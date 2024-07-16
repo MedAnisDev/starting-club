@@ -6,6 +6,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,9 +41,9 @@ public class JWTService {
         return Keys.hmacShaKeyFor(keyBytes) ;
     }
     public boolean validateToken(String token){
-        //Returns true if claims can be extracted successfully
+        //Return true if claims can be extracted
         try{
-            Claims calims = extractAllClaims(token) ;
+            Claims claims = extractAllClaims(token) ;
 
         }catch(ExpiredJwtException e){
             logger.info("ExpiredJwtException :"+e);
@@ -50,7 +51,7 @@ public class JWTService {
         return true ;
     }
 
-    public boolean isTokenValid(UserDetails userDetails , String token){
+    public boolean isTokenValid(@NonNull UserDetails userDetails , String token){
         return (userDetails.getUsername().equals(extractEmailFromJwt(token)) && isTokenExpired(token)) ;
     }
 
@@ -72,16 +73,12 @@ public class JWTService {
     }
 
     private Claims extractAllClaims(String token) {
-        try{
-            return Jwts
-                    .parserBuilder()        // Creates a new JwtParserBuilder instance
-                    .setSigningKey(getSignInKey())
-                    .build()                // Builds the JwtParser instance
-                    .parseClaimsJws(token)
-                    .getBody();
-        }catch(Exception e){
-            throw e;
-        }
+        return Jwts
+                .parserBuilder()        // Creates a new JwtParserBuilder instance
+                .setSigningKey(getSignInKey())
+                .build()                // Builds the JwtParser instance
+                .parseClaimsJws(token)
+                .getBody();
 
     }
 
