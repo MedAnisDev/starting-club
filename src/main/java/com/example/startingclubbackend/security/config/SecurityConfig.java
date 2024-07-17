@@ -31,13 +31,9 @@ import java.util.List;
 @Configuration
 public class SecurityConfig {
      private final CustomUserDetailsService customUserDetailsService ;
-     private final JWTService jwtService ;
-     private final TokenRepository tokenRepository ;
 
-    public SecurityConfig(CustomUserDetailsService customUserDetailsService, JWTService jwtService, TokenRepository tokenRepository) {
+    public SecurityConfig(CustomUserDetailsService customUserDetailsService) {
         this.customUserDetailsService = customUserDetailsService;
-        this.jwtService = jwtService;
-        this.tokenRepository = tokenRepository;
     }
 
     @Bean
@@ -84,6 +80,6 @@ public class SecurityConfig {
      }
      @Bean
      public Filter jwtAuthenticationFilter(){
-         return  new JWTAuthenticationFilter(jwtService , customUserDetailsService , tokenRepository);
+         return  new JWTAuthenticationFilter();
      }
 }

@@ -24,15 +24,12 @@ import java.io.IOException;
 public class JWTAuthenticationFilter extends OncePerRequestFilter {
     private static final Logger logger = LoggerFactory.getLogger(JWTAuthenticationFilter.class);
 
-    private final JWTService jwtService ;
-    private final CustomUserDetailsService customUserDetailsService  ;
-    private final TokenRepository tokenRepository ;
-
-    public JWTAuthenticationFilter(JWTService jwtService, CustomUserDetailsService customUserDetailsService, TokenRepository tokenRepository) {
-        this.jwtService = jwtService;
-        this.customUserDetailsService = customUserDetailsService;
-        this.tokenRepository = tokenRepository;
-    }
+    @Autowired
+    private  JWTService jwtService ;
+    @Autowired
+    private  CustomUserDetailsService customUserDetailsService  ;
+    @Autowired
+     private  TokenRepository tokenRepository ;
 
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request,@NonNull HttpServletResponse response, @NonNull FilterChain filterChain)
