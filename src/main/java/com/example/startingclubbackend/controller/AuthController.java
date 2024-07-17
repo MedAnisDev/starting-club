@@ -1,5 +1,7 @@
 package com.example.startingclubbackend.controller;
 
+import com.example.startingclubbackend.DTO.auth.LoginDTO;
+import com.example.startingclubbackend.DTO.auth.LoginResponseDTO;
 import com.example.startingclubbackend.DTO.auth.RegisterDTO;
 import com.example.startingclubbackend.DTO.auth.RegisterResponseDTO;
 import com.example.startingclubbackend.service.auth.AuthServiceImpl;
@@ -22,6 +24,11 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<RegisterResponseDTO> register(@RequestBody RegisterDTO registerDTO ){
         return authServiceImpl.register(registerDTO ) ;
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponseDTO> register(@RequestBody LoginDTO loginDTO ){
+        return authServiceImpl.login(loginDTO) ;
     }
 
 }

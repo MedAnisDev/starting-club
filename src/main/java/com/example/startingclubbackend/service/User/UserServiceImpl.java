@@ -4,6 +4,7 @@ import com.example.startingclubbackend.model.User;
 import com.example.startingclubbackend.repository.UserRepository;
 import jakarta.validation.constraints.NotNull;
 
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -18,5 +19,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public User saveUser(@NotNull final User user) {
         return userRepository.save(user) ;
+    }
+
+    @Override
+    public User fetchUserWithEmail(@NotNull final String email) {
+        return userRepository.fetchUserWithEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("user not found")) ;
     }
 }
