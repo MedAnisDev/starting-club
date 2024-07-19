@@ -1,6 +1,6 @@
 package com.example.startingclubbackend.service.User;
 
-import com.example.startingclubbackend.model.User;
+import com.example.startingclubbackend.model.user.User;
 import com.example.startingclubbackend.repository.UserRepository;
 import jakarta.validation.constraints.NotNull;
 
@@ -22,8 +22,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User fetchUserWithEmail(@NotNull final String email) {
+    public User fetchUserWithEmail( final String email) {
         return userRepository.fetchUserWithEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("user not found")) ;
+    }
+
+    @Override
+    public boolean isEmailRegistered( final String email) {
+        return userRepository.isEmailRegistered(email);
     }
 }

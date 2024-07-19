@@ -1,4 +1,4 @@
-package com.example.startingclubbackend.controller;
+package com.example.startingclubbackend.controller.auth;
 
 import com.example.startingclubbackend.DTO.auth.LoginDTO;
 import com.example.startingclubbackend.DTO.auth.LoginResponseDTO;

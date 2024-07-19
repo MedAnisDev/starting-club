@@ -29,16 +29,17 @@ public class JWTService {
     public String generateToken(UserDetails userDetails){
         return Jwts.builder()
                 .setSubject(userDetails.getUsername())
-                .setExpiration(new Date(System.currentTimeMillis()+ 36000000))
+                .setExpiration(new Date(System.currentTimeMillis()+ 24*60*60*10000)) //expires in 24 hours
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .signWith(getSignInKey() , SignatureAlgorithm.HS256)
                 .compact();
     }
-    @Value("${jwt.secret_key}")
-    private String SECRET_KEY ;
-    private Key getSignInKey() {
-        byte [] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
-        return Keys.hmacShaKeyFor(keyBytes) ;
+
+    @Value("${jwt.access_secret_key}")
+    private String accessSecretKey ;
+    private Key getSignInKey(){
+        byte [] keyBytes = Decoders.BASE64.decode(accessSecretKey) ;
+        return Keys.hmacShaKeyFor(keyBytes);
     }
     public boolean validateToken(String token){
         //Return true if claims can be extracted

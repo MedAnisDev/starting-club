@@ -31,9 +31,11 @@ import java.util.List;
 @Configuration
 public class SecurityConfig {
      private final CustomUserDetailsService customUserDetailsService ;
+     private final JWTAuthenticationFilter jwtAuthenticationFilter ;
 
-    public SecurityConfig(CustomUserDetailsService customUserDetailsService) {
+    public SecurityConfig(CustomUserDetailsService customUserDetailsService, JWTAuthenticationFilter jwtAuthenticationFilter) {
         this.customUserDetailsService = customUserDetailsService;
+        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
     }
 
     @Bean
@@ -42,14 +44,14 @@ public class SecurityConfig {
                   .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                   .csrf(AbstractHttpConfigurer::disable)
                   .authorizeHttpRequests(
-                          req -> req.requestMatchers("api/v1/login", "api/v1/register")
+                          req -> req.requestMatchers("api/v1/auth/login", "api/v1/auth/register")
                                   .permitAll()
                                   .anyRequest()
                                   .authenticated())
 
                   .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                   .userDetailsService(customUserDetailsService)
-                  .addFilterBefore(jwtAuthenticationFilter() , UsernamePasswordAuthenticationFilter.class)
+                  .addFilterBefore(jwtAuthenticationFilter , UsernamePasswordAuthenticationFilter.class)
                   .build() ;
      }
 
@@ -71,15 +73,7 @@ public class SecurityConfig {
          return authenticationConfiguration.getAuthenticationManager() ;
      }
      @Bean
-     public PasswordEncoder passwordEncoder(){
-         return new BCryptPasswordEncoder() ;
-     }
-     @Bean
-     public UserDetailsService userDetailsService(){
-         return customUserDetailsService ;
-     }
-     @Bean
-     public Filter jwtAuthenticationFilter(){
-         return  new JWTAuthenticationFilter();
+     public PasswordEncoder passwordEncoder() {
+         return new BCryptPasswordEncoder();
      }
 }

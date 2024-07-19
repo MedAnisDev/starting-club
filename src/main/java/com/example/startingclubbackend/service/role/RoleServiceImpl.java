@@ -1,6 +1,6 @@
 package com.example.startingclubbackend.service.role;
 
-import com.example.startingclubbackend.model.Role;
+import com.example.startingclubbackend.model.role.Role;
 import com.example.startingclubbackend.repository.RoleRepository;
 import org.springframework.stereotype.Service;
 

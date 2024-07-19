@@ -1,7 +1,6 @@
 package com.example.startingclubbackend.DTO.user;
 
-import com.example.startingclubbackend.model.User;
-import lombok.Data;
+import com.example.startingclubbackend.model.user.User;
 import org.springframework.stereotype.Service;
 
 import java.util.function.Function;
@@ -11,9 +10,11 @@ public class UserDTOMapper implements Function<User, UserDTO> {
     @Override
     public UserDTO apply(User user) {
         return new UserDTO(
+                user.getId(),
                 user.getFirstname(),
-                user.getLastName(),
+                user.getLastname(),
                 user.getEmail(),
+                user.getPassword(),
                 user.isEnabled(),
                 user.getRole());
     }

@@ -24,12 +24,18 @@ import java.io.IOException;
 public class JWTAuthenticationFilter extends OncePerRequestFilter {
     private static final Logger logger = LoggerFactory.getLogger(JWTAuthenticationFilter.class);
 
-    @Autowired
-    private  JWTService jwtService ;
-    @Autowired
-    private  CustomUserDetailsService customUserDetailsService  ;
-    @Autowired
-     private  TokenRepository tokenRepository ;
+
+    private final JWTService jwtService ;
+
+    private final   CustomUserDetailsService customUserDetailsService  ;
+
+     private final TokenRepository tokenRepository ;
+
+    public JWTAuthenticationFilter(JWTService jwtService, CustomUserDetailsService customUserDetailsService, TokenRepository tokenRepository) {
+        this.jwtService = jwtService;
+        this.customUserDetailsService = customUserDetailsService;
+        this.tokenRepository = tokenRepository;
+    }
 
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request,@NonNull HttpServletResponse response, @NonNull FilterChain filterChain)
@@ -43,12 +49,19 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
         }
 
         jwt = authHeader.substring(7) ;
-        if (!jwtService.validateToken(jwt)) {
+        String email = jwtService.extractEmailFromJwt(jwt);
+        if (email == null || SecurityContextHolder.getContext().getAuthentication() != null) { // true if USER has no email don't exist
+            // or the user is already authentificated
             filterChain.doFilter(request, response);
             return;
         }
 
-        String email= jwtService.extractEmailFromJwt(jwt) ;
+//        if (!jwtService.validateToken(jwt)) {
+//            filterChain.doFilter(request, response);
+//            return;
+//        }
+
+
         UserDetails user = customUserDetailsService.loadUserByUsername(email) ;
         if (!jwtService.isTokenValid(user , jwt)){
             filterChain.doFilter(request, response);

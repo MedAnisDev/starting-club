@@ -1,10 +1,12 @@
 package com.example.startingclubbackend.DTO.user;
 
-import com.example.startingclubbackend.model.Role;
+import com.example.startingclubbackend.model.role.Role;
 
-public record UserDTO(String firstname ,
+public record UserDTO(Long id ,
+                      String firstname ,
                       String lastname ,
                       String email ,
+                      String password ,
                       boolean isEnabled ,
                       Role role
                       ) {

@@ -1,4 +1,4 @@
-package com.example.startingclubbackend.model;
+package com.example.startingclubbackend.model.role;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Table(name ="roles")
 public class Role {
 
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Id
     @Column(name = "id", unique = true , nullable = false)
     private Long id ;

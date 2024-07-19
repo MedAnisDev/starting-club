@@ -13,7 +13,7 @@ public class RegisterDTO {
     private String firstname ;
 
     @Size(min=2 ,max=10 , message = "Invalid lastname length")
-    private String lastName;
+    private String lastname;
 
     @Pattern(regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$" , message = "Invalid email address")
     private String email;

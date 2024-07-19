@@ -1,10 +1,14 @@
 package com.example.startingclubbackend.service.User;
 
-import com.example.startingclubbackend.model.User;
+import com.example.startingclubbackend.model.user.User;
 import jakarta.validation.constraints.NotNull;
+
+import java.util.Optional;
 
 public interface UserService{
     User saveUser(@NotNull final User user) ;
 
-    User fetchUserWithEmail(@NotNull final String email);
+    User fetchUserWithEmail( final String email);
+
+    boolean isEmailRegistered( final String email);
 }

@@ -1,5 +1,6 @@
-package com.example.startingclubbackend.model;
+package com.example.startingclubbackend.model.user;
 
+import com.example.startingclubbackend.model.role.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -30,13 +31,16 @@ public class User implements UserDetails {
     private String firstname ;
 
     @Column(name = "lastname" , nullable = false)
-    private String lastName;
+    private String lastname;
 
     @Column(name = "email" , nullable = false)
     private String email;
 
     @Column(name = "password" , nullable = false)
     private String password;
+
+    @Column( name = "is_enabled", nullable = false)
+    private boolean isEnabled = false;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "role_id" , referencedColumnName = "id" , foreignKey = @ForeignKey(name = "FK_user_role"))
