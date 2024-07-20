@@ -30,4 +30,10 @@ public class TokenServiceImpl implements TokenService{
     public List<Token> saveAll(final List<Token> tokens) {
         return tokenRepository.saveAll(tokens);
     }
+
+    @Override
+    public Token fetchByToken(String expiredToken) {
+        return tokenRepository.fetchByToken(expiredToken)
+                .orElseThrow(() -> new IllegalArgumentException("The token u provided could not be found in our system"));
+    }
 }

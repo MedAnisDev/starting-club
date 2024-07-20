@@ -31,4 +31,9 @@ public class UserServiceImpl implements UserService {
     public boolean isEmailRegistered( final String email) {
         return userRepository.isEmailRegistered(email);
     }
+
+    @Override
+    public boolean isPhoneNumberRegistered(String phoneNumber) {
+        return userRepository.isPhoneNumberRegistered(phoneNumber);
+    }
 }

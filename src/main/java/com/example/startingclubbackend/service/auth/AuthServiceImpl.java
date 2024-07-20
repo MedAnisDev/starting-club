@@ -1,9 +1,6 @@
 package com.example.startingclubbackend.service.auth;
 
-import com.example.startingclubbackend.DTO.auth.LoginDTO;
-import com.example.startingclubbackend.DTO.auth.LoginResponseDTO;
-import com.example.startingclubbackend.DTO.auth.RegisterDTO;
-import com.example.startingclubbackend.DTO.auth.RegisterResponseDTO;
+import com.example.startingclubbackend.DTO.auth.*;
 import com.example.startingclubbackend.DTO.user.UserDTOMapper;
 import com.example.startingclubbackend.model.role.Role;
 import com.example.startingclubbackend.model.token.RefreshToken;
@@ -66,6 +63,10 @@ public class AuthServiceImpl implements AuthService{
             throw new IllegalArgumentException("Sorry, that email is already registered");
         }
 
+        if (userService.isPhoneNumberRegistered(registerDTO.getPhoneNumber())) {
+            throw new IllegalArgumentException("Sorry, that phone number is already registered.");
+        }
+
         Role role = roleService.fetchRoleByName("MEMBER") ;
         var user = User.builder()
                 .firstname(registerDTO.getFirstname())
@@ -112,6 +113,31 @@ public class AuthServiceImpl implements AuthService{
         return new ResponseEntity<>(loginResponse , HttpStatus.ACCEPTED);
     }
 
+    @Override
+    public ResponseEntity<NewAccessTokenResponseDTO> refreshAccessToken(String expiredToken ,String refreshToken) {
+        final Token currentAccessToken = tokenService.fetchByToken(expiredToken) ;
+        final User currentUser = currentAccessToken.getUser() ;
+
+        final RefreshToken currentRefreshToken = refreshTokenService.fetchTokenByToken(refreshToken) ;
+        final boolean isRefreshTokenValid = refreshTokenService.validateRefreshToken(currentRefreshToken.getToken()) ;
+
+        if( !isRefreshTokenValid ){ // if the token has been expired or revoked
+            throw new IllegalStateException("refresh token has expired or revoked");
+        }
+        if(!currentRefreshToken.getUser().getId().equals(currentUser.getId())){ // and refresh token belongs to the user that has expired token
+            throw new IllegalStateException("the refresh and access token provided does not belong to the same user");
+        }
+
+        revokeAllUsersAccessToken(currentUser);
+        String newAccessToken = generateAndSaveAccessToken(currentUser);
+        final NewAccessTokenResponseDTO newAccessTokenResponse = NewAccessTokenResponseDTO
+                        .builder()
+                        .accessToken(newAccessToken)
+                        .refreshToken(refreshToken)
+                        .build();
+        return new  ResponseEntity<>(newAccessTokenResponse , HttpStatus.OK );
+    }
+
     private String  generateAndSaveAccessToken(User user){
         var accessToken = jwtService.generateToken(user);
         saveUserAccessToken(user ,accessToken);
@@ -144,7 +170,7 @@ public class AuthServiceImpl implements AuthService{
 
         RefreshToken jwt = RefreshToken.builder()
                 .user(user)
-                .refreshToken(refreshToken)
+                .token(refreshToken)
                 .expired(false)
                 .revoked(false)
                 .issuedAt(issuedDate)

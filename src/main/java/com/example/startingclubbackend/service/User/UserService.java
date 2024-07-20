@@ -11,4 +11,5 @@ public interface UserService{
     User fetchUserWithEmail( final String email);
 
     boolean isEmailRegistered( final String email);
+    boolean isPhoneNumberRegistered(final String phoneNumber) ;
 }

@@ -9,17 +9,23 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.validation.constraints.NotNull;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Service
+@Slf4j
 public class RefreshTokenServiceImpl implements RefreshTokenService{
 
     private final RefreshTokenRepository refreshTokenRepository ;
+
+    @Value("${jwt.refresh_expiration}")
+    private long expirationRefreshTokenDuration ;
 
     public RefreshTokenServiceImpl(RefreshTokenRepository refreshTokenRepository) {
         this.refreshTokenRepository = refreshTokenRepository;
@@ -30,7 +36,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService{
         return Jwts.builder()
                 .setSubject(user.getEmail())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 7*24*60*60*1000))
+                .setExpiration(new Date(System.currentTimeMillis() + expirationRefreshTokenDuration))
                 .signWith(getSignInKey() , SignatureAlgorithm.HS256)
                 .compact() ;
     }
@@ -48,6 +54,24 @@ public class RefreshTokenServiceImpl implements RefreshTokenService{
     @Override
     public RefreshToken save(@NotNull final RefreshToken refreshToken) {
         return refreshTokenRepository.save(refreshToken);
+    }
+
+    @Override
+    public RefreshToken fetchTokenByToken(final String refreshToken) {
+        return refreshTokenRepository.fetchTokenByToken(refreshToken)
+                .orElseThrow(() -> new IllegalArgumentException("refresh token not found"));
+    }
+
+    @Override
+    public boolean validateRefreshToken(final String refreshToken) {
+        RefreshToken refToken = fetchTokenByToken(refreshToken) ;
+        if(refToken.isExpired()){
+            throw new IllegalStateException("sorry , your refresh token is expired");
+        }
+        if(refToken.isRevoked()){
+            throw new IllegalStateException("sorry , your refresh token is revoked") ;
+        }
+        return true ;
     }
 
     @Value("${jwt.refresh_secret_key}")

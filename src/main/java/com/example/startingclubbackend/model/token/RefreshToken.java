@@ -23,7 +23,7 @@ public class RefreshToken {
     private Long  id  ;
 
     @Column(name ="token" , unique = true)
-    private String refreshToken;
+    private String token;
 
     @Column(name ="expired" , nullable = false)
     private boolean expired ;

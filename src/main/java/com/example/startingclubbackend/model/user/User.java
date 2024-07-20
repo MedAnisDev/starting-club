@@ -40,7 +40,10 @@ public class User implements UserDetails {
     private String password;
 
     @Column( name = "is_enabled", nullable = false)
-    private boolean isEnabled = false;
+    private boolean isEnabled =false;
+
+    @Column( name = "phone_number", unique=true , nullable = false)
+    private String phoneNumber ;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "role_id" , referencedColumnName = "id" , foreignKey = @ForeignKey(name = "FK_user_role"))

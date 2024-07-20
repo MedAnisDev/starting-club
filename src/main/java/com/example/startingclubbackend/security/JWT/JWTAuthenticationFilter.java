@@ -51,7 +51,7 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
         jwt = authHeader.substring(7) ;
         String email = jwtService.extractEmailFromJwt(jwt);
         if (email == null || SecurityContextHolder.getContext().getAuthentication() != null) { // true if USER has no email don't exist
-            // or the user is already authentificated
+            // or the user is already authenticated
             filterChain.doFilter(request, response);
             return;
         }
