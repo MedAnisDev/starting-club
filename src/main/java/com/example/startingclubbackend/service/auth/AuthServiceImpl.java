@@ -26,6 +26,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 
@@ -67,13 +68,16 @@ public class AuthServiceImpl implements AuthService{
             throw new IllegalArgumentException("Sorry, that phone number is already registered.");
         }
 
-        Role role = roleService.fetchRoleByName("MEMBER") ;
+        Role role = roleService.fetchRoleByName("ATHLETE") ;
         var user = User.builder()
                 .firstname(registerDTO.getFirstname())
                 .lastname(registerDTO.getLastname())
                 .email(registerDTO.getEmail())
                 .password(passwordEncoder.encode(registerDTO.getPassword()))
                 .role(role)
+                .phoneNumber(registerDTO.getPhoneNumber())
+                .licenceID(registerDTO.getLicenceID())
+                .createdAT(LocalDateTime.now())
                 .isEnabled(true)
                 .build();
 

@@ -8,6 +8,7 @@ public record UserDTO(Long id ,
                       String email ,
                       String password ,
                       boolean isEnabled ,
+                      String licenceId,
                       Role role
                       ) {
 }
