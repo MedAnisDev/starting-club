@@ -5,13 +5,16 @@ import com.example.startingclubbackend.DTO.user.UserDTOMapper;
 import com.example.startingclubbackend.model.role.Role;
 import com.example.startingclubbackend.model.token.RefreshToken;
 import com.example.startingclubbackend.model.token.Token;
+import com.example.startingclubbackend.model.user.Athlete;
 import com.example.startingclubbackend.model.user.User;
 import com.example.startingclubbackend.model.token.TokenType;
+import com.example.startingclubbackend.repository.AthleteRepository;
 import com.example.startingclubbackend.repository.UserRepository;
 import com.example.startingclubbackend.security.JWT.JWTService;
 import com.example.startingclubbackend.service.Token.RefreshTokenService;
 import com.example.startingclubbackend.service.Token.TokenService;
 import com.example.startingclubbackend.service.User.UserService;
+import com.example.startingclubbackend.service.athlete.AthleteService;
 import com.example.startingclubbackend.service.role.RoleService;
 import jakarta.validation.constraints.NotNull;
 import org.slf4j.Logger;
@@ -22,11 +25,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.Date;
 
 
@@ -42,10 +47,11 @@ public class AuthServiceImpl implements AuthService{
     private final AuthenticationManager authenticationManager ;
    private final TokenService tokenService;
     private final RefreshTokenService refreshTokenService ;
+    private final AthleteService athleteService ;
 
     @Value("${jwt.refresh_expiration}")
     private long expirationRefreshTokenDuration ;
-    public AuthServiceImpl(RoleService roleService, JWTService jwtService, PasswordEncoder passwordEncoder, UserService userService, UserDTOMapper userDTOMapper, AuthenticationManager authenticationManager, TokenService tokenService, RefreshTokenService refreshTokenService, UserRepository userRepository) {
+    public AuthServiceImpl(RoleService roleService, JWTService jwtService, PasswordEncoder passwordEncoder, UserService userService, UserDTOMapper userDTOMapper, AuthenticationManager authenticationManager, TokenService tokenService, RefreshTokenService refreshTokenService,AthleteService athleteService) {
         this.roleService = roleService;
         this.jwtService = jwtService;
         this.passwordEncoder = passwordEncoder;
@@ -54,6 +60,7 @@ public class AuthServiceImpl implements AuthService{
         this.authenticationManager = authenticationManager;
         this.tokenService = tokenService;
         this.refreshTokenService = refreshTokenService;
+        this.athleteService = athleteService;
     }
 
 
@@ -69,19 +76,21 @@ public class AuthServiceImpl implements AuthService{
         }
 
         Role role = roleService.fetchRoleByName("ATHLETE") ;
-        var user = User.builder()
-                .firstname(registerDTO.getFirstname())
-                .lastname(registerDTO.getLastname())
-                .email(registerDTO.getEmail())
-                .password(passwordEncoder.encode(registerDTO.getPassword()))
-                .role(role)
-                .phoneNumber(registerDTO.getPhoneNumber())
-                .licenceID(registerDTO.getLicenceID())
-                .createdAT(LocalDateTime.now())
-                .isEnabled(true)
-                .build();
 
-        User savedUser = userService.saveUser(user);
+        Athlete athlete = Athlete.builder()
+            .firstname(registerDTO.getFirstname())
+            .lastname(registerDTO.getLastname())
+            .email(registerDTO.getEmail())
+            .password(passwordEncoder.encode(registerDTO.getPassword()))
+            .phoneNumber(registerDTO.getPhoneNumber())
+            .licenceID(registerDTO.getLicenceID())
+            .dateOFBirth(registerDTO.getDateOfBirth())
+            .createAt(LocalDateTime.now())
+            .role(role)
+            .isEnabled(true)
+            .build();
+
+        User savedUser = athleteService.saveAthlete(athlete);
         var token = jwtService.generateToken(savedUser) ;
 
         final RegisterResponseDTO registerResponse = RegisterResponseDTO
@@ -100,21 +109,19 @@ public class AuthServiceImpl implements AuthService{
                 loginDTO.getPassword()
         ));
         SecurityContextHolder.getContext().setAuthentication(authentication);
-
         User user = userService.fetchUserWithEmail(loginDTO.getEmail());
         revokeAllUsersAccessToken(user);
         revokeAllUsersRefreshToken(user);
 
         var accessToken = generateAndSaveAccessToken(user);
-        var refreshToken = generateAndSaveUserRefreshToken(user) ;
+        String refreshToken = generateAndSaveUserRefreshToken(user);
 
-        final LoginResponseDTO loginResponse = LoginResponseDTO.builder()
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
-                .userDTO(userDTOMapper.apply(user))
-                .build() ;
-
-        return new ResponseEntity<>(loginResponse , HttpStatus.ACCEPTED);
+       final LoginResponseDTO loginResponse = LoginResponseDTO.builder()
+               .accessToken(accessToken)
+               .refreshToken(refreshToken)
+               .userDTO(userDTOMapper.apply(user))
+               .build();
+        return new ResponseEntity<>(loginResponse, HttpStatus.ACCEPTED);
     }
 
     @Override
