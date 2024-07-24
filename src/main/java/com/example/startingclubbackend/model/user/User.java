@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,12 +17,12 @@ import java.util.List;
 
 
 @Data
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @Table(name ="users")
-public class User implements UserDetails {
+@Inheritance(strategy = InheritanceType.JOINED)
+public abstract class User implements UserDetails {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
@@ -43,17 +44,16 @@ public class User implements UserDetails {
     @Column( name = "is_enabled", nullable = false)
     private boolean isEnabled =false;
 
+    @CreationTimestamp
+    @Column(name = "created_at" , nullable = false)
+    private LocalDateTime createdAT ;
+
     @Column( name = "phone_number", unique=true , nullable = false)
     private String phoneNumber ;
 
-    @Column( name = "licence_id", unique=true )
-    private String licenceID ;
 
-    @Column( name = "note", unique=true )
-    private String note ;
 
-    @Column(name = "created_at" , nullable = false)
-    private LocalDateTime createdAT ;
+
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "role_id" , referencedColumnName = "id" , foreignKey = @ForeignKey(name = "FK_user_role"))

@@ -44,7 +44,7 @@ public class SecurityConfig {
                   .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                   .csrf(AbstractHttpConfigurer::disable)
                   .authorizeHttpRequests(
-                          req -> req.requestMatchers("api/v1/auth/login", "api/v1/auth/register" ,"api/v1/auth/refresh/**" )
+                          req -> req.requestMatchers("api/v1/auth/**", "api/v1/announcements/**"  )
 
                                   .permitAll()
                                   .anyRequest()
@@ -55,6 +55,11 @@ public class SecurityConfig {
                   .addFilterBefore(jwtAuthenticationFilter , UsernamePasswordAuthenticationFilter.class)
                   .build() ;
      }
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws  Exception{
+        return authenticationConfiguration.getAuthenticationManager() ;
+    }
 
      @Bean
      public CorsConfigurationSource corsConfigurationSource(){
@@ -69,10 +74,7 @@ public class SecurityConfig {
           return source ;
      }
 
-     @Bean
-     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws  Exception{
-         return authenticationConfiguration.getAuthenticationManager() ;
-     }
+
      @Bean
      public PasswordEncoder passwordEncoder() {
          return new BCryptPasswordEncoder();

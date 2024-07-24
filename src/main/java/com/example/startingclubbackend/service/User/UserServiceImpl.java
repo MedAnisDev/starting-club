@@ -17,11 +17,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User saveUser(@NotNull final User user) {
-        return userRepository.save(user) ;
-    }
-
-    @Override
     public User fetchUserWithEmail( final String email) {
         return userRepository.fetchUserWithEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("user not found")) ;

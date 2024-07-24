@@ -4,6 +4,7 @@ import com.example.startingclubbackend.DTO.auth.*;
 import com.example.startingclubbackend.model.token.RefreshToken;
 import com.example.startingclubbackend.service.auth.AuthService;
 import com.example.startingclubbackend.service.auth.AuthServiceImpl;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,7 +21,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<RegisterResponseDTO> register(@RequestBody RegisterDTO registerDTO ){
+    public ResponseEntity<RegisterResponseDTO> register( @RequestBody RegisterDTO registerDTO ){
         return authService.register(registerDTO ) ;
     }
 

@@ -6,7 +6,6 @@ import jakarta.validation.constraints.NotNull;
 import java.util.Optional;
 
 public interface UserService{
-    User saveUser(@NotNull final User user) ;
 
     User fetchUserWithEmail( final String email);
 
