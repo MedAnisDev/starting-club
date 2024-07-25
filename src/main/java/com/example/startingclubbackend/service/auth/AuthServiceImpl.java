@@ -17,6 +17,7 @@ import com.example.startingclubbackend.service.User.UserService;
 import com.example.startingclubbackend.service.athlete.AthleteService;
 import com.example.startingclubbackend.service.role.RoleService;
 import jakarta.validation.constraints.NotNull;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -36,6 +37,7 @@ import java.util.Date;
 
 
 @Service
+@Slf4j
 public class AuthServiceImpl implements AuthService{
     private static final Logger logger = LoggerFactory.getLogger(AuthServiceImpl.class);
 
@@ -109,6 +111,7 @@ public class AuthServiceImpl implements AuthService{
                 loginDTO.getPassword()
         ));
         SecurityContextHolder.getContext().setAuthentication(authentication);
+
         User user = userService.fetchUserWithEmail(loginDTO.getEmail());
         revokeAllUsersAccessToken(user);
         revokeAllUsersRefreshToken(user);
@@ -121,7 +124,7 @@ public class AuthServiceImpl implements AuthService{
                .refreshToken(refreshToken)
                .userDTO(userDTOMapper.apply(user))
                .build();
-        return new ResponseEntity<>(loginResponse, HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(loginResponse, HttpStatus.OK);
     }
 
     @Override
@@ -164,11 +167,12 @@ public class AuthServiceImpl implements AuthService{
                 .revoked(false)
                 .build();
         tokenService.save(jwt) ;
+        logger.info("access Token saved successfully");
+
     }
     public String generateAndSaveUserRefreshToken(User user){
         var refreshToken = refreshTokenService.generateRefreshToken(user);
         saveUserRefreshToken(user , refreshToken);
-
         return refreshToken ;
 
     }
@@ -188,6 +192,7 @@ public class AuthServiceImpl implements AuthService{
                 .expiresAt(expirationDate) //30 minutes
                 .build();
         refreshTokenService.save(jwt) ;
+        logger.info("refresh Token saved successfully");
     }
 
 

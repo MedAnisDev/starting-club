@@ -20,4 +20,7 @@ import java.util.List;
 @Table(name = "admins")
 @PrimaryKeyJoinColumn(name = "id")
 public class Admin extends User {
+    public Admin(){
+        super();
+    }
 }

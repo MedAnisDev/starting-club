@@ -51,10 +51,6 @@ public abstract class User implements UserDetails {
     @Column( name = "phone_number", unique=true , nullable = false)
     private String phoneNumber ;
 
-
-
-
-
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "role_id" , referencedColumnName = "id" , foreignKey = @ForeignKey(name = "FK_user_role"))
     private Role role ;

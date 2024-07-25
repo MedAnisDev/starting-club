@@ -22,9 +22,6 @@ import java.io.IOException;
 @Component
 @Slf4j
 public class JWTAuthenticationFilter extends OncePerRequestFilter {
-    private static final Logger logger = LoggerFactory.getLogger(JWTAuthenticationFilter.class);
-
-
     private final JWTService jwtService ;
 
     private final   CustomUserDetailsService customUserDetailsService  ;
@@ -50,43 +47,42 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
 
         jwt = authHeader.substring(7) ;
         String email = jwtService.extractEmailFromJwt(jwt);
-        if (email == null || SecurityContextHolder.getContext().getAuthentication() != null) { // true if USER has no email don't exist
+        if (email == null || SecurityContextHolder.getContext().getAuthentication() != null) { // true if USER email don't exist
             // or the user is already authenticated
+            log.info("USER email don't exist || user is already authenticated");
             filterChain.doFilter(request, response);
             return;
         }
 
-//        if (!jwtService.validateToken(jwt)) {
-//            filterChain.doFilter(request, response);
-//            return;
-//        }
+        if (!jwtService.validateToken(jwt)) {
+            log.info("");
+            filterChain.doFilter(request, response);
+            return;
+        }
 
 
         UserDetails user = customUserDetailsService.loadUserByUsername(email) ;
+        log.info("user loaded : :"+ user);
+
         if (!jwtService.isTokenValid(user , jwt)){
+            log.info("token expired or it's the not the same user");
             filterChain.doFilter(request, response);
             return ;
         }
 
         var isTokenValid = tokenRepository.findByToken(jwt).map(t -> (!t.isExpired() && !t.isRevoked())).orElse(false) ;
         var isTokenSaved = tokenRepository.findByToken(jwt).orElse(null);
-
         if(!isTokenValid){
-            logger.info("token expired");
+            log.info("token expired");
             return;
         }
         if(isTokenSaved ==null){
-            logger.info("token is not saved");
+            log.info("token is not saved");
             return ;
         }
 
-        if(!jwtService.isTokenValid(user , jwt)){
-            filterChain.doFilter(request, response);
-            return;
-        }
-
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                user.getUsername(),
+                user,
                 null,
                 user.getAuthorities()
         );

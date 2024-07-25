@@ -61,7 +61,7 @@ public class JWTService {
     }
 
     private boolean isTokenExpired(String token) {
-        return extractExpirationToken(token).before(new Date(System.currentTimeMillis())) ;
+        return !(extractExpirationToken(token).before(new Date(System.currentTimeMillis()))) ;
     }
 
     private Date extractExpirationToken(String token) {
