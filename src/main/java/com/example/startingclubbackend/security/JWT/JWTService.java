@@ -29,7 +29,7 @@ public class JWTService {
     public String generateToken(UserDetails userDetails){
         return Jwts.builder()
                 .setSubject(userDetails.getUsername())
-                .setExpiration(new Date(System.currentTimeMillis()+ 24*60*60*10000)) //expires in 24 hours
+                .setExpiration(new Date(System.currentTimeMillis()+ 24*60*60*1000)) //expires in 24 hours
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .signWith(getSignInKey() , SignatureAlgorithm.HS256)
                 .compact();

@@ -5,6 +5,7 @@ import com.example.startingclubbackend.security.JWT.JwtAuthEntryPoint;
 import com.example.startingclubbackend.security.utility.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -41,9 +42,10 @@ public class SecurityConfig {
                           exceptions -> exceptions.authenticationEntryPoint(authEntryPoint)
                   )
                   .authorizeHttpRequests(
-                          req -> req.requestMatchers("api/v1/auth/**" , "api/v1/announcement/**").permitAll()
-                                  .requestMatchers("api/v1/announcement/create").hasRole("SUPER_ADMIN")
-                                  .anyRequest().authenticated()
+                          req -> req.requestMatchers("api/v1/auth/**").permitAll()
+                                  .requestMatchers(HttpMethod.GET,"/api/v1/announcements/{announcementId}", "/api/v1/announcements").authenticated() // Authenticated users can read announcements
+                                  .requestMatchers(HttpMethod.POST, "/api/v1/announcements").hasRole("SUPER_ADMIN") // Only SUPER_ADMIN can create announcements
+                                  .requestMatchers(HttpMethod.PUT, "/api/v1/announcements/{announcementId}").hasRole("SUPER_ADMIN") // Only SUPER_ADMIN can update announcements
                   )
                   .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                   .userDetailsService(customUserDetailsService)
