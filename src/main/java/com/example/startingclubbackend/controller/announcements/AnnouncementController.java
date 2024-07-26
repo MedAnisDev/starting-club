@@ -15,11 +15,11 @@ public class AnnouncementController {
         this.announcementService = announcementService;
     }
 
-    @PostMapping
+    @PostMapping()
     public ResponseEntity<Object> createAnnouncement(@Valid @RequestBody final Announcement announcement){
         return announcementService.createAnnouncement(announcement) ;
     }
-    @GetMapping
+    @GetMapping()
     public ResponseEntity<Object> fetchAllAnnouncements(){
         return announcementService.fetchAllAnnouncements() ;
     }

@@ -77,7 +77,7 @@ public class AuthServiceImpl implements AuthService{
             throw new IllegalArgumentException("Sorry, that phone number is already registered.");
         }
 
-        Role role = roleService.fetchRoleByName("ATHLETE") ;
+        Role role = roleService.fetchRoleByName("ROLE_ATHLETE") ;
 
         Athlete athlete = Athlete.builder()
             .firstname(registerDTO.getFirstname())
