@@ -14,4 +14,6 @@ public interface AnnouncementService {
     Announcement getAnnouncementById(final Long announcementId);
 
     ResponseEntity<Object> updateAnnouncement(final Long announcementId , @NonNull final Announcement announcement);
+
+    ResponseEntity<Object> deleteAnnouncementById(final Long announcementId);
 }

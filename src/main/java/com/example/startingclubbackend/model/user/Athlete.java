@@ -1,13 +1,12 @@
 package com.example.startingclubbackend.model.user;
 
+import com.example.startingclubbackend.model.event.Event;
 import com.example.startingclubbackend.model.user.User;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.PrimaryKeyJoinColumn;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Getter
 @Setter
@@ -26,6 +25,14 @@ public class Athlete extends User {
 
     @Column(name = "date_of_birth" , nullable=false)
     private LocalDate dateOFBirth ;
+
+    @ManyToMany
+    @JoinTable(
+            name = "athlete_events" ,
+            joinColumns = @JoinColumn(name = "athlete_id") ,
+            inverseJoinColumns = @JoinColumn(name = "event_id")
+    )
+    private List<Event> registeredEvents ;
 
     public static AthleteBuilder builder(){
         return new AthleteBuilder();

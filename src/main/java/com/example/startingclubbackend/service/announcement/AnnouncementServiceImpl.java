@@ -3,9 +3,9 @@ package com.example.startingclubbackend.service.announcement;
 import com.example.startingclubbackend.model.announcement.Announcement;
 import com.example.startingclubbackend.model.user.Admin;
 import com.example.startingclubbackend.repository.AnnouncementRepository;
+import jakarta.transaction.Transactional;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.ansi.AnsiOutput;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -67,6 +67,7 @@ public class AnnouncementServiceImpl implements AnnouncementService{
     @Override
     public ResponseEntity<Object> updateAnnouncement(final Long announcementId ,@NonNull final Announcement announcement) {
         final Announcement currentAnnouncement = getAnnouncementById(announcementId) ;
+
         currentAnnouncement.setTitle(announcement.getTitle());
         currentAnnouncement.setContent(announcement.getContent());
         announcementRepository.save(currentAnnouncement) ;
@@ -79,4 +80,11 @@ public class AnnouncementServiceImpl implements AnnouncementService{
         return new ResponseEntity<>(currentAnnouncement , HttpStatus.OK) ;
     }
 
+    @Transactional
+    @Override
+    public ResponseEntity<Object> deleteAnnouncementById(final Long announcementId) {
+        announcementRepository.deleteAnnouncementById(announcementId);
+        final String successResponse = String.format("Announcement with ID :  %d deleted successfully", announcementId);
+        return new ResponseEntity<>(successResponse , HttpStatus.OK);
+    }
 }

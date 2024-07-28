@@ -26,7 +26,6 @@ public class Announcement {
     @Column(name = "title" , nullable = false)
     private String title ;
 
-    @Lob
     @Column(name = "content" , nullable = false , columnDefinition = "TEXT")
     private String content ;
 

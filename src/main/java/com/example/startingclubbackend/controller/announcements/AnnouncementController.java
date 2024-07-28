@@ -32,4 +32,8 @@ public class AnnouncementController {
     public ResponseEntity<Object> updateAnnouncement(@PathVariable final Long announcementId ,@Valid @NotNull @RequestBody final Announcement announcement){
         return announcementService.updateAnnouncement(announcementId , announcement) ;
     }
+    @DeleteMapping("/{announcementId}")
+    public ResponseEntity<Object> deleteAnnouncement(@PathVariable final Long announcementId){
+        return announcementService.deleteAnnouncementById(announcementId ) ;
+    }
 }
