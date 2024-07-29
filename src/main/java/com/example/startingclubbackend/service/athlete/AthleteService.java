@@ -5,4 +5,5 @@ import jakarta.validation.constraints.NotNull;
 
 public interface AthleteService {
     Athlete saveAthlete(@NotNull final Athlete athlete) ;
+    Athlete getAthleteById(final Long eventId) ;
 }

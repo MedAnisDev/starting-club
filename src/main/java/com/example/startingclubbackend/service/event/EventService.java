@@ -15,4 +15,5 @@ public interface EventService {
     ResponseEntity<Object> updateEvent(final Long eventId,@NonNull final EventDTO eventDTO);
 
     ResponseEntity<Object> deleteEventById(final Long eventId);
+    Event getEventById(final Long eventId) ;
 }

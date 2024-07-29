@@ -16,4 +16,10 @@ public class AthleteServiceImpl implements AthleteService{
     public Athlete saveAthlete(final Athlete athlete) {
         return athleteRepository.save(athlete);
     }
+
+    @Override
+    public Athlete getAthleteById(final Long eventId) {
+        return athleteRepository.findById(eventId)
+                .orElseThrow(()-> new IllegalArgumentException("athlete not found"));
+    }
 }

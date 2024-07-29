@@ -44,7 +44,7 @@ public class SecurityConfig {
                   .authorizeHttpRequests(
                           req -> req.requestMatchers("api/v1/auth/**").permitAll()
                                   .requestMatchers(HttpMethod.GET,"/api/v1/announcements/**" , "/api/v1/events/**").authenticated() // Authenticated users can read announcements
-                                  .requestMatchers(HttpMethod.POST, "/api/v1/announcements/**" , "/api/v1/events/**").hasRole("SUPER_ADMIN")
+                                  .requestMatchers(HttpMethod.POST, "/api/v1/announcements/**" , "/api/v1/events/**" ,"/api/v1/register_event/**").hasRole("SUPER_ADMIN")
                                   .requestMatchers(HttpMethod.PUT, "/api/v1/announcements/**" ,"/api/v1/events/**").hasRole("SUPER_ADMIN")
                                   .requestMatchers(HttpMethod.DELETE, "/api/v1/announcements/**","/api/v1/events/**").hasRole("SUPER_ADMIN")
                   )
