@@ -3,6 +3,8 @@ package com.example.startingclubbackend.service.event;
 import com.example.startingclubbackend.DTO.event.EventDTO;
 import com.example.startingclubbackend.model.event.Event;
 import com.example.startingclubbackend.model.user.Admin;
+import com.example.startingclubbackend.model.user.Athlete;
+import com.example.startingclubbackend.repository.AthleteRepository;
 import com.example.startingclubbackend.repository.EventRepository;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -20,9 +22,11 @@ import java.util.List;
 @Slf4j
 public class EventServiceImpl implements EventService{
     private final EventRepository eventRepository ;
+    private final AthleteRepository athleteRepository ;
 
-    public EventServiceImpl(EventRepository eventRepository) {
+    public EventServiceImpl(EventRepository eventRepository, AthleteRepository athleteRepository) {
         this.eventRepository = eventRepository;
+        this.athleteRepository = athleteRepository;
     }
 
     @Override
@@ -61,8 +65,10 @@ public class EventServiceImpl implements EventService{
 
     @Override
     public ResponseEntity<Object> updateEvent(final Long eventId, final @NonNull EventDTO eventDTO) {
+        //check
         final Event currentEvent = getEventById(eventId) ;
 
+        // Check if the event date is in the past
         if( currentEvent.getDate().isBefore(LocalDateTime.now())){
             throw new IllegalArgumentException("Cannot update an event that has already occurred") ;
         }
@@ -74,15 +80,22 @@ public class EventServiceImpl implements EventService{
         currentEvent.setDate(eventDTO.getDate());
 
         eventRepository.save(currentEvent) ;
-        return new ResponseEntity<>(currentEvent , HttpStatus.CREATED) ;
+        return new ResponseEntity<>(currentEvent , HttpStatus.OK) ;
     }
 
     @Transactional
     @Override
     public ResponseEntity<Object> deleteEventById(final Long eventId) {
-        if( eventRepository.fetchEventById(eventId).isEmpty() ){
-            throw new IllegalArgumentException("the eventId does not exist") ;
+        //check if the event exists
+        Event event = getEventById(eventId);
+
+        //remove the events from the associated athletes
+        for(Athlete athlete :event.getParticipants()){
+            athlete.getRegisteredEvents().remove(event) ;
+            log.info("remove event Id :{} from the athlete ID :{} ",eventId,athlete.getId());
+            athleteRepository.save(athlete) ;
         }
+
         eventRepository.deleteEventById(eventId);
         String successMessage = String.format("event with ID : %d is deleted successfully",eventId) ;
         return new ResponseEntity<>(successMessage ,HttpStatus.OK);

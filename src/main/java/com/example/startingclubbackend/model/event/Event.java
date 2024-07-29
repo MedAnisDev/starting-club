@@ -2,6 +2,8 @@ package com.example.startingclubbackend.model.event;
 
 import com.example.startingclubbackend.model.user.Admin;
 import com.example.startingclubbackend.model.user.Athlete;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -44,5 +46,6 @@ public class Event {
     private Admin created_by ;
 
     @ManyToMany(mappedBy = "registeredEvents")
+    @JsonManagedReference
     private List<Athlete> participants ;
 }
