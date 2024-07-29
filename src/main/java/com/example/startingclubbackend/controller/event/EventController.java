@@ -1,4 +1,5 @@
 package com.example.startingclubbackend.controller.event;
+import com.example.startingclubbackend.DTO.event.EventDTO;
 import com.example.startingclubbackend.model.announcement.Announcement;
 import com.example.startingclubbackend.model.event.Event;
 import com.example.startingclubbackend.service.event.EventService;
@@ -20,8 +21,8 @@ public class EventController {
     }
 
     @PostMapping()
-    public ResponseEntity<Object> createEvent(@Valid @RequestBody final Event event){
-        return eventService.createEvent(event);
+    public ResponseEntity<Object> createEvent(@Valid @RequestBody final EventDTO eventDTO){
+        return eventService.createEvent(eventDTO);
     }
     @GetMapping()
     public ResponseEntity<Object> fetchAllEvents(){
@@ -32,8 +33,8 @@ public class EventController {
         return eventService.fetchEventById(eventId) ;
     }
     @PutMapping("/{eventId}")
-    public ResponseEntity<Object> updateEvent(@PathVariable final Long eventId ,@Valid @NotNull @RequestBody final Event event){
-        return eventService.updateEvent(eventId , event) ;
+    public ResponseEntity<Object> updateEvent(@PathVariable final Long eventId , @Valid @NotNull @RequestBody final EventDTO eventDTO){
+        return eventService.updateEvent(eventId , eventDTO) ;
     }
     @DeleteMapping("/{eventId}")
     public ResponseEntity<Object> deleteEventById(@PathVariable final Long eventId){

@@ -33,6 +33,9 @@ public class Event {
     @Column(name = "created_at")
     private LocalDateTime createdAt ;
 
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt ;
+
     @Column(name = "date" , nullable = false)
     private LocalDateTime date ;
 

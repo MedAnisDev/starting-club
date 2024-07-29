@@ -1,9 +1,9 @@
 package com.example.startingclubbackend.service.event;
 
+import com.example.startingclubbackend.DTO.event.EventDTO;
 import com.example.startingclubbackend.model.event.Event;
 import com.example.startingclubbackend.model.user.Admin;
 import com.example.startingclubbackend.repository.EventRepository;
-import jdk.dynalink.linker.LinkerServices;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -26,7 +26,7 @@ public class EventServiceImpl implements EventService{
     }
 
     @Override
-    public ResponseEntity<Object> createEvent(final Event event) {
+    public ResponseEntity<Object> createEvent(final EventDTO eventDTO) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         Admin curentAdmin = (Admin) auth.getPrincipal();
 
@@ -34,11 +34,12 @@ public class EventServiceImpl implements EventService{
         log.info("Authentication Authorities: " + auth.getAuthorities());
 
         final Event currentEvent = new Event() ;
-        currentEvent.setTitle(event.getTitle());
-        currentEvent.setLocation(event.getLocation());
-        currentEvent.setDescription(event.getDescription());
+        currentEvent.setTitle(eventDTO.getTitle());
+        currentEvent.setLocation(eventDTO.getLocation());
+        currentEvent.setDescription(eventDTO.getDescription());
         currentEvent.setCreatedAt(LocalDateTime.now());
-        currentEvent.setDate(event.getDate());
+        currentEvent.setUpdatedAt(LocalDateTime.now());
+        currentEvent.setDate(eventDTO.getDate());
         currentEvent.setCreated_by(curentAdmin);
 
         eventRepository.save(currentEvent) ;
@@ -59,13 +60,18 @@ public class EventServiceImpl implements EventService{
     }
 
     @Override
-    public ResponseEntity<Object> updateEvent(final Long eventId, final @NonNull Event event) {
+    public ResponseEntity<Object> updateEvent(final Long eventId, final @NonNull EventDTO eventDTO) {
         final Event currentEvent = getEventById(eventId) ;
 
-        currentEvent.setTitle(event.getTitle());
-        currentEvent.setLocation(event.getLocation());
-        currentEvent.setDescription(event.getDescription());
-        currentEvent.setDate(event.getDate());
+        if( currentEvent.getDate().isBefore(LocalDateTime.now())){
+            throw new IllegalArgumentException("Cannot update an event that has already occurred") ;
+        }
+
+        currentEvent.setTitle(eventDTO.getTitle());
+        currentEvent.setLocation(eventDTO.getLocation());
+        currentEvent.setDescription(eventDTO.getDescription());
+        currentEvent.setUpdatedAt(LocalDateTime.now());
+        currentEvent.setDate(eventDTO.getDate());
 
         eventRepository.save(currentEvent) ;
         return new ResponseEntity<>(currentEvent , HttpStatus.CREATED) ;
