@@ -1,9 +1,11 @@
 package com.example.startingclubbackend.DTO.event;
 
 import jakarta.validation.constraints.*;
+import lombok.Getter;
 
 import java.time.LocalDateTime;
 
+@Getter
 public class EventDTO {
     @NotBlank(message = "title cannot be empty")
     @Size(max = 50, message = "Event title cannot be longer than 50 characters")
@@ -22,21 +24,5 @@ public class EventDTO {
         this.location = location;
         this.description = description;
         this.date = date;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public String getLocation() {
-        return location;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public LocalDateTime getDate() {
-        return date;
     }
 }

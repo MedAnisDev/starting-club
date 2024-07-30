@@ -43,13 +43,13 @@ public class SecurityConfig {
                   )
                   .authorizeHttpRequests(
                           req -> req.requestMatchers("api/v1/auth/**").permitAll()
-                                  .requestMatchers(HttpMethod.GET,"/api/v1/announcements/**" , "/api/v1/events/**").authenticated() // Authenticated users can read announcements
-                                  .requestMatchers(HttpMethod.POST, "/api/v1/announcements/**" , "/api/v1/events/**").hasRole("SUPER_ADMIN")
-                                  .requestMatchers(HttpMethod.PUT, "/api/v1/announcements/**" ,"/api/v1/events/**").hasRole("SUPER_ADMIN")
+                                  .requestMatchers(HttpMethod.POST, "/api/v1/announcements/**" , "/api/v1/events/**").hasAnyRole("SUPER_ADMIN", "ADMIN")
+                                  .requestMatchers(HttpMethod.PUT, "/api/v1/announcements/**" ,"/api/v1/events/**").hasAnyRole("SUPER_ADMIN", "ADMIN")
                                   .requestMatchers(HttpMethod.DELETE, "/api/v1/announcements/**","/api/v1/events/**").hasRole("SUPER_ADMIN")
 
                                   .requestMatchers(HttpMethod.POST, "api/v1/register_event/**").hasRole("ATHLETE")
                                   .requestMatchers(HttpMethod.DELETE, "/api/v1/register_event/admin/**").hasRole("SUPER_ADMIN")
+                                  .anyRequest().authenticated()
                   )
                   .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                   .userDetailsService(customUserDetailsService)
@@ -73,7 +73,6 @@ public class SecurityConfig {
           source.registerCorsConfiguration("api/v1/**",configuration);
           return source ;
      }
-
 
      @Bean
      public PasswordEncoder passwordEncoder() {
