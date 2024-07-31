@@ -86,15 +86,14 @@ public class ForumCommentServiceImpl implements ForumCommentService{
 
     @Override
     public ResponseEntity<Object> editComment(final CommentDTO commentDTO,final  Long commentId) {
-        final ForumComment currentComment = getCommentById(commentId) ;
+        final ForumComment currentComment = getCommentById(commentId);
         currentComment.setContent(commentDTO.getContent());
         currentComment.setUpdatedAt(LocalDateTime.now());
-        forumCommentRepository.save(currentComment) ;
-        final CommentDTO commentResponse = commentDTOMapper.apply(currentComment) ;
-        return new ResponseEntity<>(commentResponse , HttpStatus.OK) ;
+        forumCommentRepository.save(currentComment);
+        final CommentDTO commentResponse = commentDTOMapper.apply(currentComment);
+        return new ResponseEntity<>(commentResponse, HttpStatus.OK);
 
     }
-
     @Transactional
     @Override
     public ResponseEntity<Object> deleteComment(final Long commentId) {
