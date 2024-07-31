@@ -31,13 +31,13 @@ public class ForumComment {
     private User postedBy ;
 
     @ManyToOne(fetch=FetchType.EAGER)
-    @JoinColumn(name="parent_comment_id", foreignKey = @ForeignKey(name="FK_comment_reply"))
-    @JsonBackReference // Avoid serializing the parent comment
+    @JoinColumn(name="parent_comment_id")
+    @JsonBackReference
     private ForumComment parentComment ; // parent of this comment, top level ones will have this field as null
 
     @OneToMany(fetch=FetchType.LAZY, mappedBy="parentComment")
     @OrderBy("id ASC")
-    @JsonManagedReference  // Manage serialization of replies
+    @JsonManagedReference
     private List<ForumComment> replies; // children of this comment
 
 }

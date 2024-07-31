@@ -5,12 +5,15 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @AllArgsConstructor
 public class CommentDTO{
+
+    private Long id ;
+
     @NotBlank(message = "please write something")
     private String content;
 
@@ -20,8 +23,5 @@ public class CommentDTO{
 
     private UserPublicDTO postedBy ;
 
-    private CommentDTO parentCommentId; ;
-
-
-
+    private List<CommentDTO> replies ;
 }

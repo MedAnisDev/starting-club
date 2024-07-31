@@ -1,6 +1,7 @@
 package com.example.startingclubbackend.service.event;
 
 import com.example.startingclubbackend.DTO.event.EventDTO;
+import com.example.startingclubbackend.DTO.event.EventDTOMapper;
 import com.example.startingclubbackend.model.event.Event;
 import com.example.startingclubbackend.model.user.Admin;
 import com.example.startingclubbackend.model.user.Athlete;
@@ -17,16 +18,19 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
 public class EventServiceImpl implements EventService{
     private final EventRepository eventRepository ;
     private final AthleteRepository athleteRepository ;
+    private final EventDTOMapper eventDTOMapper ;
 
-    public EventServiceImpl(EventRepository eventRepository, AthleteRepository athleteRepository) {
+    public EventServiceImpl(EventRepository eventRepository, AthleteRepository athleteRepository, EventDTOMapper eventDTOMapper) {
         this.eventRepository = eventRepository;
         this.athleteRepository = athleteRepository;
+        this.eventDTOMapper = eventDTOMapper;
     }
 
     @Override
@@ -41,25 +45,30 @@ public class EventServiceImpl implements EventService{
         currentEvent.setTitle(eventDTO.getTitle());
         currentEvent.setLocation(eventDTO.getLocation());
         currentEvent.setDescription(eventDTO.getDescription());
-        currentEvent.setCreatedAt(LocalDateTime.now());
         currentEvent.setUpdatedAt(LocalDateTime.now());
         currentEvent.setDate(eventDTO.getDate());
         currentEvent.setCreated_by(curentAdmin);
 
         eventRepository.save(currentEvent) ;
-        return new ResponseEntity<>(currentEvent , HttpStatus.CREATED) ;
+
+        final EventDTO eventDTOResponse = eventDTOMapper.apply(currentEvent) ;
+        return new ResponseEntity<>(eventDTOResponse , HttpStatus.CREATED) ;
     }
 
     @Override
     public ResponseEntity<Object> fetchAllEvents() {
         final List<Event> events = eventRepository.fetchAllEvents();
-        return new ResponseEntity<>(events , HttpStatus.OK) ;
+        final List<EventDTO> eventDTOs = events.stream()
+                .map(eventDTOMapper)
+                .collect(Collectors.toList());
+        return new ResponseEntity<>(eventDTOs , HttpStatus.OK) ;
     }
 
     @Override
     public ResponseEntity<Object> fetchEventById(final Long eventId) {
         final Event event = getEventById(eventId) ;
-        return new ResponseEntity<>(event , HttpStatus.OK) ;
+        final EventDTO eventDTOResponse = eventDTOMapper.apply(event) ;
+        return new ResponseEntity<>(eventDTOResponse , HttpStatus.OK) ;
 
     }
 
@@ -80,7 +89,9 @@ public class EventServiceImpl implements EventService{
         currentEvent.setDate(eventDTO.getDate());
 
         eventRepository.save(currentEvent) ;
-        return new ResponseEntity<>(currentEvent , HttpStatus.OK) ;
+
+        final EventDTO eventDTOResponse = eventDTOMapper.apply(currentEvent) ;
+        return new ResponseEntity<>(eventDTOResponse , HttpStatus.OK) ;
     }
 
     @Transactional

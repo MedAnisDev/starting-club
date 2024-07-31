@@ -1,5 +1,7 @@
 package com.example.startingclubbackend.service.announcement;
 
+import com.example.startingclubbackend.DTO.announcement.AnnouncementDTO;
+import com.example.startingclubbackend.DTO.announcement.AnnouncementDTOMapper;
 import com.example.startingclubbackend.model.announcement.Announcement;
 import com.example.startingclubbackend.model.user.Admin;
 import com.example.startingclubbackend.repository.AnnouncementRepository;
@@ -14,33 +16,35 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-
 @Service
 @Slf4j
 public class AnnouncementServiceImpl implements AnnouncementService{
     private final AnnouncementRepository announcementRepository ;
+    private final AnnouncementDTOMapper announcementDTOMapper ;
 
-    public AnnouncementServiceImpl(AnnouncementRepository announcementRepository) {
+    public AnnouncementServiceImpl(AnnouncementRepository announcementRepository, AnnouncementDTOMapper announcementDTOMapper) {
         this.announcementRepository = announcementRepository;
+        this.announcementDTOMapper = announcementDTOMapper;
     }
 
 
     @Override
-    public ResponseEntity<Object> createAnnouncement(final Announcement announcement) {
+    public ResponseEntity<Object> createAnnouncement(final AnnouncementDTO announcementDTO) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Admin admin = (Admin) authentication.getPrincipal() ;
+
         log.info("Authentication Principal: " + authentication.getPrincipal());
         log.info("Authentication Authorities: " + authentication.getAuthorities());
 
-        Admin admin = (Admin) authentication.getPrincipal() ;
-        final Announcement currentAnnouncement = Announcement
-                .builder()
-                .title(announcement.getTitle())
-                .content(announcement.getContent())
-                .createdAt(LocalDateTime.now())
-                .createdBy(admin)
-                .build();
+        final Announcement currentAnnouncement = new Announcement() ;
+        currentAnnouncement.setTitle(announcementDTO.getTitle()) ;
+        currentAnnouncement.setContent(announcementDTO.getContent()) ;
+        currentAnnouncement.setCreatedBy(admin) ;
+
         announcementRepository.save(currentAnnouncement) ;
-        return new ResponseEntity<>(currentAnnouncement , HttpStatus.CREATED);
+
+        final AnnouncementDTO announcementDTOResponse = announcementDTOMapper.apply(currentAnnouncement) ;
+        return new ResponseEntity<>(announcementDTOResponse , HttpStatus.OK);
     }
     @Override
     public ResponseEntity<Object> fetchAllAnnouncements() {
@@ -49,13 +53,17 @@ public class AnnouncementServiceImpl implements AnnouncementService{
         log.info("Authentication Authorities: " + authentication.getAuthorities());
 
         final List<Announcement> announcements = announcementRepository.fetchAllAnnouncementsAll();
-        return new ResponseEntity<>(announcements , HttpStatus.OK) ;
+        final List<AnnouncementDTO> announcementDTOList = announcements.stream()
+                                                                .map(announcementDTOMapper)
+                                                                .toList();
+        return new ResponseEntity<>(announcementDTOList , HttpStatus.OK) ;
     }
 
     @Override
     public ResponseEntity<Object> fetchAnnouncementById(final Long announcementId) {
         final Announcement currentAnnouncement = getAnnouncementById(announcementId) ;
-        return  new ResponseEntity<>(currentAnnouncement  ,HttpStatus.OK) ;
+        final AnnouncementDTO announcementDTOResponse = announcementDTOMapper.apply(currentAnnouncement) ;
+        return  new ResponseEntity<>(announcementDTOResponse  ,HttpStatus.OK) ;
     }
 
     @Override
@@ -65,11 +73,12 @@ public class AnnouncementServiceImpl implements AnnouncementService{
     }
 
     @Override
-    public ResponseEntity<Object> updateAnnouncement(final Long announcementId ,@NonNull final Announcement announcement) {
+    public ResponseEntity<Object> updateAnnouncement(final Long announcementId ,@NonNull final AnnouncementDTO announcementDTO) {
         final Announcement currentAnnouncement = getAnnouncementById(announcementId) ;
 
-        currentAnnouncement.setTitle(announcement.getTitle());
-        currentAnnouncement.setContent(announcement.getContent());
+        currentAnnouncement.setTitle(announcementDTO.getTitle());
+        currentAnnouncement.setContent(announcementDTO.getContent());
+        currentAnnouncement.setUpdatedAt(LocalDateTime.now());
         announcementRepository.save(currentAnnouncement) ;
 
         log.info("current Announcement : "+currentAnnouncement);
@@ -77,7 +86,8 @@ public class AnnouncementServiceImpl implements AnnouncementService{
         log.info("Authentication Principal: " + authentication.getPrincipal());
         log.info("Authentication Authorities: " + authentication.getAuthorities());
 
-        return new ResponseEntity<>(currentAnnouncement , HttpStatus.OK) ;
+        final AnnouncementDTO announcementDTOResponse = announcementDTOMapper.apply(currentAnnouncement) ;
+        return new ResponseEntity<>(announcementDTOResponse , HttpStatus.OK) ;
     }
 
     @Transactional

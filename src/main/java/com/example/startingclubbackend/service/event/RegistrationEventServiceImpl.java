@@ -31,12 +31,11 @@ public class RegistrationEventServiceImpl implements RegistrationEventService{
         Athlete currentAthlete = (Athlete) auth.getPrincipal();
         Long athleteID =currentAthlete.getId() ;
 
-        boolean isAthleteRegistered = athleteRepository.isAthleteRegistered(athleteID, eventId);
-        if(isAthleteRegistered){
+
+        if(isAthleteRegistered(eventId , athleteID)){
             String errorMessage = String.format("sorry , we cannot register athlete with ID : %d he is already registered ",athleteID);
             return new ResponseEntity<>(errorMessage, HttpStatus.CONFLICT);
         }
-
         Event currentEvent = eventService.getEventById(eventId);
 
         currentEvent.getParticipants().add(currentAthlete);
@@ -61,5 +60,9 @@ public class RegistrationEventServiceImpl implements RegistrationEventService{
 
         String successRegistration = String.format("removal of athlete with ID : %d from event with ID: %d is successful  ", athleteId , eventId);
         return new ResponseEntity<>(successRegistration , HttpStatus.OK) ;
+    }
+
+    public boolean isAthleteRegistered(final Long eventId ,final Long athleteID){
+        return athleteRepository.isAthleteRegistered(athleteID, eventId) ;
     }
 }
