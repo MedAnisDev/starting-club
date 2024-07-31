@@ -26,6 +26,9 @@ public class ForumComment {
     @Column(name = "created_at" , nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
+    @Column(name = "updated_at" , nullable = false)
+    private LocalDateTime updatedAt ;
+
     @ManyToOne()
     @JoinColumn(name = "posted_by" , nullable = false)
     private User postedBy ;

@@ -16,4 +16,8 @@ public interface ForumCommentService {
     ResponseEntity<Object> postReply(@NotNull final CommentDTO commentDTO ,final Long parentCommentId);
 
     ResponseEntity<Object> fetchAllRepliesByCommendId(final Long parentCommentId);
+
+    ResponseEntity<Object> editComment(@NotNull final CommentDTO commentDTO, final Long commentId);
+
+    ResponseEntity<Object> deleteComment(final Long commentId);
 }

@@ -19,6 +19,8 @@ public class CommentDTO{
 
     private LocalDateTime createdAt;
 
+    private LocalDateTime updatedAt;
+
     private int likesCount;
 
     private UserPublicDTO postedBy ;

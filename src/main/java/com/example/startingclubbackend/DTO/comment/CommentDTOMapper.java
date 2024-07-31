@@ -20,12 +20,13 @@ public class CommentDTOMapper implements Function<ForumComment ,CommentDTO> {
                 forumComment.getId() ,
                 forumComment.getContent() ,
                 forumComment.getCreatedAt(),
+                forumComment.getUpdatedAt() ,
                 forumComment.getLikesCount(),
                 userPublicDTOMapper.apply(forumComment.getPostedBy()),
-                forumComment.getReplies()
+                forumComment.getReplies()!=null? forumComment.getReplies()
                         .stream()
                         .map(this)
-                        .toList()
+                        .toList(): null
         );
     }
 }

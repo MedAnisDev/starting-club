@@ -20,14 +20,9 @@ public class ForumCommentController {
         return forumCommentService.postComment(commentDTO) ;
     }
 
-    @PostMapping("/post_reply/{parentCommentId}")
+    @PostMapping("/{parentCommentId}/post_reply")
     public ResponseEntity<Object> postReply(final @Valid @RequestBody CommentDTO commentDTO ,final @PathVariable Long parentCommentId ){
         return forumCommentService.postReply(commentDTO , parentCommentId) ;
-    }
-
-    @PutMapping("/like/{commentId}")
-    public ResponseEntity<Object> likeComment(final @PathVariable Long commentId){
-        return forumCommentService.likeComment(commentId) ;
     }
     @GetMapping()
     public ResponseEntity<Object> fetchAllComments(){
@@ -38,9 +33,24 @@ public class ForumCommentController {
         return forumCommentService.fetchCommentById(commentId) ;
     }
 
-    @GetMapping("/replies/{parentCommentId}")
+    @GetMapping("/{parentCommentId}/replies")
     public ResponseEntity<Object> fetchAllRepliesByCommendId(@PathVariable final Long parentCommentId ){
         return forumCommentService.fetchAllRepliesByCommendId(parentCommentId) ;
+    }
+
+    @PutMapping("/like/{commentId}")
+    public ResponseEntity<Object> likeComment(final @PathVariable Long commentId){
+        return forumCommentService.likeComment(commentId) ;
+    }
+
+    @PutMapping("/editComment/{commentId}")
+    public ResponseEntity<Object> editComment(final @Valid @RequestBody CommentDTO commentDTO ,final @PathVariable Long commentId){
+        return forumCommentService.editComment(commentDTO , commentId) ;
+    }
+
+    @DeleteMapping("/deleteComment/{commentId}")
+    public ResponseEntity<Object> deleteComment(final @PathVariable Long commentId){
+        return forumCommentService.deleteComment( commentId) ;
     }
 
 

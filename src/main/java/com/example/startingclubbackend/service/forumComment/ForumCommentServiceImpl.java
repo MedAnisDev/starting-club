@@ -5,16 +5,20 @@ import com.example.startingclubbackend.DTO.comment.CommentDTOMapper;
 import com.example.startingclubbackend.model.forum.ForumComment;
 import com.example.startingclubbackend.model.user.User;
 import com.example.startingclubbackend.repository.ForumCommentRepository;
+import lombok.extern.slf4j.Slf4j;
+import org.hibernate.validator.internal.util.logging.Log;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
+@Slf4j
 public class ForumCommentServiceImpl implements ForumCommentService{
     private final ForumCommentRepository forumCommentRepository ;
     private final CommentDTOMapper commentDTOMapper;
@@ -33,15 +37,6 @@ public class ForumCommentServiceImpl implements ForumCommentService{
     }
 
     @Override
-    public ResponseEntity<Object> likeComment(final Long commentId) {
-        final ForumComment comment = getCommentById(commentId) ;
-        comment.setLikesCount(comment.getLikesCount()+ 1);
-        forumCommentRepository.save(comment) ;
-
-        return ResponseEntity.ok().body("Comment liked successfully") ;
-    }
-
-    @Override
     public ResponseEntity<Object> fetchAllComments() {
         final List <ForumComment> comments =forumCommentRepository.findAll() ;
         final List<CommentDTO> commentDTOLlist = comments.stream()
@@ -51,7 +46,7 @@ public class ForumCommentServiceImpl implements ForumCommentService{
     }
 
     @Override
-    public ResponseEntity<Object> fetchCommentById(Long commentId) {
+    public ResponseEntity<Object> fetchCommentById(final Long commentId) {
         final ForumComment comment = getCommentById(commentId) ;
         final CommentDTO commentDTO = commentDTOMapper.apply(comment) ;
         return new ResponseEntity<>(commentDTO , HttpStatus.OK) ;
@@ -73,12 +68,52 @@ public class ForumCommentServiceImpl implements ForumCommentService{
     }
 
     @Override
-    public ResponseEntity<Object> fetchAllRepliesByCommendId(Long parentCommentId) {
+    public ResponseEntity<Object> fetchAllRepliesByCommendId(final Long parentCommentId) {
         List<ForumComment> replies = forumCommentRepository.fetchAllRepliesByCommendId(parentCommentId) ;
         final List<CommentDTO> repliesDTOResponse = replies.
                 stream().map(commentDTOMapper).
                 toList() ;
         return new ResponseEntity<>(repliesDTOResponse , HttpStatus.OK) ;
+    }
+    @Override
+    public ResponseEntity<Object> likeComment(final Long commentId) {
+        final ForumComment comment = getCommentById(commentId) ;
+        comment.setLikesCount(comment.getLikesCount()+ 1);
+        forumCommentRepository.save(comment) ;
+
+        return ResponseEntity.ok().body("Comment liked successfully") ;
+    }
+
+    @Override
+    public ResponseEntity<Object> editComment(final CommentDTO commentDTO,final  Long commentId) {
+        final ForumComment currentComment = getCommentById(commentId) ;
+        currentComment.setContent(commentDTO.getContent());
+        currentComment.setUpdatedAt(LocalDateTime.now());
+        forumCommentRepository.save(currentComment) ;
+        final CommentDTO commentResponse = commentDTOMapper.apply(currentComment) ;
+        return new ResponseEntity<>(commentResponse , HttpStatus.OK) ;
+
+    }
+
+    @Transactional
+    @Override
+    public ResponseEntity<Object> deleteComment(final Long commentId) {
+        final ForumComment currentComment = getCommentById(commentId) ;
+        //log.info("current comment : "+ currentComment.getContent());
+
+        if(!currentComment.getReplies().isEmpty()){
+            List<ForumComment> replies = currentComment.getReplies() ;
+            for (ForumComment reply :replies ){
+                //log.info("reply content : "+reply.getContent());
+                deleteComment(reply.getId()) ;
+            }
+        }
+//        log.info("current comment has no replies");
+//        log.info("this comment wil be deleted :"+ currentComment.getContent());
+        forumCommentRepository.delete(currentComment);
+
+        final String successResponse = String.format("comment with ID :  %d deleted successfully", currentComment.getId());
+        return new ResponseEntity<>(successResponse , HttpStatus.OK);
     }
 
     private ForumComment setCommentFields(final CommentDTO commentDTO ) {
@@ -88,11 +123,12 @@ public class ForumCommentServiceImpl implements ForumCommentService{
         ForumComment comment = new ForumComment() ;
         comment.setContent(commentDTO.getContent());
         comment.setCreatedAt(LocalDateTime.now());
+        comment.setUpdatedAt(LocalDateTime.now());
         comment.setPostedBy(user);
         return comment ;
     }
 
-    private ForumComment getCommentById(Long commentId) {
+    private ForumComment getCommentById(final Long commentId) {
         return forumCommentRepository.findById(commentId)
                 .orElseThrow(() -> new IllegalArgumentException("comment not found")) ;
     }
