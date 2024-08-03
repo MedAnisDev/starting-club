@@ -1,17 +1,15 @@
 package com.example.startingclubbackend.model.file;
 
+import com.example.startingclubbackend.model.event.Event;
 import com.example.startingclubbackend.model.user.Admin;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
-@Getter
-@Setter
+@Data
+
 @Entity
 @Table(name = "files")
 public class FileRecord {
@@ -35,6 +33,10 @@ public class FileRecord {
     @ManyToOne
     @JoinColumn(name = "uploaded_by")
     private Admin uploadedBy ;
+
+    @ManyToOne
+    @JoinColumn(name = "event_id")
+    private Event event ;
 
     public FileRecord() {
 

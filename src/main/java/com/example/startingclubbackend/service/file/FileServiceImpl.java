@@ -2,10 +2,13 @@ package com.example.startingclubbackend.service.file;
 
 import com.example.startingclubbackend.DTO.file.FileRecordDTO;
 import com.example.startingclubbackend.DTO.file.FileRecordDTOMapper;
+import com.example.startingclubbackend.model.event.Event;
 import com.example.startingclubbackend.model.file.FileRecord;
 import com.example.startingclubbackend.model.user.Admin;
 import com.example.startingclubbackend.repository.FileRepository;
+import com.example.startingclubbackend.service.event.EventService;
 import jakarta.validation.constraints.NotNull;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -13,6 +16,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.swing.plaf.ColorUIResource;
 import java.io.File;
 import java.nio.file.Paths;
 
@@ -22,24 +26,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@Slf4j
 public class FileServiceImpl implements FileService{
     private final FileRepository fileRepository ;
     private final FileRecordDTOMapper fileRecordDTOMapper ;
+    private final EventService eventService;
 
-
-    public FileServiceImpl(FileRepository fileRepository, FileRecordDTOMapper fileRecordDTOMapper) {
+    public FileServiceImpl(FileRepository fileRepository, FileRecordDTOMapper fileRecordDTOMapper, EventService eventService) {
         this.fileRepository = fileRepository;
         this.fileRecordDTOMapper = fileRecordDTOMapper;
+        this.eventService = eventService;
     }
 
     private final String  FILE_PATH= Paths.get("").toAbsolutePath().resolve("src").resolve("main").resolve("resources").resolve("files") +"/";
     @Override
-    public ResponseEntity<Object> uploadFile(@NotNull final MultipartFile file)throws IOException {
-        if(validateResponse(file) != null){
-            return validateResponse(file) ;  //checking conditions
+    public ResponseEntity<Object> uploadFile(@NotNull final MultipartFile file) throws IOException {
+        if (validateResponse(file) != null) {
+            return validateResponse(file);  //checking conditions
         }
-
-        final FileRecord fileRecord = handleFile(file) ;
+        final FileRecord fileRecord = handleFile(file);
 
         final FileRecordDTO fileRecordDTOResponse = fileRecordDTOMapper.apply(fileRecord); //transforming file to DTO
         return new ResponseEntity<>(fileRecordDTOResponse, HttpStatus.CREATED);
@@ -57,6 +62,38 @@ public class FileServiceImpl implements FileService{
             fileRecordDTOList.add(fileRecordDTOMapper.apply(fileRecord)) ;
         }
         return new ResponseEntity<>(fileRecordDTOList , HttpStatus.OK) ;
+    }
+
+    @Override
+    public ResponseEntity<Object> fetchAllFilesByEventId(final Long eventId) {
+        List<FileRecord> currentFiles = fileRepository.fetchAllPhotosByEventId(eventId);
+         if (currentFiles.isEmpty()){
+             return new ResponseEntity<>("Sorry, there are no files for the specified event ",HttpStatus.NOT_FOUND);
+         }
+         //handling response
+        List<FileRecordDTO> currentFilesResponse = currentFiles.stream()
+                .map(fileRecordDTOMapper)
+                .toList() ;
+         return new ResponseEntity<>(currentFilesResponse , HttpStatus.OK) ;
+    }
+
+    @Override
+    public ResponseEntity<Object> addFileToEventId(Long eventId, Long fileId) {
+        Event currEvent = eventService.getEventById(eventId);
+        FileRecord fileRecord = getFileById(fileId);
+        if (fileRecord.getEvent().getId() == eventId){ //check if the event has already registered
+            return new ResponseEntity<>("sorry , file already added to this event",HttpStatus.CONFLICT) ;
+        }
+
+        fileRecord.setEvent(currEvent);//adding event to file
+        fileRepository.save(fileRecord);
+        return new ResponseEntity<>("File added to event successfully", HttpStatus.OK);
+    }
+
+    @Override
+    public FileRecord getFileById(Long fileId) {
+        return fileRepository.findById(fileId)
+                .orElseThrow(()-> new IllegalArgumentException("File not found "));
     }
 
     private ResponseEntity<Object> validateResponse(MultipartFile file) {
