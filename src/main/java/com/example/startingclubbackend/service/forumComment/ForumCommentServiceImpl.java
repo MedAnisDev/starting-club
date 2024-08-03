@@ -6,7 +6,6 @@ import com.example.startingclubbackend.model.forum.ForumComment;
 import com.example.startingclubbackend.model.user.User;
 import com.example.startingclubbackend.repository.ForumCommentRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.validator.internal.util.logging.Log;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -99,7 +98,6 @@ public class ForumCommentServiceImpl implements ForumCommentService{
     public ResponseEntity<Object> deleteComment(final Long commentId) {
         final ForumComment currentComment = getCommentById(commentId) ;
         //log.info("current comment : "+ currentComment.getContent());
-
         if(!currentComment.getReplies().isEmpty()){
             List<ForumComment> replies = currentComment.getReplies() ;
             for (ForumComment reply :replies ){
