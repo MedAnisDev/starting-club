@@ -7,8 +7,11 @@ import com.example.startingclubbackend.model.file.FileRecord;
 import com.example.startingclubbackend.model.user.Admin;
 import com.example.startingclubbackend.repository.FileRepository;
 import com.example.startingclubbackend.service.event.EventService;
+import org.springframework.core.io.Resource;
 import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -16,8 +19,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.swing.plaf.ColorUIResource;
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import java.io.IOException;
@@ -41,6 +45,7 @@ public class FileServiceImpl implements FileService{
     private final String  FILE_PATH= Paths.get("").toAbsolutePath().resolve("src").resolve("main").resolve("resources").resolve("files") +"/";
     @Override
     public ResponseEntity<Object> uploadFile(@NotNull final MultipartFile file) throws IOException {
+        log.info("file name : "+file.getName());
         if (validateResponse(file) != null) {
             return validateResponse(file);  //checking conditions
         }
@@ -51,7 +56,7 @@ public class FileServiceImpl implements FileService{
     }
 
     @Override
-    public ResponseEntity<Object> uploadMultipleFile(List<MultipartFile> files) throws IOException {
+    public ResponseEntity<Object> uploadMultipleFiles(List<MultipartFile> files) throws IOException {
         List<FileRecordDTO> fileRecordDTOList = new ArrayList<>() ;
 
         for (MultipartFile file : files){
@@ -78,7 +83,7 @@ public class FileServiceImpl implements FileService{
     }
 
     @Override
-    public ResponseEntity<Object> addFileToEventId(Long eventId, Long fileId) {
+    public ResponseEntity<Object> addFileToEventId(final Long eventId,final Long fileId) {
         Event currEvent = eventService.getEventById(eventId);
         FileRecord fileRecord = getFileById(fileId);
         if (fileRecord.getEvent().getId() == eventId){ //check if the event has already registered
@@ -91,12 +96,32 @@ public class FileServiceImpl implements FileService{
     }
 
     @Override
-    public FileRecord getFileById(Long fileId) {
+    public FileRecord getFileById(final Long fileId) {
         return fileRepository.findById(fileId)
                 .orElseThrow(()-> new IllegalArgumentException("File not found "));
     }
 
-    private ResponseEntity<Object> validateResponse(MultipartFile file) {
+    @Override
+    public ResponseEntity<Object> downloadFile(final String fileName) throws IOException {
+        Path path = Paths.get(FILE_PATH + fileName) ;
+
+        //checking file validation
+        Resource resource = new UrlResource(path.toUri()) ;
+        if (!resource.exists() || !resource.isFile()) {
+            return new ResponseEntity<>("resource not found" , HttpStatus.NOT_FOUND);
+        }
+        //getting fileData
+        byte[] fileDataBytes = Files.readAllBytes(path) ;
+        //setting headers
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_DISPOSITION , "attachment; filename=\"" + fileName + "\""); // ex.txt
+        headers.add(HttpHeaders.CONTENT_LENGTH , String.valueOf(resource.contentLength()));
+        headers.add(HttpHeaders.CONTENT_TYPE ,Files.probeContentType(path) );
+
+        return new ResponseEntity<>(fileDataBytes , headers , HttpStatus.OK) ;
+    }
+
+    private ResponseEntity<Object> validateResponse(final MultipartFile file) {
         var originalFileName = file.getOriginalFilename() ;
         if (originalFileName == null) {
             return new ResponseEntity<>("Original file name is null", HttpStatus.BAD_REQUEST);

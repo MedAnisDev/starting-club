@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.List;
 
 @RestController
@@ -24,10 +25,9 @@ public class FileController {
     }
 
     @PostMapping("/upload_files" )
-    public ResponseEntity<Object> uploadMultipleFile(@RequestParam(value = "files") final List<MultipartFile> files) throws IOException {
-        return fileService.uploadMultipleFile(files) ;
+    public ResponseEntity<Object> uploadMultipleFiles(@RequestParam(value = "files") final List<MultipartFile> files) throws IOException {
+        return fileService.uploadMultipleFiles(files) ;
     }
-
     @PutMapping("/photos/{event_id}/{fileId}")
     public ResponseEntity<Object> addFileToEventId(@PathVariable final Long event_id , @PathVariable final Long fileId) {
         return fileService.addFileToEventId(event_id ,fileId);
@@ -36,5 +36,10 @@ public class FileController {
     @GetMapping("/photos/{event_id}" )
     public ResponseEntity<Object> fetchAllFilesByEventId(@PathVariable final Long event_id){
         return fileService.fetchAllFilesByEventId(event_id);
+    }
+
+    @GetMapping("/download_file" )
+    public ResponseEntity<Object> downloadFile(@RequestParam(value = "fileName") final String fileName) throws IOException {
+            return fileService.downloadFile(fileName) ;
     }
 }

@@ -2,7 +2,6 @@ package com.example.startingclubbackend.model.event;
 
 import com.example.startingclubbackend.model.user.Admin;
 import com.example.startingclubbackend.model.user.Athlete;
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
