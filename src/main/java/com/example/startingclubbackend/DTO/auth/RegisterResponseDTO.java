@@ -8,9 +8,12 @@ import lombok.Data;
 public class RegisterResponseDTO {
 
     private UserDTO userDTO ;
-    private String token ;
-    public RegisterResponseDTO(UserDTO userDTO , String token){
+    private String refreshToken;
+    private String confirmationToken;
+
+    public RegisterResponseDTO(UserDTO userDTO , String refreshToken , String confirmationToken){
         this.userDTO =userDTO ;
-        this.token = token ;
+        this.refreshToken =refreshToken ;
+        this.confirmationToken = confirmationToken ;
     }
 }

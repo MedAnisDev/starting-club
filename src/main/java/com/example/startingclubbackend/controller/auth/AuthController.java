@@ -35,4 +35,10 @@ public class AuthController {
         return authService.refreshAccessToken( expiredToken , refreshToken) ;
     }
 
+    @GetMapping("/confirm")
+    public String confirmToken (@RequestParam("token") final String token){
+        return authService.confirmToken(token) ;
+    }
+
+
 }

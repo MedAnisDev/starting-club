@@ -122,7 +122,7 @@ public class FileServiceImpl implements FileService{
     }
 
     @Override
-    public ResponseEntity<String> deleteFile(Long fileId) throws IOException{
+    public ResponseEntity<String> deleteFileByIds(Long fileId) throws IOException{
         FileRecord fileToDelete = getFileById(fileId) ;
         fileRepository.deleteById(fileId); // delete file from database
 

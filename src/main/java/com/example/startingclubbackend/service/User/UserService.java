@@ -1,5 +1,6 @@
 package com.example.startingclubbackend.service.User;
 
+import com.example.startingclubbackend.model.user.Athlete;
 import com.example.startingclubbackend.model.user.User;
 import jakarta.validation.constraints.NotNull;
 
@@ -11,4 +12,7 @@ public interface UserService{
 
     boolean isEmailRegistered( final String email);
     boolean isPhoneNumberRegistered(final String phoneNumber) ;
+
+    void enableAthleteById(final Long athleteId) ;
+    Athlete getAthleteById(final Long athleteId) ;
 }

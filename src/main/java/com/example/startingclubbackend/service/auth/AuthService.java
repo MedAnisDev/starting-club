@@ -12,4 +12,6 @@ public interface AuthService {
     ResponseEntity<LoginResponseDTO> login(@NotNull final LoginDTO loginDTO);
 
     ResponseEntity<NewAccessTokenResponseDTO> refreshAccessToken(final String expiredToken , final String refreshToken);
+
+    String confirmToken(final String token);
 }

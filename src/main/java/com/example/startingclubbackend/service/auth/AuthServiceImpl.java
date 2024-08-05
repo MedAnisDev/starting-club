@@ -3,6 +3,7 @@ package com.example.startingclubbackend.service.auth;
 import com.example.startingclubbackend.DTO.auth.*;
 import com.example.startingclubbackend.DTO.user.UserDTOMapper;
 import com.example.startingclubbackend.model.role.Role;
+import com.example.startingclubbackend.model.token.ConfirmationToken;
 import com.example.startingclubbackend.model.token.RefreshToken;
 import com.example.startingclubbackend.model.token.Token;
 import com.example.startingclubbackend.model.user.Athlete;
@@ -11,6 +12,7 @@ import com.example.startingclubbackend.model.token.TokenType;
 import com.example.startingclubbackend.repository.AthleteRepository;
 import com.example.startingclubbackend.repository.UserRepository;
 import com.example.startingclubbackend.security.JWT.JWTService;
+import com.example.startingclubbackend.service.Token.ConfirmationTokenService;
 import com.example.startingclubbackend.service.Token.RefreshTokenService;
 import com.example.startingclubbackend.service.Token.TokenService;
 import com.example.startingclubbackend.service.User.UserService;
@@ -30,6 +32,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
@@ -50,10 +53,11 @@ public class AuthServiceImpl implements AuthService{
    private final TokenService tokenService;
     private final RefreshTokenService refreshTokenService ;
     private final AthleteService athleteService ;
+    private final ConfirmationTokenService confirmationTokenService;
 
     @Value("${jwt.refresh_expiration}")
     private long expirationRefreshTokenDuration ;
-    public AuthServiceImpl(RoleService roleService, JWTService jwtService, PasswordEncoder passwordEncoder, UserService userService, UserDTOMapper userDTOMapper, AuthenticationManager authenticationManager, TokenService tokenService, RefreshTokenService refreshTokenService,AthleteService athleteService) {
+    public AuthServiceImpl(RoleService roleService, JWTService jwtService, PasswordEncoder passwordEncoder, UserService userService, UserDTOMapper userDTOMapper, AuthenticationManager authenticationManager, TokenService tokenService, RefreshTokenService refreshTokenService, AthleteService athleteService, ConfirmationTokenService confirmationTokenService) {
         this.roleService = roleService;
         this.jwtService = jwtService;
         this.passwordEncoder = passwordEncoder;
@@ -63,10 +67,12 @@ public class AuthServiceImpl implements AuthService{
         this.tokenService = tokenService;
         this.refreshTokenService = refreshTokenService;
         this.athleteService = athleteService;
+        this.confirmationTokenService = confirmationTokenService;
     }
 
 
     @Override
+    @Transactional
     public ResponseEntity<RegisterResponseDTO> register(@NotNull final RegisterDTO registerDTO)  {
 
         if(userService.isEmailRegistered(registerDTO.getEmail())){
@@ -89,22 +95,27 @@ public class AuthServiceImpl implements AuthService{
             .dateOFBirth(registerDTO.getDateOfBirth())
             .createAt(LocalDateTime.now())
             .role(role)
-            .isEnabled(true)
+            .isEnabled(false)
             .build();
 
-        User savedUser = athleteService.saveAthlete(athlete);
-        var token = jwtService.generateToken(savedUser) ;
+        Athlete savedAthlete = athleteService.saveAthlete(athlete);
+
+        //getting tokens
+        String refreshToken = refreshTokenService.generateRefreshToken(savedAthlete);
+        String confirmationToken = confirmationTokenService.generateConfirmationToken(savedAthlete);
 
         final RegisterResponseDTO registerResponse = RegisterResponseDTO
                 .builder()
-                .userDTO(userDTOMapper.apply(savedUser))
-                .token(token)
+                .userDTO(userDTOMapper.apply(savedAthlete))
+                .refreshToken(refreshToken)
+                .confirmationToken(confirmationToken)
                 .build();
 
         return new ResponseEntity<>(registerResponse , HttpStatus.CREATED) ;
     }
 
     @Override
+    @Transactional
     public ResponseEntity<LoginResponseDTO> login(LoginDTO loginDTO) {
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                 loginDTO.getEmail(),
@@ -128,6 +139,7 @@ public class AuthServiceImpl implements AuthService{
     }
 
     @Override
+    @Transactional
     public ResponseEntity<NewAccessTokenResponseDTO> refreshAccessToken(String expiredToken ,String refreshToken) {
         final Token currentAccessToken = tokenService.fetchByToken(expiredToken) ;
         final User currentUser = currentAccessToken.getUser() ;
@@ -150,6 +162,22 @@ public class AuthServiceImpl implements AuthService{
                         .refreshToken(refreshToken)
                         .build();
         return new  ResponseEntity<>(newAccessTokenResponse , HttpStatus.OK );
+    }
+
+    @Override
+    @Transactional
+    public String confirmToken(String token) {
+        ConfirmationToken confirmationToken =confirmationTokenService.fetchTokenByToken(token) ;
+        if(confirmationToken.getConfirmedAt() != null){
+           return confirmationTokenService.getAlreadyConfirmedPage();
+        }
+        LocalDateTime expiredAt = confirmationToken.getExpiredAt() ;
+        if(expiredAt.isBefore(LocalDateTime.now())){
+            throw new IllegalArgumentException("confirmation Token already expired") ;
+        }
+        confirmationTokenService.setConfirmedAt(token);
+        userService.enableAthleteById(confirmationToken.getAthlete().getId());
+        return confirmationTokenService.getConfirmationPage();
     }
 
     private String  generateAndSaveAccessToken(User user){
