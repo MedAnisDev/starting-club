@@ -121,6 +121,18 @@ public class FileServiceImpl implements FileService{
         return new ResponseEntity<>(fileDataBytes , headers , HttpStatus.OK) ;
     }
 
+    @Override
+    public ResponseEntity<String> deleteFile(Long fileId) throws IOException{
+        FileRecord fileToDelete = getFileById(fileId) ;
+        fileRepository.deleteById(fileId); // delete file from database
+
+        //delete file from server using NIO
+        Path filePath = Paths.get(fileToDelete.getPath());
+        Files.delete(filePath);
+
+        return new ResponseEntity<>("File deleted successfully" , HttpStatus.OK) ;
+    }
+
     private ResponseEntity<Object> validateResponse(final MultipartFile file) {
         var originalFileName = file.getOriginalFilename() ;
         if (originalFileName == null) {

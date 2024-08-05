@@ -1,12 +1,12 @@
 package com.example.startingclubbackend.controller.file;
 
 import com.example.startingclubbackend.service.file.FileService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.util.List;
 
 @RestController
@@ -41,5 +41,13 @@ public class FileController {
     @GetMapping("/download_file" )
     public ResponseEntity<Object> downloadFile(@RequestParam(value = "fileName") final String fileName) throws IOException {
             return fileService.downloadFile(fileName) ;
+    }
+    @DeleteMapping("/{fileId}")
+    public ResponseEntity<String> deleteFile(@PathVariable final Long fileId) {
+        try{
+            return fileService.deleteFile(fileId);
+        } catch (IOException e) {
+            return new ResponseEntity<>("File not found or could not be deleted", HttpStatus.NOT_FOUND) ;
+        }
     }
 }

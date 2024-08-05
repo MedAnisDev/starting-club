@@ -20,5 +20,7 @@ public interface FileService {
     FileRecord getFileById(final Long fileId) ;
 
     ResponseEntity<Object> downloadFile(final String files) throws IOException;
+
+    ResponseEntity<String> deleteFile(final Long fileId) throws IOException;
 }
 
