@@ -3,12 +3,14 @@ package com.example.startingclubbackend.service.Token;
 import com.example.startingclubbackend.model.token.ConfirmationToken;
 import com.example.startingclubbackend.model.user.Athlete;
 import com.example.startingclubbackend.repository.ConfirmationTokenRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Service
+@Slf4j
 public class ConfirmationTokenServiceImpl implements ConfirmationTokenService{
     private final ConfirmationTokenRepository confirmationTokenRepository ;
 

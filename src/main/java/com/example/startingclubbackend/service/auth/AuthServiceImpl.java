@@ -9,14 +9,13 @@ import com.example.startingclubbackend.model.token.Token;
 import com.example.startingclubbackend.model.user.Athlete;
 import com.example.startingclubbackend.model.user.User;
 import com.example.startingclubbackend.model.token.TokenType;
-import com.example.startingclubbackend.repository.AthleteRepository;
-import com.example.startingclubbackend.repository.UserRepository;
 import com.example.startingclubbackend.security.JWT.JWTService;
 import com.example.startingclubbackend.service.Token.ConfirmationTokenService;
 import com.example.startingclubbackend.service.Token.RefreshTokenService;
 import com.example.startingclubbackend.service.Token.TokenService;
 import com.example.startingclubbackend.service.User.UserService;
 import com.example.startingclubbackend.service.athlete.AthleteService;
+import com.example.startingclubbackend.service.email.EmailSenderService;
 import com.example.startingclubbackend.service.role.RoleService;
 import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
@@ -28,14 +27,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
 import java.util.Date;
 
 
@@ -54,10 +51,11 @@ public class AuthServiceImpl implements AuthService{
     private final RefreshTokenService refreshTokenService ;
     private final AthleteService athleteService ;
     private final ConfirmationTokenService confirmationTokenService;
+    private final EmailSenderService emailSenderService ;
 
     @Value("${jwt.refresh_expiration}")
     private long expirationRefreshTokenDuration ;
-    public AuthServiceImpl(RoleService roleService, JWTService jwtService, PasswordEncoder passwordEncoder, UserService userService, UserDTOMapper userDTOMapper, AuthenticationManager authenticationManager, TokenService tokenService, RefreshTokenService refreshTokenService, AthleteService athleteService, ConfirmationTokenService confirmationTokenService) {
+    public AuthServiceImpl(RoleService roleService, JWTService jwtService, PasswordEncoder passwordEncoder, UserService userService, UserDTOMapper userDTOMapper, AuthenticationManager authenticationManager, TokenService tokenService, RefreshTokenService refreshTokenService, AthleteService athleteService, ConfirmationTokenService confirmationTokenService, EmailSenderService emailSenderService) {
         this.roleService = roleService;
         this.jwtService = jwtService;
         this.passwordEncoder = passwordEncoder;
@@ -68,6 +66,7 @@ public class AuthServiceImpl implements AuthService{
         this.refreshTokenService = refreshTokenService;
         this.athleteService = athleteService;
         this.confirmationTokenService = confirmationTokenService;
+        this.emailSenderService = emailSenderService;
     }
 
 
@@ -103,6 +102,13 @@ public class AuthServiceImpl implements AuthService{
         //getting tokens
         String refreshToken = refreshTokenService.generateRefreshToken(savedAthlete);
         String confirmationToken = confirmationTokenService.generateConfirmationToken(savedAthlete);
+
+        //
+        final String link = "http://localhost:8082/api/v1/auth/confirm?token=" + confirmationToken;
+        emailSenderService.sendEmail(
+                savedAthlete.getEmail() ,
+                emailSenderService.emailTemplateConfirmation(savedAthlete.getFirstname() ,link )
+        );
 
         final RegisterResponseDTO registerResponse = RegisterResponseDTO
                 .builder()
@@ -171,10 +177,12 @@ public class AuthServiceImpl implements AuthService{
         if(confirmationToken.getConfirmedAt() != null){
            return confirmationTokenService.getAlreadyConfirmedPage();
         }
+
         LocalDateTime expiredAt = confirmationToken.getExpiredAt() ;
         if(expiredAt.isBefore(LocalDateTime.now())){
             throw new IllegalArgumentException("confirmation Token already expired") ;
         }
+
         confirmationTokenService.setConfirmedAt(token);
         userService.enableAthleteById(confirmationToken.getAthlete().getId());
         return confirmationTokenService.getConfirmationPage();
