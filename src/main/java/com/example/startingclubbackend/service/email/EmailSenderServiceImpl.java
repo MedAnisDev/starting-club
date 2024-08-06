@@ -62,7 +62,7 @@ public class EmailSenderServiceImpl implements EmailSenderService {
                 "            <p>If you did not sign up for this service, please ignore this email.</p>\n" +
                 "        </div>\n" +
                 "        <div style=\"text-align: center; padding-top: 20px;\">\n" +
-                "            <p>Best regards,<br>Ruspina</p>\n" +
+                "            <p>Best regards,<br>Starting club</p>\n" +
                 "        </div>\n" +
                 "    </div>\n" +
                 "</div>";
