@@ -17,9 +17,6 @@ public class EmailSenderServiceImpl implements EmailSenderService {
 
     @Value("${spring.mail.username}")
     String SenderOfEmail ;
-
-    private final static Logger LOGGER = LoggerFactory
-            .getLogger(EmailSenderServiceImpl.class);
     private final JavaMailSender mailSender ;
 
     public EmailSenderServiceImpl(JavaMailSender mailSender) {
@@ -41,7 +38,6 @@ public class EmailSenderServiceImpl implements EmailSenderService {
             mailSender.send(mimeMessage);
 
         }catch (MessagingException e){
-            LOGGER.error("failed to send email", e);
             throw new IllegalStateException("failed to send email");
         }
     }

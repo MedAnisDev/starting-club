@@ -13,9 +13,6 @@ public class AthleteBuilder {
 
     private String email;
     private String password;
-
-    private boolean isEnabled   ;
-
     private LocalDateTime createdAT ;
 
     private String phoneNumber ;
@@ -24,6 +21,7 @@ public class AthleteBuilder {
     private String licenceID ;
     private String note ;
     private LocalDate dateOfBirth;
+    private boolean enable = false; // Default to false
 
 
     public AthleteBuilder id(Long id) {
@@ -44,10 +42,6 @@ public class AthleteBuilder {
     }
     public AthleteBuilder password(String password) {
         this.password = password;
-        return this;
-    }
-    public AthleteBuilder isEnabled(boolean isEnabled) {
-        this.isEnabled = isEnabled;
         return this;
     }
     public AthleteBuilder createAt(LocalDateTime createdAT) {
@@ -76,6 +70,11 @@ public class AthleteBuilder {
         return this;
     }
 
+    public AthleteBuilder enable(boolean enable) {
+        this.enable = enable;
+        return this;
+    }
+
     public Athlete build(){
         Athlete athlete = new Athlete() ;
         athlete.setId(id);
@@ -89,6 +88,7 @@ public class AthleteBuilder {
         athlete.setLicenceID(licenceID);
         athlete.setNote(note);
         athlete.setDateOFBirth(dateOfBirth);
+        athlete.setEnable(enable); ;
         return athlete ;
     }
 

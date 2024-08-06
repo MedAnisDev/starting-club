@@ -43,7 +43,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void enableAthleteById(Long athleteId) {
         Athlete athlete = getAthleteById(athleteId) ;
-        athlete.setEnabled(true);
+        athlete.setEnable(true);
         athleteRepository.save(athlete);
 
     }

@@ -40,7 +40,7 @@ public abstract class User implements UserDetails {
     private String password;
 
     @Column( name = "is_enabled", nullable = false)
-    private boolean isEnabled =false;
+    private boolean enable =false;
 
     @CreationTimestamp
     @Column(name = "created_at" , nullable = false)
@@ -81,6 +81,6 @@ public abstract class User implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return UserDetails.super.isEnabled();
+        return this.isEnable();
     }
 }

@@ -9,7 +9,7 @@ public record UserDTO(Long id ,
                       String lastname ,
                       String email ,
                       String password ,
-                      boolean isEnabled ,
+                      boolean isEnable ,
                       LocalDateTime createdAt,
                       Role role
                       ) {

@@ -94,10 +94,14 @@ public class AuthServiceImpl implements AuthService{
             .dateOFBirth(registerDTO.getDateOfBirth())
             .createAt(LocalDateTime.now())
             .role(role)
-            .isEnabled(false)
-            .build();
+                .enable(false)
+                .build();
+        athlete.setEnable(false);
 
+        log.info("Athlete enabled: "+ athlete.isEnable());
         Athlete savedAthlete = athleteService.saveAthlete(athlete);
+        log.info("Athlete enabled: "+ savedAthlete.isEnable());
+
 
         //getting tokens
         String refreshToken = refreshTokenService.generateRefreshToken(savedAthlete);
@@ -109,6 +113,7 @@ public class AuthServiceImpl implements AuthService{
                 savedAthlete.getEmail() ,
                 emailSenderService.emailTemplateConfirmation(savedAthlete.getFirstname() ,link )
         );
+        log.info("Athlete enabled: "+ savedAthlete.isEnable());
 
         final RegisterResponseDTO registerResponse = RegisterResponseDTO
                 .builder()
@@ -123,13 +128,17 @@ public class AuthServiceImpl implements AuthService{
     @Override
     @Transactional
     public ResponseEntity<LoginResponseDTO> login(LoginDTO loginDTO) {
+        User user = userService.fetchUserWithEmail(loginDTO.getEmail());
+        if (!user.isEnabled()) {
+            throw new RuntimeException("Account not verified. Please verify your account.");
+        }
+
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                 loginDTO.getEmail(),
                 loginDTO.getPassword()
         ));
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        User user = userService.fetchUserWithEmail(loginDTO.getEmail());
         revokeAllUsersAccessToken(user);
         revokeAllUsersRefreshToken(user);
 
@@ -185,6 +194,9 @@ public class AuthServiceImpl implements AuthService{
 
         confirmationTokenService.setConfirmedAt(token);
         userService.enableAthleteById(confirmationToken.getAthlete().getId());
+
+        log.info("User with enable : "+ confirmationToken.getAthlete().isEnable());
+
         return confirmationTokenService.getConfirmationPage();
     }
 
