@@ -2,6 +2,8 @@ package com.example.startingclubbackend.service.auth;
 
 import com.example.startingclubbackend.DTO.auth.*;
 import com.example.startingclubbackend.DTO.user.UserDTOMapper;
+import com.example.startingclubbackend.exceptions.custom.EmailAlreadyRegisteredException;
+import com.example.startingclubbackend.exceptions.custom.PhoneAlreadyRegisteredException;
 import com.example.startingclubbackend.model.role.Role;
 import com.example.startingclubbackend.model.token.ConfirmationToken;
 import com.example.startingclubbackend.model.token.RefreshToken;
@@ -47,7 +49,7 @@ public class AuthServiceImpl implements AuthService{
     private final UserService userService ;
     private final UserDTOMapper userDTOMapper ;
     private final AuthenticationManager authenticationManager ;
-   private final TokenService tokenService;
+    private final TokenService tokenService;
     private final RefreshTokenService refreshTokenService ;
     private final AthleteService athleteService ;
     private final ConfirmationTokenService confirmationTokenService;
@@ -73,17 +75,15 @@ public class AuthServiceImpl implements AuthService{
     @Override
     @Transactional
     public ResponseEntity<RegisterResponseDTO> register(@NotNull final RegisterDTO registerDTO)  {
-
+        //validate User info
         if(userService.isEmailRegistered(registerDTO.getEmail())){
-            throw new IllegalArgumentException("Sorry, that email is already registered");
+            throw new EmailAlreadyRegisteredException("Email " + registerDTO.getEmail() + " is already registered");
         }
-
         if (userService.isPhoneNumberRegistered(registerDTO.getPhoneNumber())) {
-            throw new IllegalArgumentException("Sorry, that phone number is already registered.");
+            throw new PhoneAlreadyRegisteredException("phone number " + registerDTO.getPhoneNumber() + " is already registered.");
         }
-
+        //build and save athlete
         Role role = roleService.fetchRoleByName("ROLE_ATHLETE") ;
-
         Athlete athlete = Athlete.builder()
             .firstname(registerDTO.getFirstname())
             .lastname(registerDTO.getLastname())
@@ -94,34 +94,28 @@ public class AuthServiceImpl implements AuthService{
             .dateOFBirth(registerDTO.getDateOfBirth())
             .createAt(LocalDateTime.now())
             .role(role)
-                .enable(false)
-                .build();
-        athlete.setEnable(false);
-
-        log.info("Athlete enabled: "+ athlete.isEnable());
+            .enable(false)
+            .build();
         Athlete savedAthlete = athleteService.saveAthlete(athlete);
-        log.info("Athlete enabled: "+ savedAthlete.isEnable());
 
-
-        //getting tokens
+        //get tokens
         String refreshToken = refreshTokenService.generateRefreshToken(savedAthlete);
         String confirmationToken = confirmationTokenService.generateConfirmationToken(savedAthlete);
 
-        //
+        //send email confirmation
         final String link = "http://localhost:8082/api/v1/auth/confirm?token=" + confirmationToken;
         emailSenderService.sendEmail(
                 savedAthlete.getEmail() ,
                 emailSenderService.emailTemplateConfirmation(savedAthlete.getFirstname() ,link )
         );
-        log.info("Athlete enabled: "+ savedAthlete.isEnable());
 
+        //response
         final RegisterResponseDTO registerResponse = RegisterResponseDTO
                 .builder()
                 .userDTO(userDTOMapper.apply(savedAthlete))
                 .refreshToken(refreshToken)
                 .confirmationToken(confirmationToken)
                 .build();
-
         return new ResponseEntity<>(registerResponse , HttpStatus.CREATED) ;
     }
 
@@ -145,6 +139,7 @@ public class AuthServiceImpl implements AuthService{
         var accessToken = generateAndSaveAccessToken(user);
         String refreshToken = generateAndSaveUserRefreshToken(user);
 
+        //response
        final LoginResponseDTO loginResponse = LoginResponseDTO.builder()
                .accessToken(accessToken)
                .refreshToken(refreshToken)

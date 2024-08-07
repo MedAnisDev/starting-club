@@ -1,9 +1,8 @@
 package com.example.startingclubbackend.security.JWT;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import com.example.startingclubbackend.exceptions.custom.ExpiredTokenException;
+import com.example.startingclubbackend.exceptions.custom.InvalidTokenException;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.NonNull;
@@ -16,6 +15,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
+import java.security.SignatureException;
 import java.util.Date;
 import java.util.function.Function;
 
@@ -41,15 +41,17 @@ public class JWTService {
         byte [] keyBytes = Decoders.BASE64.decode(accessSecretKey) ;
         return Keys.hmacShaKeyFor(keyBytes);
     }
-    public boolean validateToken(String token){
+    public boolean validateToken(String token) {
         //Return true if claims can be extracted
-        try{
-            Claims claims = extractAllClaims(token) ;
+        try {
+            Claims claims = extractAllClaims(token);
+            return true;
 
-        }catch(ExpiredJwtException e){
-            logger.info("ExpiredJwtException :"+e);
+        } catch (ExpiredJwtException e) {
+            throw new InvalidTokenException("Token has expired");
+        } catch (MalformedJwtException e) {
+            throw new InvalidTokenException("Malformed token");
         }
-        return true ;
     }
 
     public boolean isTokenValid(@NonNull UserDetails userDetails , String token){
@@ -60,7 +62,7 @@ public class JWTService {
         return extractClaim(token , Claims::getSubject ) ;
     }
 
-    private boolean isTokenExpired(String token) {
+    public boolean isTokenExpired(String token) {
         return !(extractExpirationToken(token).before(new Date(System.currentTimeMillis()))) ;
     }
 
@@ -74,13 +76,17 @@ public class JWTService {
     }
 
     private Claims extractAllClaims(String token) {
-        return Jwts
-                .parserBuilder()        // Creates a new JwtParserBuilder instance
-                .setSigningKey(getSignInKey())
-                .build()                // Builds the JwtParser instance
-                .parseClaimsJws(token)
-                .getBody();
-
+        try{
+            return Jwts
+                    .parserBuilder()        // Creates a new JwtParserBuilder instance
+                    .setSigningKey(getSignInKey())
+                    .build()                // Builds the JwtParser instance
+                    .parseClaimsJws(token)
+                    .getBody();
+        }
+        catch (JwtException e) {
+            throw new InvalidTokenException("Token parsing error");
+        }
     }
 
 }
