@@ -33,6 +33,18 @@ public class SecurityConfig {
         this.authEntryPoint = authEntryPoint;
     }
 
+    private static final String[] SWAGGER_WHITELIST = {
+            "/swagger-ui.html",
+            "/swagger-ui/**",
+            "/v2/api-docs",
+            "/v3/api-docs",
+            "/v3/api-docs/**",
+            "/swagger-resources/**",
+            "/webjars/**",
+            "configuration/ui",
+            "configuration/security"
+    };
+
     @Bean
      public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
           return http
@@ -42,8 +54,11 @@ public class SecurityConfig {
                           exceptions -> exceptions.authenticationEntryPoint(authEntryPoint)
                   )
                   .authorizeHttpRequests(
-                          req -> req.requestMatchers("api/v1/auth/**").
-                                    permitAll()
+                          req -> req.requestMatchers("api/v1/auth/**")
+                                    .permitAll()
+
+                                  .requestMatchers(SWAGGER_WHITELIST)
+                                    .permitAll()
 
                                   .requestMatchers(HttpMethod.POST, "/api/v1/announcements/**" ,
                                           "/api/v1/events/**",
