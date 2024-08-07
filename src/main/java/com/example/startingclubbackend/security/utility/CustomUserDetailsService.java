@@ -1,5 +1,6 @@
 package com.example.startingclubbackend.security.utility;
 
+import com.example.startingclubbackend.exceptions.custom.ResourceNotFoundException;
 import com.example.startingclubbackend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,6 +19,6 @@ public class CustomUserDetailsService implements UserDetailsService {
     }
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        return userRepository.fetchUserWithEmail(email).orElseThrow(() -> new UsernameNotFoundException("user not found"));
+        return userRepository.fetchUserWithEmail(email).orElseThrow(() -> new ResourceNotFoundException("user not found"));
     }
 }

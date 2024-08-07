@@ -2,6 +2,8 @@ package com.example.startingclubbackend.service.event;
 
 import com.example.startingclubbackend.DTO.event.EventDTO;
 import com.example.startingclubbackend.DTO.event.EventDTOMapper;
+import com.example.startingclubbackend.exceptions.custom.EventAlreadyOccurredException;
+import com.example.startingclubbackend.exceptions.custom.ResourceNotFoundException;
 import com.example.startingclubbackend.model.event.Event;
 import com.example.startingclubbackend.model.user.Admin;
 import com.example.startingclubbackend.model.user.Athlete;
@@ -79,7 +81,7 @@ public class EventServiceImpl implements EventService{
 
         // Check if the event date is in the past
         if( currentEvent.getDate().isBefore(LocalDateTime.now())){
-            throw new IllegalArgumentException("Cannot update an event that has already occurred") ;
+            throw new EventAlreadyOccurredException("Cannot update an event that has already occurred") ;
         }
 
         currentEvent.setTitle(eventDTO.getTitle());
@@ -114,6 +116,6 @@ public class EventServiceImpl implements EventService{
 
     public Event getEventById(final Long eventId){
         return eventRepository.fetchEventById(eventId)
-                .orElseThrow(()-> new IllegalArgumentException("event not found")) ;
+                .orElseThrow(()-> new ResourceNotFoundException("event not found")) ;
     }
 }

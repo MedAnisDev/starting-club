@@ -2,6 +2,7 @@ package com.example.startingclubbackend.service.announcement;
 
 import com.example.startingclubbackend.DTO.announcement.AnnouncementDTO;
 import com.example.startingclubbackend.DTO.announcement.AnnouncementDTOMapper;
+import com.example.startingclubbackend.exceptions.custom.ResourceNotFoundException;
 import com.example.startingclubbackend.model.announcement.Announcement;
 import com.example.startingclubbackend.model.user.Admin;
 import com.example.startingclubbackend.repository.AnnouncementRepository;
@@ -69,7 +70,7 @@ public class AnnouncementServiceImpl implements AnnouncementService{
     @Override
     public Announcement getAnnouncementById(final Long announcementId) {
         return announcementRepository.fetchAnnouncementById(announcementId)
-                .orElseThrow(()-> new IllegalArgumentException("Announcement not found")) ;
+                .orElseThrow(()-> new ResourceNotFoundException("Announcement not found")) ;
     }
 
     @Override

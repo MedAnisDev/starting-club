@@ -1,16 +1,13 @@
 package com.example.startingclubbackend.service.email;
 
+import com.example.startingclubbackend.exceptions.custom.EmailSendingException;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-
-import javax.sound.midi.MidiMessage;
 
 @Service
 public class EmailSenderServiceImpl implements EmailSenderService {
@@ -38,7 +35,7 @@ public class EmailSenderServiceImpl implements EmailSenderService {
             mailSender.send(mimeMessage);
 
         }catch (MessagingException e){
-            throw new IllegalStateException("failed to send email");
+            throw new EmailSendingException("failed to send email to :  " +to );
         }
     }
 

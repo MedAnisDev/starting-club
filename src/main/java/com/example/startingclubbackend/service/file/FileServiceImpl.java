@@ -2,6 +2,8 @@ package com.example.startingclubbackend.service.file;
 
 import com.example.startingclubbackend.DTO.file.FileRecordDTO;
 import com.example.startingclubbackend.DTO.file.FileRecordDTOMapper;
+import com.example.startingclubbackend.exceptions.custom.FileValidationException;
+import com.example.startingclubbackend.exceptions.custom.ResourceNotFoundException;
 import com.example.startingclubbackend.model.event.Event;
 import com.example.startingclubbackend.model.file.FileRecord;
 import com.example.startingclubbackend.model.user.Admin;
@@ -46,9 +48,7 @@ public class FileServiceImpl implements FileService{
     @Override
     public ResponseEntity<Object> uploadFile(@NotNull final MultipartFile file) throws IOException {
         log.info("file name : "+file.getName());
-        if (validateResponse(file) != null) {
-            return validateResponse(file);  //checking conditions
-        }
+        validateUploadFile(file) ;
         final FileRecord fileRecord = handleFile(file);
 
         final FileRecordDTO fileRecordDTOResponse = fileRecordDTOMapper.apply(fileRecord); //transforming file to DTO
@@ -60,9 +60,7 @@ public class FileServiceImpl implements FileService{
         List<FileRecordDTO> fileRecordDTOList = new ArrayList<>() ;
 
         for (MultipartFile file : files){
-            if(validateResponse(file) != null){
-                return validateResponse(file) ;  //checking conditions
-            }
+
             final FileRecord fileRecord = handleFile(file) ;
             fileRecordDTOList.add(fileRecordDTOMapper.apply(fileRecord)) ;
         }
@@ -87,18 +85,18 @@ public class FileServiceImpl implements FileService{
         Event currEvent = eventService.getEventById(eventId);
         FileRecord fileRecord = getFileById(fileId);
         if (fileRecord.getEvent().getId() == eventId){ //check if the event has already registered
-            return new ResponseEntity<>("sorry , file already added to this event",HttpStatus.CONFLICT) ;
+            return new ResponseEntity<>("Sorry , file already added to this event",HttpStatus.CONFLICT) ;
         }
 
         fileRecord.setEvent(currEvent);//adding event to file
         fileRepository.save(fileRecord);
-        return new ResponseEntity<>("File added to event successfully", HttpStatus.OK);
+        return new ResponseEntity<>("File Added To Event Successfully", HttpStatus.OK);
     }
 
     @Override
     public FileRecord getFileById(final Long fileId) {
         return fileRepository.findById(fileId)
-                .orElseThrow(()-> new IllegalArgumentException("File not found "));
+                .orElseThrow(()-> new ResourceNotFoundException("File not found "));
     }
 
     @Override
@@ -107,15 +105,15 @@ public class FileServiceImpl implements FileService{
 
         //checking file validation
         Resource resource = new UrlResource(path.toUri()) ;
-        if (!resource.exists() || !resource.isFile()) {
-            return new ResponseEntity<>("resource not found" , HttpStatus.NOT_FOUND);
-        }
+        validateDownloadFile(resource);
+
         //getting fileData
         byte[] fileDataBytes = Files.readAllBytes(path) ;
+
         //setting headers
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.CONTENT_DISPOSITION , "attachment; filename=\"" + fileName + "\""); // ex.txt
-        headers.add(HttpHeaders.CONTENT_LENGTH , String.valueOf(resource.contentLength()));
+        headers.add(HttpHeaders.CONTENT_LENGTH , String.valueOf(fileDataBytes.length));
         headers.add(HttpHeaders.CONTENT_TYPE ,Files.probeContentType(path) );
 
         return new ResponseEntity<>(fileDataBytes , headers , HttpStatus.OK) ;
@@ -133,16 +131,20 @@ public class FileServiceImpl implements FileService{
         return new ResponseEntity<>("File deleted successfully" , HttpStatus.OK) ;
     }
 
-    private ResponseEntity<Object> validateResponse(final MultipartFile file) {
+    private void validateUploadFile(final MultipartFile file) {
         var originalFileName = file.getOriginalFilename() ;
         if (originalFileName == null) {
-            return new ResponseEntity<>("Original file name is null", HttpStatus.BAD_REQUEST);
+            throw new FileValidationException("Original file name is null");
         }
-
         if (file.isEmpty()) {
-            return new ResponseEntity<>("File is empty", HttpStatus.BAD_REQUEST);
+            throw new FileValidationException("File is empty");
         }
-        return null ;
+    }
+
+    private void validateDownloadFile(Resource resource) {
+        if (!resource.exists() || !resource.isFile()) {
+            throw new ResourceNotFoundException("File Requested To Download Is Not Found" );
+        }
     }
 
     private FileRecord handleFile(final MultipartFile file) throws IOException {

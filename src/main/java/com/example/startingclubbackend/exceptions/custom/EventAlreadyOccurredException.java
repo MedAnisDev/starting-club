@@ -4,8 +4,8 @@ import com.example.startingclubbackend.exceptions.responseHandling.ExceptionHand
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-public class ResourceNotFoundException extends ExceptionHandler {
-    public ResourceNotFoundException(String message) {
+public class EventAlreadyOccurredException extends ExceptionHandler {
+    public EventAlreadyOccurredException(String message) {
         super(message);
     }
 }

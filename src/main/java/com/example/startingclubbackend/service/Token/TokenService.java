@@ -1,7 +1,6 @@
 package com.example.startingclubbackend.service.Token;
 
 import com.example.startingclubbackend.model.token.Token;
-import com.example.startingclubbackend.model.user.User;
 import jakarta.validation.constraints.NotNull;
 
 import java.util.List;

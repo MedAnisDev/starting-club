@@ -1,13 +1,12 @@
 package com.example.startingclubbackend.service.User;
 
+import com.example.startingclubbackend.exceptions.custom.ResourceNotFoundException;
 import com.example.startingclubbackend.model.user.Athlete;
 import com.example.startingclubbackend.model.user.User;
 import com.example.startingclubbackend.repository.AthleteRepository;
 import com.example.startingclubbackend.repository.UserRepository;
-import jakarta.validation.constraints.NotNull;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -25,9 +24,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User fetchUserWithEmail( final String email) {
-        log.info("fetchUserWithEmail called");
         return userRepository.fetchUserWithEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("user not found")) ;
+                .orElseThrow(() -> new ResourceNotFoundException("user not found")) ;
     }
 
     @Override
@@ -51,6 +49,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public Athlete getAthleteById(Long athleteId) {
         return athleteRepository.findById(athleteId)
-                .orElseThrow(() -> new IllegalArgumentException("Athlete not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Athlete not found"));
     }
 }

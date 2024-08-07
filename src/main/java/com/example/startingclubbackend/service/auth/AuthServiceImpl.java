@@ -3,6 +3,8 @@ package com.example.startingclubbackend.service.auth;
 import com.example.startingclubbackend.DTO.auth.*;
 import com.example.startingclubbackend.DTO.user.UserDTOMapper;
 import com.example.startingclubbackend.exceptions.custom.EmailAlreadyRegisteredException;
+import com.example.startingclubbackend.exceptions.custom.ExpiredTokenException;
+import com.example.startingclubbackend.exceptions.custom.InvalidTokenException;
 import com.example.startingclubbackend.exceptions.custom.PhoneAlreadyRegisteredException;
 import com.example.startingclubbackend.model.role.Role;
 import com.example.startingclubbackend.model.token.ConfirmationToken;
@@ -158,10 +160,10 @@ public class AuthServiceImpl implements AuthService{
         final boolean isRefreshTokenValid = refreshTokenService.validateRefreshToken(currentRefreshToken.getToken()) ;
 
         if( !isRefreshTokenValid ){ // if the token has been expired or revoked
-            throw new IllegalStateException("refresh token has expired or revoked");
+            throw new InvalidTokenException("refresh token has expired or revoked");
         }
         if(!currentRefreshToken.getUser().getId().equals(currentUser.getId())){ // and refresh token belongs to the user that has expired token
-            throw new IllegalStateException("the refresh and access token provided does not belong to the same user");
+            throw new InvalidTokenException("the refresh and access token provided does not belong to the same user");
         }
 
         revokeAllUsersAccessToken(currentUser);
@@ -184,7 +186,7 @@ public class AuthServiceImpl implements AuthService{
 
         LocalDateTime expiredAt = confirmationToken.getExpiredAt() ;
         if(expiredAt.isBefore(LocalDateTime.now())){
-            throw new IllegalArgumentException("confirmation Token already expired") ;
+            throw new ExpiredTokenException("confirmation Token already expired") ;
         }
 
         confirmationTokenService.setConfirmedAt(token);

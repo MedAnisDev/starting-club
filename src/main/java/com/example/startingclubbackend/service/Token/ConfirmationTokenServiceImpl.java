@@ -1,5 +1,6 @@
 package com.example.startingclubbackend.service.Token;
 
+import com.example.startingclubbackend.exceptions.custom.ResourceNotFoundException;
 import com.example.startingclubbackend.model.token.ConfirmationToken;
 import com.example.startingclubbackend.model.user.Athlete;
 import com.example.startingclubbackend.repository.ConfirmationTokenRepository;
@@ -21,7 +22,7 @@ public class ConfirmationTokenServiceImpl implements ConfirmationTokenService{
     @Override
     public ConfirmationToken fetchTokenByToken(final String token) {
         return confirmationTokenRepository.fetchTokenByToken(token)
-                .orElseThrow(()->new IllegalArgumentException("confirmation token not found"));
+                .orElseThrow(()->new ResourceNotFoundException("confirmation token not found"));
     }
 
     @Override

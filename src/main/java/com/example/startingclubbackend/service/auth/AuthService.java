@@ -4,8 +4,6 @@ import com.example.startingclubbackend.DTO.auth.*;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.http.ResponseEntity;
 
-import javax.management.relation.RoleInfoNotFoundException;
-
 public interface AuthService {
     ResponseEntity<RegisterResponseDTO> register(@NotNull final RegisterDTO registerDTO );
 

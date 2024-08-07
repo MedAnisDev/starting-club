@@ -1,9 +1,11 @@
 package com.example.startingclubbackend.service.Token;
 
+import com.example.startingclubbackend.exceptions.custom.ExpiredTokenException;
+import com.example.startingclubbackend.exceptions.custom.ResourceNotFoundException;
+import com.example.startingclubbackend.exceptions.custom.RevokedTokenException;
 import com.example.startingclubbackend.model.token.RefreshToken;
 import com.example.startingclubbackend.model.user.User;
 import com.example.startingclubbackend.repository.RefreshTokenRepository;
-import com.example.startingclubbackend.security.JWT.JWTService;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
@@ -16,7 +18,6 @@ import org.springframework.stereotype.Service;
 import java.security.Key;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Slf4j
@@ -59,17 +60,17 @@ public class RefreshTokenServiceImpl implements RefreshTokenService{
     @Override
     public RefreshToken fetchTokenByToken(final String refreshToken) {
         return refreshTokenRepository.fetchTokenByToken(refreshToken)
-                .orElseThrow(() -> new IllegalArgumentException("refresh token not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("refresh token not found"));
     }
 
     @Override
     public boolean validateRefreshToken(final String refreshToken) {
         RefreshToken refToken = fetchTokenByToken(refreshToken) ;
         if(refToken.isExpired()){
-            throw new IllegalStateException("sorry , your refresh token is expired");
+            throw new ExpiredTokenException("sorry , your refresh token is expired");
         }
         if(refToken.isRevoked()){
-            throw new IllegalStateException("sorry , your refresh token is revoked") ;
+            throw new RevokedTokenException("sorry , your refresh token is revoked") ;
         }
         return true ;
     }

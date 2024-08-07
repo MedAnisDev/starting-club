@@ -1,6 +1,5 @@
 package com.example.startingclubbackend.security.JWT;
 
-import com.example.startingclubbackend.exceptions.custom.ExpiredTokenException;
 import com.example.startingclubbackend.exceptions.custom.InvalidTokenException;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
@@ -15,7 +14,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
-import java.security.SignatureException;
 import java.util.Date;
 import java.util.function.Function;
 

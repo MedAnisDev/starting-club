@@ -1,5 +1,6 @@
 package com.example.startingclubbackend.service.athlete;
 
+import com.example.startingclubbackend.exceptions.custom.ResourceNotFoundException;
 import com.example.startingclubbackend.model.user.Athlete;
 import com.example.startingclubbackend.repository.AthleteRepository;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,6 @@ public class AthleteServiceImpl implements AthleteService{
     @Override
     public Athlete getAthleteById(final Long eventId) {
         return athleteRepository.findById(eventId)
-                .orElseThrow(()-> new IllegalArgumentException("athlete not found"));
+                .orElseThrow(()-> new ResourceNotFoundException("athlete not found"));
     }
 }

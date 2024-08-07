@@ -5,7 +5,6 @@ import com.example.startingclubbackend.model.user.User;
 import jakarta.validation.constraints.NotNull;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface RefreshTokenService {
     String generateRefreshToken(@NotNull final User user) ;

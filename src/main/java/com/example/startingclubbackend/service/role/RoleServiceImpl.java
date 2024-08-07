@@ -1,5 +1,6 @@
 package com.example.startingclubbackend.service.role;
 
+import com.example.startingclubbackend.exceptions.custom.ResourceNotFoundException;
 import com.example.startingclubbackend.model.role.Role;
 import com.example.startingclubbackend.repository.RoleRepository;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,6 @@ public class RoleServiceImpl implements RoleService {
     @Override
     public Role fetchRoleByName(String roleName) {
         return roleRepository.fetchRoleByName(roleName)
-                .orElseThrow(() ->  new IllegalArgumentException("The role could not be found."));
+                .orElseThrow(() ->  new ResourceNotFoundException("The role could not be found."));
     }
 }

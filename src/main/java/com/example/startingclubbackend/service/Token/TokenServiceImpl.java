@@ -1,7 +1,7 @@
 package com.example.startingclubbackend.service.Token;
 
+import com.example.startingclubbackend.exceptions.custom.ResourceNotFoundException;
 import com.example.startingclubbackend.model.token.Token;
-import com.example.startingclubbackend.model.user.User;
 import com.example.startingclubbackend.repository.TokenRepository;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.stereotype.Service;
@@ -34,6 +34,6 @@ public class TokenServiceImpl implements TokenService{
     @Override
     public Token fetchByToken(String expiredToken) {
         return tokenRepository.fetchByToken(expiredToken)
-                .orElseThrow(() -> new IllegalArgumentException("The token u provided could not be found in our system"));
+                .orElseThrow(() -> new ResourceNotFoundException("The token u provided could not be found in our system"));
     }
 }
