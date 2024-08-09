@@ -1,6 +1,6 @@
 package com.example.startingclubbackend.service.User;
 
-import com.example.startingclubbackend.exceptions.custom.ResourceNotFoundException;
+import com.example.startingclubbackend.exceptions.custom.ResourceNotFoundCustomException;
 import com.example.startingclubbackend.model.user.Athlete;
 import com.example.startingclubbackend.model.user.User;
 import com.example.startingclubbackend.repository.AthleteRepository;
@@ -25,7 +25,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User fetchUserWithEmail( final String email) {
         return userRepository.fetchUserWithEmail(email)
-                .orElseThrow(() -> new ResourceNotFoundException("user not found")) ;
+                .orElseThrow(() -> new ResourceNotFoundCustomException("user not found")) ;
     }
 
     @Override
@@ -49,6 +49,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public Athlete getAthleteById(Long athleteId) {
         return athleteRepository.findById(athleteId)
-                .orElseThrow(() -> new ResourceNotFoundException("Athlete not found"));
+                .orElseThrow(() -> new ResourceNotFoundCustomException("Athlete not found"));
     }
 }

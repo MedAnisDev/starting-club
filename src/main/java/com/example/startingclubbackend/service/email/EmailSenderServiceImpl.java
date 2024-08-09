@@ -1,6 +1,6 @@
 package com.example.startingclubbackend.service.email;
 
-import com.example.startingclubbackend.exceptions.custom.EmailSendingException;
+import com.example.startingclubbackend.exceptions.custom.EmailSendingCustomException;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Value;
@@ -35,7 +35,7 @@ public class EmailSenderServiceImpl implements EmailSenderService {
             mailSender.send(mimeMessage);
 
         }catch (MessagingException e){
-            throw new EmailSendingException("failed to send email to :  " +to );
+            throw new EmailSendingCustomException("failed to send email to :  " +to );
         }
     }
 

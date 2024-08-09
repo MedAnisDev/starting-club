@@ -13,4 +13,6 @@ public interface TokenService {
     List<Token> saveAll(final List<Token> tokens);
 
     Token fetchByToken(final String expiredToken);
+
+    void deleteByUserId(final Long userId) ;
 }

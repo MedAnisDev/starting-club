@@ -2,10 +2,10 @@ package com.example.startingclubbackend.service.auth;
 
 import com.example.startingclubbackend.DTO.auth.*;
 import com.example.startingclubbackend.DTO.user.UserDTOMapper;
-import com.example.startingclubbackend.exceptions.custom.EmailAlreadyRegisteredException;
-import com.example.startingclubbackend.exceptions.custom.ExpiredTokenException;
-import com.example.startingclubbackend.exceptions.custom.InvalidTokenException;
-import com.example.startingclubbackend.exceptions.custom.PhoneAlreadyRegisteredException;
+import com.example.startingclubbackend.exceptions.custom.EmailAlreadyRegisteredCustomException;
+import com.example.startingclubbackend.exceptions.custom.ExpiredTokenCustomException;
+import com.example.startingclubbackend.exceptions.custom.InvalidTokenCustomException;
+import com.example.startingclubbackend.exceptions.custom.PhoneAlreadyRegisteredCustomException;
 import com.example.startingclubbackend.model.role.Role;
 import com.example.startingclubbackend.model.token.ConfirmationToken;
 import com.example.startingclubbackend.model.token.RefreshToken;
@@ -79,10 +79,10 @@ public class AuthServiceImpl implements AuthService{
     public ResponseEntity<RegisterResponseDTO> register(@NotNull final RegisterDTO registerDTO)  {
         //validate User info
         if(userService.isEmailRegistered(registerDTO.getEmail())){
-            throw new EmailAlreadyRegisteredException("Email " + registerDTO.getEmail() + " is already registered");
+            throw new EmailAlreadyRegisteredCustomException("Email " + registerDTO.getEmail() + " is already registered");
         }
         if (userService.isPhoneNumberRegistered(registerDTO.getPhoneNumber())) {
-            throw new PhoneAlreadyRegisteredException("phone number " + registerDTO.getPhoneNumber() + " is already registered.");
+            throw new PhoneAlreadyRegisteredCustomException("phone number " + registerDTO.getPhoneNumber() + " is already registered.");
         }
         //build and save athlete
         Role role = roleService.fetchRoleByName("ROLE_ATHLETE") ;
@@ -160,10 +160,10 @@ public class AuthServiceImpl implements AuthService{
         final boolean isRefreshTokenValid = refreshTokenService.validateRefreshToken(currentRefreshToken.getToken()) ;
 
         if( !isRefreshTokenValid ){ // if the token has been expired or revoked
-            throw new InvalidTokenException("refresh token has expired or revoked");
+            throw new InvalidTokenCustomException("refresh token has expired or revoked");
         }
         if(!currentRefreshToken.getUser().getId().equals(currentUser.getId())){ // and refresh token belongs to the user that has expired token
-            throw new InvalidTokenException("the refresh and access token provided does not belong to the same user");
+            throw new InvalidTokenCustomException("the refresh and access token provided does not belong to the same user");
         }
 
         revokeAllUsersAccessToken(currentUser);
@@ -186,7 +186,7 @@ public class AuthServiceImpl implements AuthService{
 
         LocalDateTime expiredAt = confirmationToken.getExpiredAt() ;
         if(expiredAt.isBefore(LocalDateTime.now())){
-            throw new ExpiredTokenException("confirmation Token already expired") ;
+            throw new ExpiredTokenCustomException("confirmation Token already expired") ;
         }
 
         confirmationTokenService.setConfirmedAt(token);

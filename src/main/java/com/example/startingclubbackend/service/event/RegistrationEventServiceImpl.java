@@ -5,26 +5,38 @@ import com.example.startingclubbackend.model.user.Athlete;
 import com.example.startingclubbackend.repository.AthleteRepository;
 import com.example.startingclubbackend.repository.EventRepository;
 import com.example.startingclubbackend.service.athlete.AthleteService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 public class RegistrationEventServiceImpl implements RegistrationEventService{
     private final EventService eventService ;
     private final EventRepository eventRepository ;
-    private final AthleteService athleteService ;
     private final AthleteRepository athleteRepository ;
+    private AthleteService athleteService ;
 
-    public RegistrationEventServiceImpl(EventService eventService, EventRepository eventRepository, AthleteService athleteService, AthleteRepository athleteRepository) {
+    public RegistrationEventServiceImpl(EventService eventService, EventRepository eventRepository, AthleteRepository athleteRepository) {
         this.eventService = eventService;
         this.eventRepository = eventRepository;
-        this.athleteService = athleteService;
         this.athleteRepository = athleteRepository;
     }
 
+    @Autowired
+    @Lazy
+    public void setAthleteService(AthleteService athleteService){
+        this.athleteService = athleteService ;
+    }
+
+    @Override
+    @Transactional
     public ResponseEntity<Object> registerAthleteToEvent(final Long eventId) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
@@ -48,6 +60,7 @@ public class RegistrationEventServiceImpl implements RegistrationEventService{
     }
 
     @Override
+    @Transactional
     public ResponseEntity<Object> deleteAthleteFromEvent(final Long eventId ,final Long athleteId) {
         Event currentEvent = eventService.getEventById(eventId);
         Athlete currentAthlete = athleteService.getAthleteById(athleteId) ;
@@ -60,6 +73,24 @@ public class RegistrationEventServiceImpl implements RegistrationEventService{
 
         String successRegistration = String.format("removal of athlete with ID : %d from event with ID: %d is successful  ", athleteId , eventId);
         return new ResponseEntity<>(successRegistration , HttpStatus.OK) ;
+    }
+
+    @Override
+    @Transactional
+    public void deleteAthleteFromAllEvents(final Long athleteId) {
+        Athlete currentAthlete = athleteService.getAthleteById(athleteId) ;
+        List<Event> registeredEvents = currentAthlete.getRegisteredEvents() ;
+
+        if(!registeredEvents.isEmpty()){
+            for(Event currentEvent :registeredEvents){
+                currentEvent.getParticipants().remove(currentAthlete) ;
+                eventRepository.save(currentEvent);
+            }
+
+            currentAthlete.getRegisteredEvents().clear();
+            athleteRepository.save(currentAthlete);
+
+        }
     }
 
     public boolean isAthleteRegistered(final Long eventId ,final Long athleteID){

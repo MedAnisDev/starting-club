@@ -1,6 +1,6 @@
 package com.example.startingclubbackend.service.Token;
 
-import com.example.startingclubbackend.exceptions.custom.ResourceNotFoundException;
+import com.example.startingclubbackend.exceptions.custom.ResourceNotFoundCustomException;
 import com.example.startingclubbackend.model.token.Token;
 import com.example.startingclubbackend.repository.TokenRepository;
 import jakarta.validation.constraints.NotNull;
@@ -34,6 +34,14 @@ public class TokenServiceImpl implements TokenService{
     @Override
     public Token fetchByToken(String expiredToken) {
         return tokenRepository.fetchByToken(expiredToken)
-                .orElseThrow(() -> new ResourceNotFoundException("The token u provided could not be found in our system"));
+                .orElseThrow(() -> new ResourceNotFoundCustomException("The token u provided could not be found in our system"));
+    }
+
+    @Override
+    public void deleteByUserId(Long userId) {
+        boolean isTokenExists = tokenRepository.fetchByUserId(userId) ;
+        if(isTokenExists){
+            tokenRepository.deleteTokenByUserId(userId);
+        }
     }
 }

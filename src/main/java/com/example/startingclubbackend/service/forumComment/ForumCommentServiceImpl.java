@@ -2,7 +2,7 @@ package com.example.startingclubbackend.service.forumComment;
 
 import com.example.startingclubbackend.DTO.comment.CommentDTO;
 import com.example.startingclubbackend.DTO.comment.CommentDTOMapper;
-import com.example.startingclubbackend.exceptions.custom.ResourceNotFoundException;
+import com.example.startingclubbackend.exceptions.custom.ResourceNotFoundCustomException;
 import com.example.startingclubbackend.model.forum.ForumComment;
 import com.example.startingclubbackend.model.user.User;
 import com.example.startingclubbackend.repository.ForumCommentRepository;
@@ -128,7 +128,7 @@ public class ForumCommentServiceImpl implements ForumCommentService{
 
     private ForumComment getCommentById(final Long commentId) {
         return forumCommentRepository.findById(commentId)
-                .orElseThrow(() -> new ResourceNotFoundException("comment not found")) ;
+                .orElseThrow(() -> new ResourceNotFoundCustomException("comment not found")) ;
     }
 
 }

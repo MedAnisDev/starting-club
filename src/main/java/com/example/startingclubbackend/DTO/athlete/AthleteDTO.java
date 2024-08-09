@@ -15,7 +15,5 @@ public record AthleteDTO (Long id ,
                           Role role ,
                           String licenceID,
                           LocalDate dateOFBirth
-
-
 ) {
 }

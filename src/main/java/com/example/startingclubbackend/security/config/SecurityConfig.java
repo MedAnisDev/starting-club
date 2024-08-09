@@ -60,6 +60,9 @@ public class SecurityConfig {
                                   .requestMatchers(SWAGGER_WHITELIST)
                                     .permitAll()
 
+                                  .requestMatchers(HttpMethod.GET, "api/v1/athlete/**")
+                                    .hasAnyRole("SUPER_ADMIN", "ADMIN")
+
                                   .requestMatchers(HttpMethod.POST, "/api/v1/announcements/**" ,
                                           "/api/v1/events/**",
                                           "api/v1/files/**").
@@ -74,7 +77,8 @@ public class SecurityConfig {
                                           "/api/v1/announcements/**",
                                           "/api/v1/events/**" ,
                                           "/api/v1/register_event/admin/**",
-                                          "api/v1/files/**")
+                                          "api/v1/files/**" ,
+                                          "api/v1/athlete/**")
                                     .hasRole("SUPER_ADMIN")
 
                                   .requestMatchers(HttpMethod.POST, "api/v1/register_event/**")

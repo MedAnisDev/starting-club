@@ -3,6 +3,7 @@ package com.example.startingclubbackend.exceptions;
 import com.example.startingclubbackend.exceptions.custom.*;
 import com.example.startingclubbackend.exceptions.responseHandling.ApiError;
 import com.example.startingclubbackend.exceptions.responseHandling.ResponseEntityBuilder;
+import io.jsonwebtoken.JwtException;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,48 +19,59 @@ import java.util.List;
 @ControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler(EmailAlreadyRegisteredException.class)
-    public ResponseEntity<Object> handleEmailAlreadyRegisteredException(EmailAlreadyRegisteredException e){
+    @ExceptionHandler(EmailAlreadyRegisteredCustomException.class)
+    public ResponseEntity<Object> handleEmailAlreadyRegisteredException(EmailAlreadyRegisteredCustomException e){
         return e.handleResponse(e.getMessage() , "that email is already registered" , HttpStatus.CONFLICT) ;
     }
 
 
-    @ExceptionHandler(PhoneAlreadyRegisteredException.class)
-    public ResponseEntity<Object> handlePhoneAlreadyRegisteredException(PhoneAlreadyRegisteredException e){
+    @ExceptionHandler(PhoneAlreadyRegisteredCustomException.class)
+    public ResponseEntity<Object> handlePhoneAlreadyRegisteredException(PhoneAlreadyRegisteredCustomException e){
         return e.handleResponse(e.getMessage(),"phone number is already registered",HttpStatus.CONFLICT) ;
     }
-    @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<Object> handleResourceNotFoundException(ResourceNotFoundException e){
+    @ExceptionHandler(ResourceNotFoundCustomException.class)
+    public ResponseEntity<Object> handleResourceNotFoundException(ResourceNotFoundCustomException e){
         return e.handleResponse(e.getMessage(),"Resource not found",HttpStatus.NOT_FOUND) ;
     }
 
-    @ExceptionHandler(InvalidTokenException.class)
-    public ResponseEntity<Object> handleInvalidTokenException(InvalidTokenException e){
+    @ExceptionHandler(InvalidTokenCustomException.class)
+    public ResponseEntity<Object> handleInvalidTokenException(InvalidTokenCustomException e){
         return e.handleResponse(e.getMessage(),"token is not valid",HttpStatus.UNAUTHORIZED) ;
     }
 
-    @ExceptionHandler(ExpiredTokenException.class)
-    public ResponseEntity<Object> handleExpiredTokenExceptionHandler(ExpiredTokenException e){
+    @ExceptionHandler(ExpiredTokenCustomException.class)
+    public ResponseEntity<Object> handleExpiredTokenExceptionHandler(ExpiredTokenCustomException e){
         return e.handleResponse(e.getMessage(),"token is expired",HttpStatus.FORBIDDEN) ;
     }
 
-    @ExceptionHandler(RevokedTokenException.class)
-    public ResponseEntity<Object> handleRevokedTokenException(RevokedTokenException e){
+    @ExceptionHandler(RevokedTokenCustomException.class)
+    public ResponseEntity<Object> handleRevokedTokenException(RevokedTokenCustomException e){
         return e.handleResponse(e.getMessage(),"token is revoked",HttpStatus.FORBIDDEN) ;
     }
-    @ExceptionHandler(EmailSendingException.class)
-    public ResponseEntity<Object> handleEmailSendingException(EmailSendingException e){
+    @ExceptionHandler(EmailSendingCustomException.class)
+    public ResponseEntity<Object> handleEmailSendingException(EmailSendingCustomException e){
         return e.handleResponse(e.getMessage(),"failed to send email",HttpStatus.INTERNAL_SERVER_ERROR) ;
     }
 
-    @ExceptionHandler(EventAlreadyOccurredException.class)
-    public ResponseEntity<Object> handleEventAlreadyOccurredException(EventAlreadyOccurredException e){
+    @ExceptionHandler(EventAlreadyOccurredCustomException.class)
+    public ResponseEntity<Object> handleEventAlreadyOccurredException(EventAlreadyOccurredCustomException e){
         return e.handleResponse(e.getMessage(),"Event Update Error",HttpStatus.BAD_REQUEST) ;
     }
 
-    @ExceptionHandler(FileValidationException.class)
-    public ResponseEntity<Object> handleFileValidationException(FileValidationException e){
+    @ExceptionHandler(FileValidationCustomException.class)
+    public ResponseEntity<Object> handleFileValidationException(FileValidationCustomException e){
         return e.handleResponse(e.getMessage() , "File Validation Failed" , HttpStatus.BAD_REQUEST) ;
+    }
+
+    @ExceptionHandler(CustomDataIntegrityViolationCustomException.class)
+    protected ResponseEntity<Object> handleCustomDataIntegrityViolationException(@NotNull CustomDataIntegrityViolationCustomException e) {
+        return e.handleResponse(e.getMessage() ,"Data integrity violation" , HttpStatus.BAD_REQUEST);
+    }
+
+    //General Exception
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<Object> handleGenericException(Exception e){
+        return handleResponseException(e.getMessage() ,"An unexpected error occurred.: " ,HttpStatus.INTERNAL_SERVER_ERROR) ;
     }
 
     @ExceptionHandler(IOException.class)
@@ -70,11 +82,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<Object> handleIllegalArgumentException(IllegalArgumentException e){
         return handleResponseException(e.getMessage() ,"File operation error: " ,HttpStatus.BAD_REQUEST) ;
-    }
-
-    @ExceptionHandler(DatabaseException.class)
-    protected ResponseEntity<Object> handleDatabaseException(@NotNull DatabaseException e) {
-        return e.handleResponse(e.getMessage() ,"Internal Server Error" , HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
 

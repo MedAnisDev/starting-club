@@ -1,9 +1,9 @@
 package com.example.startingclubbackend.security.JWT;
 
-import com.example.startingclubbackend.exceptions.custom.ExpiredTokenException;
-import com.example.startingclubbackend.exceptions.custom.InvalidTokenException;
-import com.example.startingclubbackend.exceptions.custom.ResourceNotFoundException;
-import com.example.startingclubbackend.exceptions.custom.RevokedTokenException;
+import com.example.startingclubbackend.exceptions.custom.ExpiredTokenCustomException;
+import com.example.startingclubbackend.exceptions.custom.InvalidTokenCustomException;
+import com.example.startingclubbackend.exceptions.custom.ResourceNotFoundCustomException;
+import com.example.startingclubbackend.exceptions.custom.RevokedTokenCustomException;
 import com.example.startingclubbackend.repository.TokenRepository;
 import com.example.startingclubbackend.security.utility.CustomUserDetailsService;
 import jakarta.servlet.FilterChain;
@@ -71,18 +71,18 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
         var TokenSaved = tokenRepository.findByToken(jwt).orElse(null);
 
         if(!isTokenValid){
-            throw new InvalidTokenException("token invalid");
+            throw new InvalidTokenCustomException("token invalid");
         }
         if(TokenSaved ==null){
-            throw new ResourceNotFoundException("Invalid not found");
+            throw new ResourceNotFoundCustomException("Invalid not found");
         }
 
         if(jwtService.isTokenExpired(jwt)){
-            throw new ExpiredTokenException("token expired") ;
+            throw new ExpiredTokenCustomException("token expired") ;
         }
 
         if(TokenSaved.isRevoked()){
-            throw new RevokedTokenException("token revoked") ;
+            throw new RevokedTokenCustomException("token revoked") ;
         }
 
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(

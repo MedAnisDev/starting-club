@@ -1,7 +1,6 @@
 package com.example.startingclubbackend.model.token;
 
 import com.example.startingclubbackend.model.user.Athlete;
-import com.example.startingclubbackend.model.user.User;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;

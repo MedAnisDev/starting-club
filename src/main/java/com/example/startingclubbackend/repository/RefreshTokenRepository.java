@@ -4,6 +4,7 @@ package com.example.startingclubbackend.repository;
 import com.example.startingclubbackend.model.token.RefreshToken;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -21,4 +22,12 @@ public interface RefreshTokenRepository extends JpaRepository<RefreshToken,Long>
 
     @Query(value = "select rt from RefreshToken rt where rt.token= :refreshToken")
     Optional<RefreshToken> fetchTokenByToken(@NotNull @Param("refreshToken") final String refreshToken);
+
+    @Query(value = "select COUNT(rt)>0 from RefreshToken rt where rt.user.id = :userId")
+    boolean fetchByUserId(@NotNull @Param("userId") final Long userId);
+
+    @Modifying
+    @Transactional
+    @Query("delete from RefreshToken rt where rt.user.id = :userId")
+    void deleteRefreshTokenByUserId(@NotNull @Param("userId") final Long userId);
 }

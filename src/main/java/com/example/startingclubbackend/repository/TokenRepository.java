@@ -3,6 +3,7 @@ package com.example.startingclubbackend.repository;
 import com.example.startingclubbackend.model.token.Token;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -23,4 +24,12 @@ public interface TokenRepository extends JpaRepository<Token,Long> {
 
     @Query("Select t from Token t where t.token= :token")
     Optional<Token> fetchByToken(@Param("token") String token) ;
+
+    @Modifying
+    @Transactional
+    @Query("delete from Token t where t.user.id = :userId")
+    void deleteTokenByUserId(@NotNull @Param("userId") final Long userId);
+
+    @Query("Select COUNT (t)>0 from Token t where t.user.id = :userId")
+    boolean fetchByUserId(@NotNull @Param("userId") final Long userId);
 }

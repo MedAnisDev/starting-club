@@ -2,13 +2,15 @@ package com.example.startingclubbackend.service.announcement;
 
 import com.example.startingclubbackend.DTO.announcement.AnnouncementDTO;
 import com.example.startingclubbackend.DTO.announcement.AnnouncementDTOMapper;
-import com.example.startingclubbackend.exceptions.custom.ResourceNotFoundException;
+import com.example.startingclubbackend.exceptions.custom.CustomDataIntegrityViolationCustomException;
+import com.example.startingclubbackend.exceptions.custom.ResourceNotFoundCustomException;
 import com.example.startingclubbackend.model.announcement.Announcement;
 import com.example.startingclubbackend.model.user.Admin;
 import com.example.startingclubbackend.repository.AnnouncementRepository;
 import jakarta.transaction.Transactional;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -42,7 +44,7 @@ public class AnnouncementServiceImpl implements AnnouncementService{
         currentAnnouncement.setContent(announcementDTO.getContent()) ;
         currentAnnouncement.setCreatedBy(admin) ;
 
-        announcementRepository.save(currentAnnouncement) ;
+        saveAnnouncement(currentAnnouncement) ;
 
         final AnnouncementDTO announcementDTOResponse = announcementDTOMapper.apply(currentAnnouncement) ;
         return new ResponseEntity<>(announcementDTOResponse , HttpStatus.OK);
@@ -70,7 +72,7 @@ public class AnnouncementServiceImpl implements AnnouncementService{
     @Override
     public Announcement getAnnouncementById(final Long announcementId) {
         return announcementRepository.fetchAnnouncementById(announcementId)
-                .orElseThrow(()-> new ResourceNotFoundException("Announcement not found")) ;
+                .orElseThrow(()-> new ResourceNotFoundCustomException("Announcement not found")) ;
     }
 
     @Override
@@ -98,4 +100,14 @@ public class AnnouncementServiceImpl implements AnnouncementService{
         final String successResponse = String.format("Announcement with ID :  %d deleted successfully", announcementId);
         return new ResponseEntity<>(successResponse , HttpStatus.OK);
     }
+
+    @Override
+    public Announcement saveAnnouncement(@NonNull final Announcement announcement) {
+        try {
+            return announcementRepository.save(announcement);
+        } catch (DataIntegrityViolationException  e) {
+            throw new CustomDataIntegrityViolationCustomException("Title or Description cannot be null");
+        }
+    }
+
 }

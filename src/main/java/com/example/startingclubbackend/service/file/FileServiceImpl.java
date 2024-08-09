@@ -2,8 +2,8 @@ package com.example.startingclubbackend.service.file;
 
 import com.example.startingclubbackend.DTO.file.FileRecordDTO;
 import com.example.startingclubbackend.DTO.file.FileRecordDTOMapper;
-import com.example.startingclubbackend.exceptions.custom.FileValidationException;
-import com.example.startingclubbackend.exceptions.custom.ResourceNotFoundException;
+import com.example.startingclubbackend.exceptions.custom.FileValidationCustomException;
+import com.example.startingclubbackend.exceptions.custom.ResourceNotFoundCustomException;
 import com.example.startingclubbackend.model.event.Event;
 import com.example.startingclubbackend.model.file.FileRecord;
 import com.example.startingclubbackend.model.user.Admin;
@@ -96,7 +96,7 @@ public class FileServiceImpl implements FileService{
     @Override
     public FileRecord getFileById(final Long fileId) {
         return fileRepository.findById(fileId)
-                .orElseThrow(()-> new ResourceNotFoundException("File not found "));
+                .orElseThrow(()-> new ResourceNotFoundCustomException("File not found "));
     }
 
     @Override
@@ -134,16 +134,16 @@ public class FileServiceImpl implements FileService{
     private void validateUploadFile(final MultipartFile file) {
         var originalFileName = file.getOriginalFilename() ;
         if (originalFileName == null) {
-            throw new FileValidationException("Original file name is null");
+            throw new FileValidationCustomException("Original file name is null");
         }
         if (file.isEmpty()) {
-            throw new FileValidationException("File is empty");
+            throw new FileValidationCustomException("File is empty");
         }
     }
 
     private void validateDownloadFile(Resource resource) {
         if (!resource.exists() || !resource.isFile()) {
-            throw new ResourceNotFoundException("File Requested To Download Is Not Found" );
+            throw new ResourceNotFoundCustomException("File Requested To Download Is Not Found" );
         }
     }
 

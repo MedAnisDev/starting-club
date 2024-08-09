@@ -2,15 +2,14 @@ package com.example.startingclubbackend.exceptions.responseHandling;
 
 import jakarta.validation.constraints.NotNull;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ExceptionHandler extends RuntimeException{
-    public ExceptionHandler(String message){
+public class CustomException extends RuntimeException{
+    public CustomException(String message){
         super(message) ;
     }
 

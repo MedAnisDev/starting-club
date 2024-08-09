@@ -18,4 +18,6 @@ public interface RefreshTokenService {
     RefreshToken fetchTokenByToken(final String refreshToken);
 
     boolean validateRefreshToken(final String refreshToken);
+
+    void deleteTokenByUserId(final Long userId) ;
 }

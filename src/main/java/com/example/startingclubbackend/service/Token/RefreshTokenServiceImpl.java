@@ -1,8 +1,8 @@
 package com.example.startingclubbackend.service.Token;
 
-import com.example.startingclubbackend.exceptions.custom.ExpiredTokenException;
-import com.example.startingclubbackend.exceptions.custom.ResourceNotFoundException;
-import com.example.startingclubbackend.exceptions.custom.RevokedTokenException;
+import com.example.startingclubbackend.exceptions.custom.ExpiredTokenCustomException;
+import com.example.startingclubbackend.exceptions.custom.ResourceNotFoundCustomException;
+import com.example.startingclubbackend.exceptions.custom.RevokedTokenCustomException;
 import com.example.startingclubbackend.model.token.RefreshToken;
 import com.example.startingclubbackend.model.user.User;
 import com.example.startingclubbackend.repository.RefreshTokenRepository;
@@ -60,19 +60,27 @@ public class RefreshTokenServiceImpl implements RefreshTokenService{
     @Override
     public RefreshToken fetchTokenByToken(final String refreshToken) {
         return refreshTokenRepository.fetchTokenByToken(refreshToken)
-                .orElseThrow(() -> new ResourceNotFoundException("refresh token not found"));
+                .orElseThrow(() -> new ResourceNotFoundCustomException("refresh token not found"));
     }
 
     @Override
     public boolean validateRefreshToken(final String refreshToken) {
         RefreshToken refToken = fetchTokenByToken(refreshToken) ;
         if(refToken.isExpired()){
-            throw new ExpiredTokenException("sorry , your refresh token is expired");
+            throw new ExpiredTokenCustomException("sorry , your refresh token is expired");
         }
         if(refToken.isRevoked()){
-            throw new RevokedTokenException("sorry , your refresh token is revoked") ;
+            throw new RevokedTokenCustomException("sorry , your refresh token is revoked") ;
         }
         return true ;
+    }
+
+    @Override
+    public void deleteTokenByUserId(Long userId) {
+        boolean isTokenExists = refreshTokenRepository.fetchByUserId(userId);
+        if(isTokenExists){
+            refreshTokenRepository.deleteRefreshTokenByUserId(userId);
+        }
     }
 
     @Value("${jwt.refresh_secret_key}")

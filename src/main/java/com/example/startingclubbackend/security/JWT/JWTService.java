@@ -1,6 +1,6 @@
 package com.example.startingclubbackend.security.JWT;
 
-import com.example.startingclubbackend.exceptions.custom.InvalidTokenException;
+import com.example.startingclubbackend.exceptions.custom.InvalidTokenCustomException;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -46,14 +46,14 @@ public class JWTService {
             return true;
 
         } catch (ExpiredJwtException e) {
-            throw new InvalidTokenException("Token has expired");
+            throw new InvalidTokenCustomException("Token has expired");
         } catch (MalformedJwtException e) {
-            throw new InvalidTokenException("Malformed token");
+            throw new InvalidTokenCustomException("Malformed token");
         }
     }
 
     public boolean isTokenValid(@NonNull UserDetails userDetails , String token){
-        return (userDetails.getUsername().equals(extractEmailFromJwt(token)) && isTokenExpired(token)) ;
+        return (userDetails.getUsername().equals(extractEmailFromJwt(token)) && !isTokenExpired(token)) ;
     }
 
     public String extractEmailFromJwt(String token){
@@ -61,7 +61,7 @@ public class JWTService {
     }
 
     public boolean isTokenExpired(String token) {
-        return !(extractExpirationToken(token).before(new Date(System.currentTimeMillis()))) ;
+        return (extractExpirationToken(token).before(new Date(System.currentTimeMillis()))) ;
     }
 
     private Date extractExpirationToken(String token) {
@@ -83,7 +83,7 @@ public class JWTService {
                     .getBody();
         }
         catch (JwtException e) {
-            throw new InvalidTokenException("Token parsing error");
+            throw new InvalidTokenCustomException("Token parsing error");
         }
     }
 
