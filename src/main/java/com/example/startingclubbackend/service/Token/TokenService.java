@@ -10,7 +10,7 @@ public interface TokenService {
 
     List<Token> fetchAllValidTokenByUserId(final Long userId);
 
-    List<Token> saveAll(final List<Token> tokens);
+    void saveAll(final List<Token> tokens);
 
     Token fetchByToken(final String expiredToken);
 

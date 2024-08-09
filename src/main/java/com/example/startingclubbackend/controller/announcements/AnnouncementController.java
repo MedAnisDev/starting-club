@@ -19,8 +19,8 @@ public class AnnouncementController {
         return announcementService.createAnnouncement(announcementDTO) ;
     }
     @GetMapping()
-    public ResponseEntity<Object> fetchAllAnnouncements(){
-        return announcementService.fetchAllAnnouncements() ;
+    public ResponseEntity<Object> fetchAllAnnouncements(final long pageNumber){
+        return announcementService.fetchAllAnnouncements(pageNumber) ;
     }
 
     @GetMapping("/{announcementId}")

@@ -2,7 +2,7 @@ package com.example.startingclubbackend.service.announcement;
 
 import com.example.startingclubbackend.DTO.announcement.AnnouncementDTO;
 import com.example.startingclubbackend.DTO.announcement.AnnouncementDTOMapper;
-import com.example.startingclubbackend.exceptions.custom.CustomDataIntegrityViolationCustomException;
+import com.example.startingclubbackend.exceptions.custom.DatabaseCustomException;
 import com.example.startingclubbackend.exceptions.custom.ResourceNotFoundCustomException;
 import com.example.startingclubbackend.model.announcement.Announcement;
 import com.example.startingclubbackend.model.user.Admin;
@@ -11,6 +11,8 @@ import jakarta.transaction.Transactional;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -33,11 +35,9 @@ public class AnnouncementServiceImpl implements AnnouncementService{
 
     @Override
     public ResponseEntity<Object> createAnnouncement(final AnnouncementDTO announcementDTO) {
+        //get creator of announcement (admin)
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Admin admin = (Admin) authentication.getPrincipal() ;
-
-        log.info("Authentication Principal: " + authentication.getPrincipal());
-        log.info("Authentication Authorities: " + authentication.getAuthorities());
 
         final Announcement currentAnnouncement = new Announcement() ;
         currentAnnouncement.setTitle(announcementDTO.getTitle()) ;
@@ -50,15 +50,12 @@ public class AnnouncementServiceImpl implements AnnouncementService{
         return new ResponseEntity<>(announcementDTOResponse , HttpStatus.OK);
     }
     @Override
-    public ResponseEntity<Object> fetchAllAnnouncements() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        log.info("Authentication Principal: " + authentication.getPrincipal());
-        log.info("Authentication Authorities: " + authentication.getAuthorities());
-
-        final List<Announcement> announcements = announcementRepository.fetchAllAnnouncementsAll();
-        final List<AnnouncementDTO> announcementDTOList = announcements.stream()
-                                                                .map(announcementDTOMapper)
-                                                                .toList();
+    public ResponseEntity<Object> fetchAllAnnouncements(final long pageNumber) {
+        Pageable pageable = PageRequest.of((int)pageNumber -1 , 5) ;
+        final List<AnnouncementDTO> announcementDTOList = announcementRepository.fetchAllAnnouncementsAll(pageable)
+                .stream()
+                .map(announcementDTOMapper)
+                .toList();
         return new ResponseEntity<>(announcementDTOList , HttpStatus.OK) ;
     }
 
@@ -84,11 +81,6 @@ public class AnnouncementServiceImpl implements AnnouncementService{
         currentAnnouncement.setUpdatedAt(LocalDateTime.now());
         announcementRepository.save(currentAnnouncement) ;
 
-        log.info("current Announcement : "+currentAnnouncement);
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        log.info("Authentication Principal: " + authentication.getPrincipal());
-        log.info("Authentication Authorities: " + authentication.getAuthorities());
-
         final AnnouncementDTO announcementDTOResponse = announcementDTOMapper.apply(currentAnnouncement) ;
         return new ResponseEntity<>(announcementDTOResponse , HttpStatus.OK) ;
     }
@@ -102,11 +94,11 @@ public class AnnouncementServiceImpl implements AnnouncementService{
     }
 
     @Override
-    public Announcement saveAnnouncement(@NonNull final Announcement announcement) {
+    public void saveAnnouncement(@NonNull final Announcement announcement) {
         try {
-            return announcementRepository.save(announcement);
+             announcementRepository.save(announcement);
         } catch (DataIntegrityViolationException  e) {
-            throw new CustomDataIntegrityViolationCustomException("Title or Description cannot be null");
+            throw new DatabaseCustomException("Title or Description cannot be null");
         }
     }
 

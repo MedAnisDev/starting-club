@@ -24,9 +24,9 @@ public class EventController {
     public ResponseEntity<Object> createEvent(@Valid @RequestBody final EventDTO eventDTO){
         return eventService.createEvent(eventDTO);
     }
-    @GetMapping()
-    public ResponseEntity<Object> fetchAllEvents(){
-        return eventService.fetchAllEvents();
+    @GetMapping("/page/{pageNumber}")
+    public ResponseEntity<Object> fetchAllEvents(@PathVariable final long pageNumber){
+        return eventService.fetchAllEvents(pageNumber);
     }
     @GetMapping("/{eventId}")
     public ResponseEntity<Object> fetchEventById(@PathVariable final Long eventId){

@@ -1,5 +1,7 @@
 package com.example.startingclubbackend.service.athlete;
 
+import com.example.startingclubbackend.DTO.athlete.AthleteDTO;
+import com.example.startingclubbackend.DTO.athlete.AthleteDTOMapper;
 import com.example.startingclubbackend.exceptions.custom.DatabaseCustomException;
 import com.example.startingclubbackend.exceptions.custom.ResourceNotFoundCustomException;
 import com.example.startingclubbackend.model.user.Athlete;
@@ -28,12 +30,14 @@ public class AthleteServiceImpl implements AthleteService{
     private final ConfirmationTokenService confirmationTokenService ;
     private RegistrationEventService registrationEventService;
 
+    private final AthleteDTOMapper athleteDTOMapper ;
 
-    public AthleteServiceImpl(TokenService tokenService, RefreshTokenService refreshTokenService, AthleteRepository athleteRepository, ConfirmationTokenService confirmationTokenService) {
+    public AthleteServiceImpl(TokenService tokenService, RefreshTokenService refreshTokenService, AthleteRepository athleteRepository, ConfirmationTokenService confirmationTokenService, AthleteDTOMapper athleteDTOMapper) {
         this.tokenService = tokenService;
         this.refreshTokenService = refreshTokenService;
         this.athleteRepository = athleteRepository;
         this.confirmationTokenService = confirmationTokenService;
+        this.athleteDTOMapper = athleteDTOMapper;
     }
     @Autowired
     @Lazy
@@ -77,9 +81,10 @@ public class AthleteServiceImpl implements AthleteService{
 
     @Override
     public ResponseEntity<Object> getAllAthletes() {
-        List<Athlete> athletes = athleteRepository.findAll() ;
+        final List<Athlete> athletes = athleteRepository.findAll() ;
         if(athletes.isEmpty()) {throw new ResourceNotFoundCustomException("No athletes found") ;}
 
-        return new ResponseEntity<>(athletes , HttpStatus.OK) ;
+        final List<AthleteDTO> athletesDTOList = athletes.stream().map(athleteDTOMapper).toList();
+        return new ResponseEntity<>(athletesDTOList , HttpStatus.OK) ;
     }
 }

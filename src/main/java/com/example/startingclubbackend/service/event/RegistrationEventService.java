@@ -7,5 +7,5 @@ public interface RegistrationEventService {
     ResponseEntity<Object> deleteAthleteFromEvent(final Long eventId , final Long athleteId) ;
     void deleteAthleteFromAllEvents(final Long athleteId) ;
 
-
+    ResponseEntity<Object> getAllParticipants(final Long eventId);
 }

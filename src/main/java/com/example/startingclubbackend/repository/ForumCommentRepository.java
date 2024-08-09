@@ -15,4 +15,7 @@ public interface ForumCommentRepository  extends JpaRepository<ForumComment, Lon
 
     @Query("SELECT r FROM ForumComment r where r.parentComment.id = :parentCommentId  ")
     List<ForumComment> fetchAllRepliesByCommendId(@Param("parentCommentId") final Long parentCommentId);
+
+    @Query("SELECT r FROM ForumComment r order by r.id desc")
+    List<ForumComment> fetchAllComments();
 }

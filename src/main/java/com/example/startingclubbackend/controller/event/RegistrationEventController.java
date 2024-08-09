@@ -21,4 +21,9 @@ public class RegistrationEventController {
     public ResponseEntity<Object> deleteAthleteFromEvent( @PathVariable final Long eventId ,@PathVariable final Long athleteId) {
         return  registrationEventService.deleteAthleteFromEvent(eventId , athleteId) ;
     }
+
+    @GetMapping("/{eventId}/participants")
+    public ResponseEntity<Object> getAllParticipants( @PathVariable final Long eventId ) {
+        return  registrationEventService.getAllParticipants(eventId) ;
+    }
 }

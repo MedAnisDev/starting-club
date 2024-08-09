@@ -1,6 +1,7 @@
 package com.example.startingclubbackend.service.forumComment;
 
 import com.example.startingclubbackend.DTO.comment.CommentDTO;
+import com.example.startingclubbackend.model.forum.ForumComment;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.http.ResponseEntity;
 
@@ -20,4 +21,8 @@ public interface ForumCommentService {
     ResponseEntity<Object> editComment(@NotNull final CommentDTO commentDTO, final Long commentId);
 
     ResponseEntity<Object> deleteComment(final Long commentId);
+
+    void saveComment(@NotNull ForumComment comment) ;
+    void deleteComment(@NotNull ForumComment comment) ;
+    ForumComment getCommentById(final Long commentId) ;
 }

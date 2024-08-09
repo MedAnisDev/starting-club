@@ -63,9 +63,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return e.handleResponse(e.getMessage() , "File Validation Failed" , HttpStatus.BAD_REQUEST) ;
     }
 
-    @ExceptionHandler(CustomDataIntegrityViolationCustomException.class)
-    protected ResponseEntity<Object> handleCustomDataIntegrityViolationException(@NotNull CustomDataIntegrityViolationCustomException e) {
-        return e.handleResponse(e.getMessage() ,"Data integrity violation" , HttpStatus.BAD_REQUEST);
+    @ExceptionHandler(DatabaseCustomException.class)
+    protected ResponseEntity<Object> DatabaseCustomException(@NotNull DatabaseCustomException e) {
+        return e.handleResponse(e.getMessage() ,"error occurred during in database operation" , HttpStatus.BAD_REQUEST);
     }
 
     //General Exception

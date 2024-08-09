@@ -21,7 +21,7 @@ public class AthleteController {
         return new ResponseEntity<>( athlete , HttpStatus.OK) ;
     }
 
-    @GetMapping()
+    @GetMapping
     public ResponseEntity<Object> getAllAthletes(){
         return athleteService.getAllAthletes() ;
     }

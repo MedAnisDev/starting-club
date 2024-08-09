@@ -11,9 +11,9 @@ public interface RefreshTokenService {
 
     List<RefreshToken> fetchAllValidRefreshTokenByUserId(final Long userId);
 
-    List<RefreshToken> saveAll(final List<RefreshToken> validRefreshTokens);
+    void saveAll(final List<RefreshToken> validRefreshTokens);
 
-    RefreshToken save(final RefreshToken refreshToken);
+    void save(final RefreshToken refreshToken);
 
     RefreshToken fetchTokenByToken(final String refreshToken);
 

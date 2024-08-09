@@ -2,14 +2,13 @@ package com.example.startingclubbackend.service.event;
 
 import com.example.startingclubbackend.DTO.event.EventDTO;
 import com.example.startingclubbackend.model.event.Event;
-import com.example.startingclubbackend.model.user.Athlete;
 import lombok.NonNull;
 import org.springframework.http.ResponseEntity;
 
 public interface EventService {
-    ResponseEntity<Object> createEvent(final EventDTO eventDTO );
+    ResponseEntity<Object> createEvent(@NonNull final EventDTO eventDTO );
 
-    ResponseEntity<Object> fetchAllEvents();
+    ResponseEntity<Object> fetchAllEvents(final long pageNumber);
 
     ResponseEntity<Object> fetchEventById(final Long eventId);
 

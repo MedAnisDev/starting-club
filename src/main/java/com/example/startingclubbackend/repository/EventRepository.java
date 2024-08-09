@@ -1,6 +1,7 @@
 package com.example.startingclubbackend.repository;
 
 import com.example.startingclubbackend.model.event.Event;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -14,8 +15,8 @@ import java.util.Optional;
 @Repository
 @Transactional(readOnly = true)
 public interface EventRepository extends JpaRepository<Event, Long> {
-    @Query("Select e from Event e")
-    List<Event> fetchAllEvents();
+    @Query("Select e from Event e order by e.id DESC ")
+    List<Event> fetchAllEvents(Pageable pageable);
 
     @Query("Select e from Event e where e.id = :eventId")
     Optional<Event> fetchEventById(@Param("eventId") final Long eventId);

@@ -1,5 +1,6 @@
 package com.example.startingclubbackend.service.Token;
 
+import com.example.startingclubbackend.exceptions.custom.DatabaseCustomException;
 import com.example.startingclubbackend.exceptions.custom.ExpiredTokenCustomException;
 import com.example.startingclubbackend.exceptions.custom.ResourceNotFoundCustomException;
 import com.example.startingclubbackend.exceptions.custom.RevokedTokenCustomException;
@@ -12,7 +13,10 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.TransactionException;
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
@@ -48,13 +52,30 @@ public class RefreshTokenServiceImpl implements RefreshTokenService{
     }
 
     @Override
-    public List<RefreshToken> saveAll(List<RefreshToken> refreshTokens) {
-        return refreshTokenRepository.saveAll(refreshTokens);
+    public void saveAll(List<RefreshToken> refreshTokens) {
+        try{
+            refreshTokenRepository.saveAll(refreshTokens);
+        }catch(DataAccessException da ) {
+            throw new DatabaseCustomException("saving refresh token : An error occurred while accessing the database");
+        }
+        catch(TransactionException te){
+            throw new DatabaseCustomException("saving refresh token : An error occurred while processing the transaction");
+        }
     }
 
     @Override
-    public RefreshToken save(@NotNull final RefreshToken refreshToken) {
-        return refreshTokenRepository.save(refreshToken);
+    public void save(@NotNull final RefreshToken refreshToken) {
+         try{
+             refreshTokenRepository.save(refreshToken);
+         }catch(DataAccessException da ) {
+             throw new DatabaseCustomException("saving refresh token : An error occurred while accessing the database");
+         }
+         catch(TransactionException te){
+             throw new DatabaseCustomException("saving refresh token : An error occurred while processing the transaction");
+         }catch (ConstraintViolationException cve) {
+             throw new DatabaseCustomException("A database constraint was violated when saving refresh token");
+         }
+
     }
 
     @Override

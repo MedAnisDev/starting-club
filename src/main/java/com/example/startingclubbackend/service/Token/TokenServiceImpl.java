@@ -1,9 +1,13 @@
 package com.example.startingclubbackend.service.Token;
 
+import com.example.startingclubbackend.exceptions.custom.DatabaseCustomException;
 import com.example.startingclubbackend.exceptions.custom.ResourceNotFoundCustomException;
 import com.example.startingclubbackend.model.token.Token;
 import com.example.startingclubbackend.repository.TokenRepository;
 import jakarta.validation.constraints.NotNull;
+import org.hibernate.TransactionException;
+import org.hibernate.exception.ConstraintViolationException;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,7 +22,11 @@ public class TokenServiceImpl implements TokenService{
 
     @Override
     public Token save(@NotNull final Token token) {
-        return tokenRepository.save(token);
+        try{
+            return tokenRepository.save(token);
+        }catch (ConstraintViolationException cve) {
+            throw new DatabaseCustomException("A database constraint was violated when saving access token");
+        }
     }
 
     @Override
@@ -27,8 +35,15 @@ public class TokenServiceImpl implements TokenService{
     }
 
     @Override
-    public List<Token> saveAll(final List<Token> tokens) {
-        return tokenRepository.saveAll(tokens);
+    public void saveAll(final List<Token> tokens) {
+        try{
+            tokenRepository.saveAll(tokens);
+        }catch(DataAccessException da ) {
+            throw new DatabaseCustomException("saving access token : An error occurred while accessing the database");
+        }
+        catch(TransactionException te){
+        throw new DatabaseCustomException("saving access token : An error occurred while processing the transaction");
+        }
     }
 
     @Override

@@ -11,6 +11,9 @@ import com.example.startingclubbackend.repository.AthleteRepository;
 import com.example.startingclubbackend.repository.EventRepository;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.coyote.Request;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -36,7 +39,7 @@ public class EventServiceImpl implements EventService{
     }
 
     @Override
-    public ResponseEntity<Object> createEvent(final EventDTO eventDTO) {
+    public ResponseEntity<Object> createEvent(@NonNull final EventDTO eventDTO) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         Admin curentAdmin = (Admin) auth.getPrincipal();
 
@@ -58,9 +61,9 @@ public class EventServiceImpl implements EventService{
     }
 
     @Override
-    public ResponseEntity<Object> fetchAllEvents() {
-        final List<Event> events = eventRepository.fetchAllEvents();
-        final List<EventDTO> eventDTOs = events.stream()
+    public ResponseEntity<Object> fetchAllEvents(final long pageNumber) {
+        Pageable pageable = PageRequest.of((int)pageNumber - 1 , 5) ;
+        final List<EventDTO> eventDTOs = eventRepository.fetchAllEvents(pageable).stream()
                 .map(eventDTOMapper)
                 .collect(Collectors.toList());
         return new ResponseEntity<>(eventDTOs , HttpStatus.OK) ;

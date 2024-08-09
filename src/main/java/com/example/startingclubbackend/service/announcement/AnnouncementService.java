@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 public interface AnnouncementService {
     ResponseEntity<Object> createAnnouncement(final AnnouncementDTO announcementDTO) ;
 
-    ResponseEntity<Object> fetchAllAnnouncements();
+    ResponseEntity<Object> fetchAllAnnouncements(final long pageNumber);
 
     ResponseEntity<Object> fetchAnnouncementById(final Long announcementId);
 
@@ -17,5 +17,5 @@ public interface AnnouncementService {
     ResponseEntity<Object> updateAnnouncement(final Long announcementId , @NonNull final AnnouncementDTO announcementDTO);
 
     ResponseEntity<Object> deleteAnnouncementById(final Long announcementId);
-    Announcement saveAnnouncement(@NonNull final Announcement announcement);
+    void saveAnnouncement(@NonNull final Announcement announcement);
 }

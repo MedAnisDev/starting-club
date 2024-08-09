@@ -2,11 +2,15 @@ package com.example.startingclubbackend.service.forumComment;
 
 import com.example.startingclubbackend.DTO.comment.CommentDTO;
 import com.example.startingclubbackend.DTO.comment.CommentDTOMapper;
+import com.example.startingclubbackend.exceptions.custom.DatabaseCustomException;
 import com.example.startingclubbackend.exceptions.custom.ResourceNotFoundCustomException;
 import com.example.startingclubbackend.model.forum.ForumComment;
 import com.example.startingclubbackend.model.user.User;
 import com.example.startingclubbackend.repository.ForumCommentRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.exception.ConstraintViolationException;
+import org.springframework.dao.DataAccessException;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -30,7 +34,7 @@ public class ForumCommentServiceImpl implements ForumCommentService{
 
     public ResponseEntity<Object> postComment(final CommentDTO commentDTO) {
         ForumComment comment = setCommentFields(commentDTO) ;
-        forumCommentRepository.save(comment) ;
+        saveComment(comment); ;
 
         final CommentDTO commentResponse = commentDTOMapper.apply(comment) ;
         return new ResponseEntity<>(commentResponse , HttpStatus.CREATED) ;
@@ -38,7 +42,7 @@ public class ForumCommentServiceImpl implements ForumCommentService{
 
     @Override
     public ResponseEntity<Object> fetchAllComments() {
-        final List <ForumComment> comments =forumCommentRepository.findAll() ;
+        final List <ForumComment> comments =forumCommentRepository.fetchAllComments() ;
         final List<CommentDTO> commentDTOLlist = comments.stream()
                 .map(commentDTOMapper)
                 .toList();
@@ -60,7 +64,7 @@ public class ForumCommentServiceImpl implements ForumCommentService{
 
         reply.setParentComment(parentComment);
         parentComment.getReplies().add(reply) ;
-        forumCommentRepository.save(reply) ;
+        saveComment(reply) ;
 
         final CommentDTO replyResponse = commentDTOMapper.apply(reply) ;
         return new ResponseEntity<>(replyResponse , HttpStatus.CREATED) ;
@@ -79,7 +83,7 @@ public class ForumCommentServiceImpl implements ForumCommentService{
     public ResponseEntity<Object> likeComment(final Long commentId) {
         final ForumComment comment = getCommentById(commentId) ;
         comment.setLikesCount(comment.getLikesCount()+ 1);
-        forumCommentRepository.save(comment) ;
+        saveComment(comment) ;
 
         return ResponseEntity.ok().body("Comment liked successfully") ;
     }
@@ -89,7 +93,7 @@ public class ForumCommentServiceImpl implements ForumCommentService{
         final ForumComment currentComment = getCommentById(commentId);
         currentComment.setContent(commentDTO.getContent());
         currentComment.setUpdatedAt(LocalDateTime.now());
-        forumCommentRepository.save(currentComment);
+        saveComment(currentComment);
         final CommentDTO commentResponse = commentDTOMapper.apply(currentComment);
         return new ResponseEntity<>(commentResponse, HttpStatus.OK);
 
@@ -108,10 +112,28 @@ public class ForumCommentServiceImpl implements ForumCommentService{
         }
 //        log.info("current comment has no replies");
 //        log.info("this comment wil be deleted :"+ currentComment.getContent());
-        forumCommentRepository.delete(currentComment);
+        deleteComment(currentComment);
 
         final String successResponse = String.format("comment with ID :  %d deleted successfully", currentComment.getId());
         return new ResponseEntity<>(successResponse , HttpStatus.OK);
+    }
+    @Override
+    public void saveComment(final ForumComment comment) {
+        try {
+            forumCommentRepository.save(comment);
+        }catch (ConstraintViolationException cve) {
+            throw new DatabaseCustomException("A database constraint was violated when saving refresh token");
+        }
+    }
+
+    @Override
+    public void deleteComment(ForumComment comment) {
+        try{
+            forumCommentRepository.delete(comment);
+        }catch (DataAccessException e) {
+            // Handle general data access issues
+            throw new DatabaseCustomException("An error occurred while trying to delete the comment.");
+        }
     }
 
     private ForumComment setCommentFields(final CommentDTO commentDTO ) {
@@ -126,7 +148,8 @@ public class ForumCommentServiceImpl implements ForumCommentService{
         return comment ;
     }
 
-    private ForumComment getCommentById(final Long commentId) {
+    @Override
+    public ForumComment getCommentById(final Long commentId) {
         return forumCommentRepository.findById(commentId)
                 .orElseThrow(() -> new ResourceNotFoundCustomException("comment not found")) ;
     }

@@ -1,5 +1,7 @@
 package com.example.startingclubbackend.service.event;
 
+import com.example.startingclubbackend.DTO.athlete.AthleteDTO;
+import com.example.startingclubbackend.DTO.athlete.AthleteDTOMapper;
 import com.example.startingclubbackend.model.event.Event;
 import com.example.startingclubbackend.model.user.Athlete;
 import com.example.startingclubbackend.repository.AthleteRepository;
@@ -21,12 +23,14 @@ public class RegistrationEventServiceImpl implements RegistrationEventService{
     private final EventService eventService ;
     private final EventRepository eventRepository ;
     private final AthleteRepository athleteRepository ;
+    private final AthleteDTOMapper athleteDTOMapper ;
     private AthleteService athleteService ;
 
-    public RegistrationEventServiceImpl(EventService eventService, EventRepository eventRepository, AthleteRepository athleteRepository) {
+    public RegistrationEventServiceImpl(EventService eventService, EventRepository eventRepository, AthleteRepository athleteRepository, AthleteDTOMapper athleteDTOMapper) {
         this.eventService = eventService;
         this.eventRepository = eventRepository;
         this.athleteRepository = athleteRepository;
+        this.athleteDTOMapper = athleteDTOMapper;
     }
 
     @Autowired
@@ -86,12 +90,25 @@ public class RegistrationEventServiceImpl implements RegistrationEventService{
                 currentEvent.getParticipants().remove(currentAthlete) ;
                 eventRepository.save(currentEvent);
             }
-
             currentAthlete.getRegisteredEvents().clear();
             athleteRepository.save(currentAthlete);
-
         }
     }
+
+    @Override
+    public ResponseEntity<Object> getAllParticipants(Long eventId) {
+        final Event currentEvent = eventService.getEventById(eventId);
+        final List<Athlete> participants = currentEvent.getParticipants();
+
+        if(participants.isEmpty()){
+            String errorMessage= String.format("sorry , event with title '%s' does not contain any registered athlete yet",currentEvent.getTitle()) ;
+            return new ResponseEntity<>(errorMessage ,HttpStatus.OK);
+        }
+        List<AthleteDTO> participantsDTOList = participants.stream().map(athleteDTOMapper).toList();
+
+        return new ResponseEntity<>(participantsDTOList ,HttpStatus.OK);
+    }
+
 
     public boolean isAthleteRegistered(final Long eventId ,final Long athleteID){
         return athleteRepository.isAthleteRegistered(athleteID, eventId) ;
