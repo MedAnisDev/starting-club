@@ -28,9 +28,11 @@ public class ConfirmationTokenServiceImpl implements ConfirmationTokenService{
     @Override
 
     public void deleteConfirmTokenByUserId(Long athleteId) {
-        boolean isTokenExists = confirmationTokenRepository.fetchByUserId(athleteId) ;
-        if(isTokenExists){
+        boolean isConfirmationTokenExists = confirmationTokenRepository.fetchByUserId(athleteId) ;
+        log.info("isConfirmationTokenExists :"+isConfirmationTokenExists);
+        if(isConfirmationTokenExists){
             confirmationTokenRepository.deleteByUserId(athleteId);
+            log.info("confirmation token deleted");
         }
     }
 

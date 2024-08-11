@@ -98,9 +98,12 @@ public class RefreshTokenServiceImpl implements RefreshTokenService{
 
     @Override
     public void deleteTokenByUserId(Long userId) {
-        boolean isTokenExists = refreshTokenRepository.fetchByUserId(userId);
-        if(isTokenExists){
+        boolean isRefreshTokenExists = refreshTokenRepository.fetchByUserId(userId);
+        log.info("isRefreshTokenExists :"+isRefreshTokenExists);
+
+        if(isRefreshTokenExists){
             refreshTokenRepository.deleteRefreshTokenByUserId(userId);
+            log.info("Refresh Token token deleted");
         }
     }
 

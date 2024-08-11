@@ -11,11 +11,11 @@ import java.util.List;
 
 @Repository
 @Transactional(readOnly = true)
-public interface ForumCommentRepository  extends JpaRepository<ForumComment, Long> {
+public interface ForumCommentRepository extends JpaRepository<ForumComment, Long> {
 
-    @Query("SELECT r FROM ForumComment r where r.parentComment.id = :parentCommentId  ")
-    List<ForumComment> fetchAllRepliesByCommendId(@Param("parentCommentId") final Long parentCommentId);
+    @Query("SELECT r FROM ForumComment r where r.parentComment.id = :parentCommentId order by r.id desc  ")
+    List<ForumComment> fetchAllRepliesByCommendId(@Param("parentCommentId") Long parentCommentId);
 
-    @Query("SELECT r FROM ForumComment r order by r.id desc")
+    @Query("SELECT r FROM ForumComment r where r.parentComment IS NULL  order by r.id desc")
     List<ForumComment> fetchAllComments();
 }

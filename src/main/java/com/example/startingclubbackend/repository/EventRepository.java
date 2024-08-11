@@ -19,10 +19,10 @@ public interface EventRepository extends JpaRepository<Event, Long> {
     List<Event> fetchAllEvents(Pageable pageable);
 
     @Query("Select e from Event e where e.id = :eventId")
-    Optional<Event> fetchEventById(@Param("eventId") final Long eventId);
+    Optional<Event> fetchEventById(@Param("eventId") Long eventId);
 
     @Transactional
     @Modifying
     @Query("Delete from Event e where e.id = :eventId")
-    void deleteEventById( @Param("eventId") final Long eventId);
+    void deleteEventById( @Param("eventId") Long eventId);
 }

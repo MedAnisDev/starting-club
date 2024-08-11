@@ -3,6 +3,7 @@ package com.example.startingclubbackend.security.config;
 import com.example.startingclubbackend.security.JWT.JWTAuthenticationFilter;
 import com.example.startingclubbackend.security.JWT.JwtAuthEntryPoint;
 import com.example.startingclubbackend.security.utility.CustomUserDetailsService;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -15,6 +16,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -26,11 +28,13 @@ public class SecurityConfig {
      private final CustomUserDetailsService customUserDetailsService ;
      private final JWTAuthenticationFilter jwtAuthenticationFilter ;
     private final JwtAuthEntryPoint authEntryPoint;
+    private final LogoutHandler logoutHandler;
 
-    public SecurityConfig(CustomUserDetailsService customUserDetailsService, JWTAuthenticationFilter jwtAuthenticationFilter, JwtAuthEntryPoint authEntryPoint) {
+    public SecurityConfig(CustomUserDetailsService customUserDetailsService, JWTAuthenticationFilter jwtAuthenticationFilter, JwtAuthEntryPoint authEntryPoint, LogoutHandler logoutHandler) {
         this.customUserDetailsService = customUserDetailsService;
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
         this.authEntryPoint = authEntryPoint;
+        this.logoutHandler = logoutHandler;
     }
 
     private static final String[] SWAGGER_WHITELIST = {
@@ -89,6 +93,18 @@ public class SecurityConfig {
                   .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                   .userDetailsService(customUserDetailsService)
                   .addFilterBefore(jwtAuthenticationFilter , UsernamePasswordAuthenticationFilter.class)
+                  .logout(
+                          logout -> logout
+                                  .logoutUrl("/api/v1/auth/logout")
+                                  .addLogoutHandler(logoutHandler)
+                                  .logoutSuccessHandler(((request, response, authentication) ->{
+                                      response.setStatus(HttpServletResponse.SC_OK);
+                                      response.sendRedirect("api/v1/auth/login") ;
+                                      response.getWriter().write("{" +
+                                              "\"message\": \"Logout successful\"" +
+                                              "}");
+                                  }))
+                  )
                   .build() ;
      }
     @Bean

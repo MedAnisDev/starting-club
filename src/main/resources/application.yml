@@ -40,6 +40,7 @@ server:
   port: 8082
 
 jwt:
-  access_secret_key : qH/KeTPBzgY6NMl84dqn2LmJX1ahtrkj+WkIVyn+zIHthUhogYvNhwQfj/ZwDq8W
-  refresh_secret_key : Sx1ulId2RUJcYU4Totv+WtlhZ1JK2zPXzlpReWbWu6okP2aNHV7qvQw9ck26NkHb
-  refresh_expiration : 604800000 # 1 week
+  access_secret_key : ${jwt.access_secret_key}
+  refresh_secret_key : ${jwt.refresh_secret_key}
+  refresh_expiration : ${jwt.refresh_expiration}
+  access_expiration : ${jwt.access_expiration}

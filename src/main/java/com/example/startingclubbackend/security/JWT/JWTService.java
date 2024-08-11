@@ -21,13 +21,14 @@ import java.util.function.Function;
 @Service
 @Slf4j
 public class JWTService {
-    private static final Logger logger = LoggerFactory.getLogger(JWTService.class);
 
+    @Value("${jwt.access_expiration}")
+    private long accessTokenExpiration ;
 
     public String generateToken(UserDetails userDetails){
         return Jwts.builder()
                 .setSubject(userDetails.getUsername())
-                .setExpiration(new Date(System.currentTimeMillis()+ 24*60*60*1000)) //expires in 24 hours
+                .setExpiration(new Date(System.currentTimeMillis()+ accessTokenExpiration))
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .signWith(getSignInKey() , SignatureAlgorithm.HS256)
                 .compact();

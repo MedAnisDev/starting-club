@@ -5,6 +5,7 @@ import com.example.startingclubbackend.exceptions.custom.ResourceNotFoundCustomE
 import com.example.startingclubbackend.model.token.Token;
 import com.example.startingclubbackend.repository.TokenRepository;
 import jakarta.validation.constraints.NotNull;
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.TransactionException;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.dao.DataAccessException;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
+@Slf4j
 public class TokenServiceImpl implements TokenService{
     private final TokenRepository tokenRepository ;
 
@@ -55,8 +57,10 @@ public class TokenServiceImpl implements TokenService{
     @Override
     public void deleteByUserId(Long userId) {
         boolean isTokenExists = tokenRepository.fetchByUserId(userId) ;
+        log.info("isTokenExists"+isTokenExists);
         if(isTokenExists){
             tokenRepository.deleteTokenByUserId(userId);
+            log.info("token is deleted");
         }
     }
 }

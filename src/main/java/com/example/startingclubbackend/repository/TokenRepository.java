@@ -28,8 +28,8 @@ public interface TokenRepository extends JpaRepository<Token,Long> {
     @Modifying
     @Transactional
     @Query("delete from Token t where t.user.id = :userId")
-    void deleteTokenByUserId(@NotNull @Param("userId") final Long userId);
+    void deleteTokenByUserId(@NotNull @Param("userId") Long userId);
 
     @Query("Select COUNT (t)>0 from Token t where t.user.id = :userId")
-    boolean fetchByUserId(@NotNull @Param("userId") final Long userId);
+    boolean fetchByUserId(@NotNull @Param("userId") Long userId);
 }

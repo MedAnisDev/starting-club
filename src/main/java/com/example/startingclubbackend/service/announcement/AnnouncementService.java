@@ -6,16 +6,17 @@ import lombok.NonNull;
 import org.springframework.http.ResponseEntity;
 
 public interface AnnouncementService {
-    ResponseEntity<Object> createAnnouncement(final AnnouncementDTO announcementDTO) ;
+    ResponseEntity<Object> createAnnouncement(AnnouncementDTO announcementDTO);
 
-    ResponseEntity<Object> fetchAllAnnouncements(final long pageNumber);
+    ResponseEntity<Object> fetchAllAnnouncements(long pageNumber);
 
-    ResponseEntity<Object> fetchAnnouncementById(final Long announcementId);
+    ResponseEntity<Object> fetchAnnouncementById(Long announcementId);
 
-    Announcement getAnnouncementById(final Long announcementId);
+    Announcement getAnnouncementById(Long announcementId);
 
-    ResponseEntity<Object> updateAnnouncement(final Long announcementId , @NonNull final AnnouncementDTO announcementDTO);
+    ResponseEntity<Object> updateAnnouncement(Long announcementId, @NonNull AnnouncementDTO announcementDTO);
 
-    ResponseEntity<Object> deleteAnnouncementById(final Long announcementId);
-    void saveAnnouncement(@NonNull final Announcement announcement);
+    ResponseEntity<Object> deleteAnnouncementById(Long announcementId);
+
+    void saveAnnouncement(@NonNull Announcement announcement);
 }

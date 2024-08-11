@@ -21,13 +21,13 @@ public interface RefreshTokenRepository extends JpaRepository<RefreshToken,Long>
     List<RefreshToken> fetchAllValidRefreshTokenByUserId(@NotNull @Param("userId") Long userId);
 
     @Query(value = "select rt from RefreshToken rt where rt.token= :refreshToken")
-    Optional<RefreshToken> fetchTokenByToken(@NotNull @Param("refreshToken") final String refreshToken);
+    Optional<RefreshToken> fetchTokenByToken(@NotNull @Param("refreshToken") String refreshToken);
 
     @Query(value = "select COUNT(rt)>0 from RefreshToken rt where rt.user.id = :userId")
-    boolean fetchByUserId(@NotNull @Param("userId") final Long userId);
+    boolean fetchByUserId(@NotNull @Param("userId") Long userId);
 
     @Modifying
     @Transactional
     @Query("delete from RefreshToken rt where rt.user.id = :userId")
-    void deleteRefreshTokenByUserId(@NotNull @Param("userId") final Long userId);
+    void deleteRefreshTokenByUserId(@NotNull @Param("userId") Long userId);
 }

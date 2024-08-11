@@ -6,14 +6,15 @@ import lombok.NonNull;
 import org.springframework.http.ResponseEntity;
 
 public interface EventService {
-    ResponseEntity<Object> createEvent(@NonNull final EventDTO eventDTO );
+    ResponseEntity<Object> createEvent(@NonNull EventDTO eventDTO);
 
-    ResponseEntity<Object> fetchAllEvents(final long pageNumber);
+    ResponseEntity<Object> fetchAllEvents(long pageNumber);
 
-    ResponseEntity<Object> fetchEventById(final Long eventId);
+    ResponseEntity<Object> fetchEventById(Long eventId);
 
-    ResponseEntity<Object> updateEvent(final Long eventId,@NonNull final EventDTO eventDTO);
+    ResponseEntity<Object> updateEvent(Long eventId, @NonNull EventDTO eventDTO);
 
-    ResponseEntity<Object> deleteEventById(final Long eventId);
-    Event getEventById(final Long eventId) ;
+    ResponseEntity<Object> deleteEventById(Long eventId);
+
+    Event getEventById(Long eventId);
 }

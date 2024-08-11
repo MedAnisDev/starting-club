@@ -13,5 +13,5 @@ import org.springframework.transaction.annotation.Transactional;
 public interface AthleteRepository extends JpaRepository<Athlete , Long> {
 
     @Query("SELECT Count(a)>0 FROM Athlete a JOIN a.registeredEvents e WHERE a.id = :athleteID AND e.id = :eventId")
-    boolean isAthleteRegistered(@Param("athleteID") final Long athleteID ,@Param("eventId") final Long eventId) ;
+    boolean isAthleteRegistered(@Param("athleteID") Long athleteID ,@Param("eventId") Long eventId) ;
 }

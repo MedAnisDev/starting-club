@@ -7,17 +7,17 @@ import jakarta.validation.constraints.NotNull;
 import java.util.List;
 
 public interface RefreshTokenService {
-    String generateRefreshToken(@NotNull final User user) ;
+    String generateRefreshToken(@NotNull User user);
 
-    List<RefreshToken> fetchAllValidRefreshTokenByUserId(final Long userId);
+    List<RefreshToken> fetchAllValidRefreshTokenByUserId(Long userId);
 
-    void saveAll(final List<RefreshToken> validRefreshTokens);
+    void saveAll(List<RefreshToken> validRefreshTokens);
 
-    void save(final RefreshToken refreshToken);
+    void save(RefreshToken refreshToken);
 
-    RefreshToken fetchTokenByToken(final String refreshToken);
+    RefreshToken fetchTokenByToken(String refreshToken);
 
-    boolean validateRefreshToken(final String refreshToken);
+    boolean validateRefreshToken(String refreshToken);
 
-    void deleteTokenByUserId(final Long userId) ;
+    void deleteTokenByUserId(Long userId);
 }

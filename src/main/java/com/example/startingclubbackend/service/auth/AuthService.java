@@ -5,11 +5,11 @@ import jakarta.validation.constraints.NotNull;
 import org.springframework.http.ResponseEntity;
 
 public interface AuthService {
-    ResponseEntity<RegisterResponseDTO> register(@NotNull final RegisterDTO registerDTO );
+    ResponseEntity<RegisterResponseDTO> register(@NotNull RegisterDTO registerDTO);
 
-    ResponseEntity<LoginResponseDTO> login(@NotNull final LoginDTO loginDTO);
+    ResponseEntity<LoginResponseDTO> login(@NotNull LoginDTO loginDTO);
 
-    ResponseEntity<NewAccessTokenResponseDTO> refreshAccessToken(final String expiredToken , final String refreshToken);
+    ResponseEntity<NewAccessTokenResponseDTO> refreshAccessToken(String expiredToken, String refreshToken);
 
-    String confirmToken(final String token);
+    String confirmToken(String token);
 }

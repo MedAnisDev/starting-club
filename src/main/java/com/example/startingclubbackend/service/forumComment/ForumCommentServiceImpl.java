@@ -10,7 +10,6 @@ import com.example.startingclubbackend.repository.ForumCommentRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.dao.DataAccessException;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -34,7 +33,7 @@ public class ForumCommentServiceImpl implements ForumCommentService{
 
     public ResponseEntity<Object> postComment(final CommentDTO commentDTO) {
         ForumComment comment = setCommentFields(commentDTO) ;
-        saveComment(comment); ;
+        saveComment(comment);
 
         final CommentDTO commentResponse = commentDTOMapper.apply(comment) ;
         return new ResponseEntity<>(commentResponse , HttpStatus.CREATED) ;
@@ -91,9 +90,11 @@ public class ForumCommentServiceImpl implements ForumCommentService{
     @Override
     public ResponseEntity<Object> editComment(final CommentDTO commentDTO,final  Long commentId) {
         final ForumComment currentComment = getCommentById(commentId);
+
         currentComment.setContent(commentDTO.getContent());
         currentComment.setUpdatedAt(LocalDateTime.now());
         saveComment(currentComment);
+
         final CommentDTO commentResponse = commentDTOMapper.apply(currentComment);
         return new ResponseEntity<>(commentResponse, HttpStatus.OK);
 
@@ -122,7 +123,7 @@ public class ForumCommentServiceImpl implements ForumCommentService{
         try {
             forumCommentRepository.save(comment);
         }catch (ConstraintViolationException cve) {
-            throw new DatabaseCustomException("A database constraint was violated when saving refresh token");
+            throw new DatabaseCustomException("A database constraint was violated when saving comment");
         }
     }
 

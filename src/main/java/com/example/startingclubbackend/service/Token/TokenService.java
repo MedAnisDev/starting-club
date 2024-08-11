@@ -6,13 +6,12 @@ import jakarta.validation.constraints.NotNull;
 import java.util.List;
 
 public interface TokenService {
-    Token save(@NotNull final Token token) ;
+    Token save(@NotNull Token token) ;
+    List<Token> fetchAllValidTokenByUserId(Long userId);
 
-    List<Token> fetchAllValidTokenByUserId(final Long userId);
+    void saveAll(List<Token> tokens);
 
-    void saveAll(final List<Token> tokens);
+    Token fetchByToken(String expiredToken);
 
-    Token fetchByToken(final String expiredToken);
-
-    void deleteByUserId(final Long userId) ;
+    void deleteByUserId(Long userId) ;
 }

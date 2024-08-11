@@ -5,10 +5,11 @@ import jakarta.validation.constraints.NotNull;
 import org.springframework.http.ResponseEntity;
 
 public interface AthleteService {
-    Athlete saveAthlete(@NotNull final Athlete athlete) ;
-    Athlete getAthleteById(final Long athleteId) ;
+    Athlete saveAthlete(@NotNull Athlete athlete);
 
-    ResponseEntity<Object> deleteAthleteById(final Long athleteId);
+    Athlete getAthleteById(Long athleteId);
+
+    ResponseEntity<Object> deleteAthleteById(Long athleteId);
 
     ResponseEntity<Object> getAllAthletes();
 }

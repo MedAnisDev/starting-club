@@ -14,5 +14,5 @@ import java.util.List;
 public interface FileRepository extends JpaRepository<FileRecord,Long> {
 
     @Query("select fe from FileRecord fe where fe.event.id = :eventId order by fe.id DESC")
-    List<FileRecord> fetchAllPhotosByEventId(@Param("eventId") final Long eventId);
+    List<FileRecord> fetchAllPhotosByEventId(@Param("eventId") Long eventId);
 }

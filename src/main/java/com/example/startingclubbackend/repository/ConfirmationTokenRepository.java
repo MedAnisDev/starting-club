@@ -15,14 +15,14 @@ import java.util.Optional;
 @Transactional(readOnly = true)
 public interface ConfirmationTokenRepository extends JpaRepository<ConfirmationToken , Long> {
     @Query("Select cf from ConfirmationToken cf where cf.token = :token")
-    Optional<ConfirmationToken> fetchByToken(@NotNull @Param("token") final String token);
+    Optional<ConfirmationToken> fetchByToken(@NotNull @Param("token") String token);
 
     @Modifying
     @Transactional
     @Query("delete from ConfirmationToken cf where cf.athlete.id = :athleteId")
-    void deleteByUserId(@NotNull @Param("athleteId") final Long athleteId);
+    void deleteByUserId(@NotNull @Param("athleteId") Long athleteId);
 
 
-    @Query("Select COUNT (ct)>0 from Token ct where ct.user.id = :athleteId")
-    boolean fetchByUserId(@NotNull @Param("athleteId") final Long athleteId);
+    @Query("Select COUNT (ct)>0 from ConfirmationToken ct where ct.athlete.id = :athleteId")
+    boolean fetchByUserId(@NotNull @Param("athleteId") Long athleteId);
 }

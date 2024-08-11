@@ -9,17 +9,18 @@ import java.io.IOException;
 import java.util.List;
 
 public interface FileService {
-    ResponseEntity<Object> uploadFile(@NotNull final MultipartFile file) throws IOException;
+    ResponseEntity<Object> uploadFile(@NotNull MultipartFile file) throws IOException;
 
-    ResponseEntity<Object> uploadMultipleFiles(final List<MultipartFile> files) throws IOException;
+    ResponseEntity<Object> uploadMultipleFiles(List<MultipartFile> files) throws IOException;
 
-    ResponseEntity<Object> fetchAllFilesByEventId(final Long eventId);
+    ResponseEntity<Object> fetchAllFilesByEventId(Long eventId);
 
-    ResponseEntity<Object> addFileToEventId(final Long eventId,final Long fileId);
-    FileRecord getFileById(final Long fileId) ;
+    ResponseEntity<Object> addFileToEventId(Long eventId, Long fileId);
 
-    ResponseEntity<Object> downloadFile(final String files) throws IOException;
+    FileRecord getFileById(Long fileId);
 
-    ResponseEntity<String> deleteFileByIds(final Long fileId) throws IOException;
+    ResponseEntity<Object> downloadFile(String files) throws IOException;
+
+    ResponseEntity<String> deleteFileByIds(Long fileId) throws IOException;
 }
 
