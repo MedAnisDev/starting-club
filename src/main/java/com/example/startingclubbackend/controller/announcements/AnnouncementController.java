@@ -18,8 +18,8 @@ public class AnnouncementController {
     public ResponseEntity<Object> createAnnouncement(@Valid @RequestBody final AnnouncementDTO announcementDTO){
         return announcementService.createAnnouncement(announcementDTO) ;
     }
-    @GetMapping()
-    public ResponseEntity<Object> fetchAllAnnouncements(final long pageNumber){
+    @GetMapping("/page/{pageNumber}")
+    public ResponseEntity<Object> fetchAllAnnouncements(@PathVariable("pageNumber") final long pageNumber){
         return announcementService.fetchAllAnnouncements(pageNumber) ;
     }
 

@@ -28,5 +28,5 @@ public class EventDTO {
     @Future(message = "Event date must be in the future")
     private LocalDateTime date;
 
-    private UserPublicDTO userPublicDTO ;
+    private UserPublicDTO createdBY ;
 }

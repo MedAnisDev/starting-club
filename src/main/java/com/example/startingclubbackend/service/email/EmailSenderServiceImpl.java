@@ -29,7 +29,7 @@ public class EmailSenderServiceImpl implements EmailSenderService {
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage , "utf-8") ;
             helper.setText(email ,true);
             helper.setTo(to);
-            helper.setSubject(email);
+            helper.setSubject("Email Verification Starting-Club Account");
             helper.setFrom(SenderOfEmail);
 
             mailSender.send(mimeMessage);

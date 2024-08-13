@@ -223,8 +223,6 @@ public class AuthServiceImpl implements AuthService{
     }
 
     private void saveUserRefreshToken(@NotNull User user ,@NotNull String refreshToken){
-
-
         Date expirationDate = new Date(System.currentTimeMillis() + expirationRefreshTokenDuration);
         Date issuedDate = new Date(System.currentTimeMillis()) ;
 

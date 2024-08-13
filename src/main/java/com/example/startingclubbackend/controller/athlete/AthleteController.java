@@ -6,6 +6,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("api/v1/athlete")
 public class AthleteController {
@@ -24,6 +26,11 @@ public class AthleteController {
     @GetMapping
     public ResponseEntity<Object> getAllAthletes(){
         return athleteService.getAllAthletes() ;
+    }
+
+    @GetMapping("/custom")
+    public ResponseEntity<Object> getAllCustomAthletes(@RequestParam List<String> checkedColumns){
+        return athleteService.getAllCustomAthletes(checkedColumns) ;
     }
 
     @DeleteMapping("/{athleteId}")

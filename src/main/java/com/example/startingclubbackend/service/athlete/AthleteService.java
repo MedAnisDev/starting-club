@@ -4,6 +4,8 @@ import com.example.startingclubbackend.model.user.Athlete;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.http.ResponseEntity;
 
+import java.util.List;
+
 public interface AthleteService {
     Athlete saveAthlete(@NotNull Athlete athlete);
 
@@ -12,4 +14,5 @@ public interface AthleteService {
     ResponseEntity<Object> deleteAthleteById(Long athleteId);
 
     ResponseEntity<Object> getAllAthletes();
+    ResponseEntity<Object> getAllCustomAthletes(List<String> checkedColumns);
 }

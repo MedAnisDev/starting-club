@@ -4,6 +4,7 @@ import com.example.startingclubbackend.model.role.Role;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Period;
 
 public class AthleteBuilder {
     private Long id ;
@@ -21,6 +22,8 @@ public class AthleteBuilder {
     private String licenceID ;
     private String note ;
     private LocalDate dateOfBirth;
+    private Integer age ;
+    private Boolean hasMedal ;
     private boolean enable = false; // Default to false
 
 
@@ -69,6 +72,10 @@ public class AthleteBuilder {
         this.dateOfBirth = dateOFBirth;
         return this;
     }
+    public AthleteBuilder hasMedal(Boolean hasMedal) {
+        this.hasMedal = hasMedal;
+        return this;
+    }
 
     public AthleteBuilder enable(boolean enable) {
         this.enable = enable;
@@ -88,7 +95,9 @@ public class AthleteBuilder {
         athlete.setLicenceID(licenceID);
         athlete.setNote(note);
         athlete.setDateOFBirth(dateOfBirth);
-        athlete.setEnable(enable); ;
+        athlete.setHasMedal(hasMedal);
+        athlete.setAge(Period.between(dateOfBirth , LocalDate.now()).getYears());
+        athlete.setEnable(enable);
         return athlete ;
     }
 

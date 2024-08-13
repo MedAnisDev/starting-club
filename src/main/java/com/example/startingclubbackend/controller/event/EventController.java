@@ -1,7 +1,5 @@
 package com.example.startingclubbackend.controller.event;
 import com.example.startingclubbackend.DTO.event.EventDTO;
-import com.example.startingclubbackend.model.announcement.Announcement;
-import com.example.startingclubbackend.model.event.Event;
 import com.example.startingclubbackend.service.event.EventService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;

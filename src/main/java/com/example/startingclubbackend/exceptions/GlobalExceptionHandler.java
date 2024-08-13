@@ -3,7 +3,6 @@ package com.example.startingclubbackend.exceptions;
 import com.example.startingclubbackend.exceptions.custom.*;
 import com.example.startingclubbackend.exceptions.responseHandling.ApiError;
 import com.example.startingclubbackend.exceptions.responseHandling.ResponseEntityBuilder;
-import io.jsonwebtoken.JwtException;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

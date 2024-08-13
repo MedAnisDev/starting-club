@@ -105,11 +105,11 @@ public class ConfirmationTokenServiceImpl implements ConfirmationTokenService{
                 "    </style>\n" +
                 "</head>\n" +
                 "<body>\n" +
-                "<div class=\"container\">\n" +
-                "    <h1>Email Confirmed</h1>\n" +
-                "    <p>Your email address has been successfully confirmed. Thank you for joining us!</p>\n" +
-                "    <button class=\"close-button\" onclick=\"window.close()\">Close</button>\n" +
-                "</div>\n" +
+                "    <div class=\"container\">\n" +
+                "        <h1>Email Confirmed</h1>\n" +
+                "        <p>Your email address has been successfully confirmed. Thank you for joining us!</p>\n" +
+                "        <button class=\"close-button\" onclick=\"window.close()\">Close</button>\n" +
+                "    </div>\n" +
                 "</body>\n" +
                 "</html>\n";
     }

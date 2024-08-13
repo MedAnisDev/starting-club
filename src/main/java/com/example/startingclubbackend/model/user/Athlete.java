@@ -1,7 +1,6 @@
 package com.example.startingclubbackend.model.user;
 
 import com.example.startingclubbackend.model.event.Event;
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -24,18 +23,20 @@ public class Athlete extends User {
     @Column(name = "date_of_birth", nullable = false)
     private LocalDate dateOFBirth;
 
+    @Column(name = "age")
+    private Integer age;
+
+    @Column(name = "has_medal")
+    private Boolean hasMedal;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "athlete_events",
             joinColumns = @JoinColumn(name = "athlete_id"),
             inverseJoinColumns = @JoinColumn(name = "event_id")
     )
-    @JsonBackReference
     private List<Event> registeredEvents;
-
-    public Athlete() {
-    }
-
+    public Athlete() {}
     public static AthleteBuilder builder() {
         return new AthleteBuilder();
     }
