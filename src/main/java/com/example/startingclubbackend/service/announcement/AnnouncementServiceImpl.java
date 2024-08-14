@@ -5,6 +5,7 @@ import com.example.startingclubbackend.DTO.announcement.AnnouncementDTOMapper;
 import com.example.startingclubbackend.exceptions.custom.DatabaseCustomException;
 import com.example.startingclubbackend.exceptions.custom.ResourceNotFoundCustomException;
 import com.example.startingclubbackend.model.announcement.Announcement;
+import com.example.startingclubbackend.model.event.Event;
 import com.example.startingclubbackend.model.file.FileRecord;
 import com.example.startingclubbackend.model.user.Admin;
 import com.example.startingclubbackend.repository.AnnouncementRepository;
@@ -16,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -24,9 +26,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
 @Service
 @Slf4j
 public class AnnouncementServiceImpl implements AnnouncementService{
@@ -45,21 +51,27 @@ public class AnnouncementServiceImpl implements AnnouncementService{
     public ResponseEntity<Object> createAnnouncement(final AnnouncementDTO announcementDTO) {
         //get creator of announcement (admin)
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Admin admin = (Admin) authentication.getPrincipal() ;
+        Admin admin = (Admin) authentication.getPrincipal();
 
-        final Announcement currentAnnouncement = new Announcement() ;
-        currentAnnouncement.setTitle(announcementDTO.getTitle()) ;
-        currentAnnouncement.setContent(announcementDTO.getContent()) ;
-        currentAnnouncement.setCreatedBy(admin) ;
-        saveAnnouncement(currentAnnouncement) ;
+        final Announcement currentAnnouncement = new Announcement();
+        currentAnnouncement.setTitle(announcementDTO.getTitle());
+        currentAnnouncement.setContent(announcementDTO.getContent());
+        currentAnnouncement.setCreatedBy(admin);
+        saveAnnouncement(currentAnnouncement);
 
-        final AnnouncementDTO announcementDTOResponse = announcementDTOMapper.apply(currentAnnouncement) ;
-        return new ResponseEntity<>(announcementDTOResponse , HttpStatus.OK);
+        final AnnouncementDTO announcementDTOResponse = announcementDTOMapper.apply(currentAnnouncement);
+        return new ResponseEntity<>(announcementDTOResponse, HttpStatus.OK);
     }
     @Override
-    public ResponseEntity<Object> fetchAllAnnouncements(final long pageNumber) {
-        Pageable pageable = PageRequest.of((int)pageNumber -1 , 5) ;
-        final List<AnnouncementDTO> announcementDTOList = announcementRepository.fetchAllAnnouncementsAll(pageable)
+    public ResponseEntity<Object> fetchAllAnnouncements(final long pageNumber ,final String columnName) {
+
+        Sort sort = Sort.by(Sort.Order.desc(columnName).nullsLast()) ;
+        Pageable pageable = PageRequest.of(
+                (int)pageNumber -1 ,
+                5 ,
+                sort
+        );
+        final List<AnnouncementDTO> announcementDTOList = announcementRepository.fetchAllAnnouncements(pageable)
                 .stream()
                 .map(announcementDTOMapper)
                 .toList();

@@ -23,9 +23,9 @@ public class AthleteController {
         return new ResponseEntity<>( athlete , HttpStatus.OK) ;
     }
 
-    @GetMapping
-    public ResponseEntity<Object> getAllAthletes(){
-        return athleteService.getAllAthletes() ;
+    @GetMapping("/page/{pageNumber}")
+    public ResponseEntity<Object> getAllAthletes(@PathVariable("pageNumber")final long pageNumber ,@RequestParam(value = "columnName" ,defaultValue = "id") final String columnName){
+        return athleteService.getAllAthletes(pageNumber,columnName) ;
     }
 
     @GetMapping("/custom")

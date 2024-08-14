@@ -28,15 +28,6 @@ public class FileController {
     public ResponseEntity<Object> uploadMultipleFiles(@RequestParam(value = "files") final List<MultipartFile> files) throws IOException {
         return fileService.uploadMultipleFiles(files) ;
     }
-    @GetMapping("/photos/{announcementId}" )
-    public ResponseEntity<Object> fetchAllFilesByAnnouncementId(@PathVariable final Long announcementId){
-        return fileService.fetchAllFilesByAnnouncementId(announcementId);
-    }
-
-    @GetMapping("/photos/{event_id}" )
-    public ResponseEntity<Object> fetchAllFilesByEventId(@PathVariable final Long event_id){
-        return fileService.fetchAllFilesByEventId(event_id);
-    }
 
     @GetMapping("/download_file" )
     public ResponseEntity<Object> downloadFile(@RequestParam(value = "fileName") final String fileName) throws IOException {

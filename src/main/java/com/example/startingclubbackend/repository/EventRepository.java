@@ -15,7 +15,7 @@ import java.util.Optional;
 @Repository
 @Transactional(readOnly = true)
 public interface EventRepository extends JpaRepository<Event, Long> {
-    @Query("Select e from Event e order by e.id DESC ")
+    @Query("Select e from Event e")
     List<Event> fetchAllEvents(Pageable pageable);
 
     @Query("Select e from Event e where e.id = :eventId")

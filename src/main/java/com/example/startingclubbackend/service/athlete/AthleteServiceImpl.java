@@ -17,6 +17,9 @@ import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -91,8 +94,15 @@ public class AthleteServiceImpl implements AthleteService {
     }
 
     @Override
-    public ResponseEntity<Object> getAllAthletes() {
-        final List<Athlete> athletes = athleteRepository.findAll();
+    public ResponseEntity<Object> getAllAthletes(final long pageNumber , final String columnName) {
+
+        Sort sort = Sort.by(Sort.Order.desc(columnName).nullsLast()) ;
+        Pageable pageable = PageRequest.of(
+                (int)pageNumber -1 ,
+                5,
+                sort
+        );
+        final List<Athlete> athletes = athleteRepository.fetchAllAthletes(pageable);
         if (athletes.isEmpty()) {
             throw new ResourceNotFoundCustomException("No athletes found");
         }

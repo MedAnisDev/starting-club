@@ -29,8 +29,8 @@ public class AnnouncementController {
     }
 
     @GetMapping("/page/{pageNumber}")
-    public ResponseEntity<Object> fetchAllAnnouncements(@PathVariable("pageNumber") final long pageNumber){
-        return announcementService.fetchAllAnnouncements(pageNumber) ;
+    public ResponseEntity<Object> fetchAllAnnouncements(@PathVariable("pageNumber") final long pageNumber ,@RequestParam(value = "columnName" ,defaultValue = "id") final String columnName){
+        return announcementService.fetchAllAnnouncements(pageNumber ,columnName) ;
     }
 
     @GetMapping("/{announcementId}")

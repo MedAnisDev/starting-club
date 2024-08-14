@@ -33,8 +33,8 @@ public class EventController {
     }
 
     @GetMapping("/page/{pageNumber}")
-    public ResponseEntity<Object> fetchAllEvents(@PathVariable final long pageNumber){
-        return eventService.fetchAllEvents(pageNumber);
+    public ResponseEntity<Object> fetchAllEvents(@PathVariable final long pageNumber ,@RequestParam(value = "columnName" ,defaultValue = "id") final String columnName){
+        return eventService.fetchAllEvents(pageNumber , columnName);
     }
     @GetMapping("/{eventId}")
     public ResponseEntity<Object> fetchEventById(@PathVariable final Long eventId){

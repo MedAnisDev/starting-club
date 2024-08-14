@@ -15,8 +15,8 @@ import java.util.Optional;
 @Repository
 @Transactional(readOnly = true)
 public interface AnnouncementRepository extends JpaRepository<Announcement , Long> {
-    @Query("Select a from Announcement a order by a.id")
-    List<Announcement> fetchAllAnnouncementsAll(Pageable pageable);
+    @Query("Select a from Announcement a")
+    List<Announcement> fetchAllAnnouncements(Pageable pageable);
 
     @Query("Select a from Announcement a where a.id = :announcementId ")
     Optional<Announcement> fetchAnnouncementById(@Param("announcementId") Long announcementId);

@@ -8,7 +8,6 @@ import com.example.startingclubbackend.exceptions.custom.ResourceNotFoundCustomE
 import com.example.startingclubbackend.model.file.FileRecord;
 import com.example.startingclubbackend.model.user.Admin;
 import com.example.startingclubbackend.repository.FileRepository;
-import com.example.startingclubbackend.service.event.EventService;
 import org.springframework.core.io.Resource;
 import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
@@ -66,31 +65,6 @@ public class FileServiceImpl implements FileService{
         return new ResponseEntity<>(fileRecordDTOList , HttpStatus.OK) ;
     }
 
-    @Override
-    public ResponseEntity<Object> fetchAllFilesByEventId(final Long eventId) {
-        List<FileRecord> currentFiles = fileRepository.fetchAllPhotosByEventId(eventId);
-         if (currentFiles.isEmpty()){
-             return new ResponseEntity<>("Sorry, there are no files for the specified event ",HttpStatus.NOT_FOUND);
-         }
-         //handling response
-        List<FileRecordDTO> currentFilesResponse = currentFiles.stream()
-                .map(fileRecordDTOMapper)
-                .toList() ;
-         return new ResponseEntity<>(currentFilesResponse , HttpStatus.OK) ;
-    }
-
-    @Override
-    public ResponseEntity<Object> fetchAllFilesByAnnouncementId(final Long announcementId) {
-        List<FileRecord> currentFiles = fileRepository.fetchAllPhotosByAnnouncementId(announcementId);
-        if (currentFiles.isEmpty()){
-            return new ResponseEntity<>("Sorry, there are no files for the specified Announcement ",HttpStatus.NOT_FOUND);
-        }
-        //handling response
-        List<FileRecordDTO> currentFilesResponse = currentFiles.stream()
-                .map(fileRecordDTOMapper)
-                .toList() ;
-        return new ResponseEntity<>(currentFilesResponse , HttpStatus.OK) ;
-    }
 
     @Override
     public FileRecord getFileById(final Long fileId) {

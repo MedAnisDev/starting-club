@@ -9,6 +9,7 @@ public record AthleteDTO (Long id ,
                           String email ,
                           String licenceID,
                           LocalDate dateOFBirth,
-                          LocalDateTime createdAt
+                          LocalDateTime createdAt ,
+                          boolean hasMedal
 ) {
 }

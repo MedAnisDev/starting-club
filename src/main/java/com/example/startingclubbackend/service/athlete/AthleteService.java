@@ -13,6 +13,6 @@ public interface AthleteService {
 
     ResponseEntity<Object> deleteAthleteById(Long athleteId);
 
-    ResponseEntity<Object> getAllAthletes();
+    ResponseEntity<Object> getAllAthletes( long pageNumber , String columnName);
     ResponseEntity<Object> getAllCustomAthletes(List<String> checkedColumns);
 }

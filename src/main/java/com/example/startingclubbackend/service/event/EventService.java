@@ -13,7 +13,7 @@ import java.util.List;
 public interface EventService {
     ResponseEntity<Object> createEvent(@NonNull EventDTO eventDTO);
 
-    ResponseEntity<Object> fetchAllEvents(long pageNumber);
+    ResponseEntity<Object> fetchAllEvents(long pageNumber , String columnName);
 
     ResponseEntity<Object> fetchEventById(Long eventId);
 

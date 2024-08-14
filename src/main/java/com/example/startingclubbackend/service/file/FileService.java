@@ -13,8 +13,6 @@ public interface FileService {
 
     ResponseEntity<Object> uploadMultipleFiles(List<MultipartFile> files) throws IOException;
 
-    ResponseEntity<Object> fetchAllFilesByEventId(Long eventId);
-    ResponseEntity<Object> fetchAllFilesByAnnouncementId(final Long announcementId) ;
     FileRecord getFileById(Long fileId);
 
     ResponseEntity<Object> downloadFile(String files) throws IOException;

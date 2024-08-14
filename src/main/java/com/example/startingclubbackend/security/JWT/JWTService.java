@@ -81,8 +81,6 @@ public class JWTService {
                     .build()                // Builds the JwtParser instance
                     .parseClaimsJws(token)
                     .getBody();
-
-
     }
 
 }

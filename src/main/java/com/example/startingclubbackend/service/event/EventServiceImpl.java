@@ -12,14 +12,13 @@ import com.example.startingclubbackend.model.user.Admin;
 import com.example.startingclubbackend.model.user.Athlete;
 import com.example.startingclubbackend.repository.AthleteRepository;
 import com.example.startingclubbackend.repository.EventRepository;
-import com.example.startingclubbackend.repository.FileRepository;
 import com.example.startingclubbackend.service.file.FileService;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.coyote.Request;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -75,12 +74,19 @@ public class EventServiceImpl implements EventService{
     }
 
     @Override
-    public ResponseEntity<Object> fetchAllEvents(final long pageNumber) {
-        Pageable pageable = PageRequest.of((int)pageNumber - 1 , 5) ;
-        final List<EventDTO> eventDTOs = eventRepository.fetchAllEvents(pageable).stream()
+    public ResponseEntity<Object> fetchAllEvents(final long pageNumber , final String columnName) {
+
+        Sort sort = Sort.by(Sort.Order.desc(columnName).nullsLast()) ;
+        Pageable pageable = PageRequest.of(
+                (int)pageNumber - 1 ,
+                5,
+                sort
+        );
+        final List<EventDTO> eventDTOList = eventRepository.fetchAllEvents(pageable).
+                stream()
                 .map(eventDTOMapper)
                 .collect(Collectors.toList());
-        return new ResponseEntity<>(eventDTOs , HttpStatus.OK) ;
+        return new ResponseEntity<>(eventDTOList , HttpStatus.OK) ;
     }
 
     @Override
