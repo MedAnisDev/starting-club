@@ -22,7 +22,6 @@ public class AthleteBuilder {
     private String licenceID ;
     private String note ;
     private LocalDate dateOfBirth;
-    private Integer age ;
     private Boolean hasMedal ;
     private boolean enable = false; // Default to false
 
@@ -94,9 +93,8 @@ public class AthleteBuilder {
         athlete.setRole(role);
         athlete.setLicenceID(licenceID);
         athlete.setNote(note);
-        athlete.setDateOFBirth(dateOfBirth);
+        athlete.setDateOfBirth(dateOfBirth);
         athlete.setHasMedal(hasMedal);
-        athlete.setAge(Period.between(dateOfBirth , LocalDate.now()).getYears());
         athlete.setEnable(enable);
         return athlete ;
     }

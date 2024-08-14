@@ -1,11 +1,12 @@
 package com.example.startingclubbackend.model.announcement;
 
+import com.example.startingclubbackend.model.file.FileRecord;
 import com.example.startingclubbackend.model.user.User;
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.boot.autoconfigure.security.SecurityProperties;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -36,4 +37,7 @@ public class Announcement {
     @ManyToOne()
     @JoinColumn(name = "created_by")
     private User createdBy;
+
+    @OneToMany(mappedBy = "announcement")
+    private List<FileRecord> files ;
 }

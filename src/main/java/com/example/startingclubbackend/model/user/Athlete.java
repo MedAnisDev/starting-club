@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.time.Period;
 import java.util.List;
 
 @Getter
@@ -21,7 +22,7 @@ public class Athlete extends User {
     private String note;
 
     @Column(name = "date_of_birth", nullable = false)
-    private LocalDate dateOFBirth;
+    private LocalDate dateOfBirth;
 
     @Column(name = "age")
     private Integer age;
@@ -39,5 +40,14 @@ public class Athlete extends User {
     public Athlete() {}
     public static AthleteBuilder builder() {
         return new AthleteBuilder();
+    }
+
+    @PostLoad
+    @PostPersist
+    @PostUpdate
+    public void setExactAge(){
+        if(dateOfBirth != null){
+            this.age = Period.between(this.dateOfBirth , LocalDate.now()).getYears() ;
+        }
     }
 }

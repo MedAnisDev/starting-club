@@ -104,7 +104,6 @@ public class AthleteServiceImpl implements AthleteService {
     @Override
     @Transactional
     public ResponseEntity<Object> getAllCustomAthletes(List<String> checkedColumns) {
-
         String athleteColumns = checkedColumns.stream()
 //                .filter(col -> !col.contains("."))
                 .map(col -> "a." + col + " as " + col)
@@ -132,7 +131,7 @@ public class AthleteServiceImpl implements AthleteService {
     public void updateAge(){
         List<Athlete> athletes = athleteRepository.findAll() ;
         for(Athlete athlete : athletes){
-            athlete.setAge(Period.between(athlete.getDateOFBirth() , LocalDate.now()).getYears());
+            athlete.setAge(Period.between(athlete.getDateOfBirth() , LocalDate.now()).getYears());
             saveAthlete(athlete) ;
         }
     }

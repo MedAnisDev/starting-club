@@ -1,5 +1,6 @@
 package com.example.startingclubbackend.model.file;
 
+import com.example.startingclubbackend.model.announcement.Announcement;
 import com.example.startingclubbackend.model.event.Event;
 import com.example.startingclubbackend.model.user.Admin;
 import jakarta.persistence.*;
@@ -38,6 +39,9 @@ public class FileRecord {
     @JoinColumn(name = "event_id")
     private Event event ;
 
+    @ManyToOne
+    @JoinColumn(name = "announcement_id")
+    private Announcement announcement;
     public FileRecord() {
 
     }

@@ -5,6 +5,11 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.List;
+
 @RestController
 @RequestMapping("api/v1/announcements")
 public class AnnouncementController {
@@ -18,6 +23,11 @@ public class AnnouncementController {
     public ResponseEntity<Object> createAnnouncement(@Valid @RequestBody final AnnouncementDTO announcementDTO){
         return announcementService.createAnnouncement(announcementDTO) ;
     }
+    @PostMapping("/{announcementId}")
+    public ResponseEntity<Object> uploadFilesToAnnouncement(@PathVariable("announcementId") final Long announcementId , @RequestParam("files") @NotNull List<MultipartFile> files) throws IOException {
+        return announcementService.uploadFilesToAnnouncement(announcementId , files) ;
+    }
+
     @GetMapping("/page/{pageNumber}")
     public ResponseEntity<Object> fetchAllAnnouncements(@PathVariable("pageNumber") final long pageNumber){
         return announcementService.fetchAllAnnouncements(pageNumber) ;

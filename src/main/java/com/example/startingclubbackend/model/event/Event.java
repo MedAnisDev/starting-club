@@ -1,5 +1,6 @@
 package com.example.startingclubbackend.model.event;
 
+import com.example.startingclubbackend.model.file.FileRecord;
 import com.example.startingclubbackend.model.user.Admin;
 import com.example.startingclubbackend.model.user.Athlete;
 import jakarta.persistence.*;
@@ -36,10 +37,16 @@ public class Event {
     @Column(name = "date" , nullable = false)
     private LocalDateTime date ;
 
+    @Enumerated(EnumType.STRING)
+    private EventType type  ;
+
     @ManyToOne
     @JoinColumn(name = "created_by")
     private Admin created_by ;
 
     @ManyToMany(mappedBy = "registeredEvents")
     private List<Athlete> participants ;
+
+    @OneToMany(mappedBy = "event")
+    private List<FileRecord> files ;
 }

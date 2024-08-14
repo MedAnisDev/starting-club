@@ -5,9 +5,12 @@ import com.example.startingclubbackend.DTO.announcement.AnnouncementDTOMapper;
 import com.example.startingclubbackend.exceptions.custom.DatabaseCustomException;
 import com.example.startingclubbackend.exceptions.custom.ResourceNotFoundCustomException;
 import com.example.startingclubbackend.model.announcement.Announcement;
+import com.example.startingclubbackend.model.file.FileRecord;
 import com.example.startingclubbackend.model.user.Admin;
 import com.example.startingclubbackend.repository.AnnouncementRepository;
+import com.example.startingclubbackend.service.file.FileService;
 import jakarta.transaction.Transactional;
+import jakarta.validation.constraints.NotNull;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -18,18 +21,23 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 @Service
 @Slf4j
 public class AnnouncementServiceImpl implements AnnouncementService{
     private final AnnouncementRepository announcementRepository ;
     private final AnnouncementDTOMapper announcementDTOMapper ;
+    private final FileService fileService ;
 
-    public AnnouncementServiceImpl(AnnouncementRepository announcementRepository, AnnouncementDTOMapper announcementDTOMapper) {
+    public AnnouncementServiceImpl(AnnouncementRepository announcementRepository, AnnouncementDTOMapper announcementDTOMapper, FileService fileService) {
         this.announcementRepository = announcementRepository;
         this.announcementDTOMapper = announcementDTOMapper;
+        this.fileService = fileService;
     }
 
 
@@ -43,7 +51,6 @@ public class AnnouncementServiceImpl implements AnnouncementService{
         currentAnnouncement.setTitle(announcementDTO.getTitle()) ;
         currentAnnouncement.setContent(announcementDTO.getContent()) ;
         currentAnnouncement.setCreatedBy(admin) ;
-
         saveAnnouncement(currentAnnouncement) ;
 
         final AnnouncementDTO announcementDTOResponse = announcementDTOMapper.apply(currentAnnouncement) ;
@@ -102,4 +109,22 @@ public class AnnouncementServiceImpl implements AnnouncementService{
         }
     }
 
+    @Override
+    @Transactional
+    public ResponseEntity<Object> uploadFilesToAnnouncement(final Long announcementId , @NotNull List<MultipartFile> files ) throws IOException {
+        final Announcement currAnnouncement = getAnnouncementById(announcementId) ;
+
+        final List<FileRecord> announcementFiles = new ArrayList<>();
+        for (MultipartFile file : files){
+            //saving each announcement into FileRecord
+            final FileRecord fileRecord = fileService.handleFile(file) ;
+            fileRecord.setAnnouncement(currAnnouncement);
+            fileService.saveFile(fileRecord);
+        }
+        //save all FileRecord list  into this current announcement
+        currAnnouncement.setFiles(announcementFiles);
+        saveAnnouncement(currAnnouncement);
+
+        return new ResponseEntity<>("files added to this announcement successfully",HttpStatus.OK) ;
+    }
 }

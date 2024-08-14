@@ -1,7 +1,6 @@
 package com.example.startingclubbackend.DTO.event;
 
 import com.example.startingclubbackend.DTO.user.UserPublicDTO;
-import com.example.startingclubbackend.DTO.user.UserPublicDTOMapper;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -27,6 +26,8 @@ public class EventDTO {
     @NotNull(message = "Event date cannot be null")
     @Future(message = "Event date must be in the future")
     private LocalDateTime date;
+
+    private String type ;
 
     private UserPublicDTO createdBY ;
 }

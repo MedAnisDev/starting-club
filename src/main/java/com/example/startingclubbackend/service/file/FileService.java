@@ -14,13 +14,13 @@ public interface FileService {
     ResponseEntity<Object> uploadMultipleFiles(List<MultipartFile> files) throws IOException;
 
     ResponseEntity<Object> fetchAllFilesByEventId(Long eventId);
-
-    ResponseEntity<Object> addFileToEventId(Long eventId, Long fileId);
-
+    ResponseEntity<Object> fetchAllFilesByAnnouncementId(final Long announcementId) ;
     FileRecord getFileById(Long fileId);
 
     ResponseEntity<Object> downloadFile(String files) throws IOException;
 
     ResponseEntity<String> deleteFileByIds(Long fileId) throws IOException;
+    FileRecord handleFile(MultipartFile file) throws IOException ;
+    void saveFile(FileRecord fileRecord);
 }
 

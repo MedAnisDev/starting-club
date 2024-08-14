@@ -28,9 +28,9 @@ public class FileController {
     public ResponseEntity<Object> uploadMultipleFiles(@RequestParam(value = "files") final List<MultipartFile> files) throws IOException {
         return fileService.uploadMultipleFiles(files) ;
     }
-    @PutMapping("/photos/{event_id}/{fileId}")
-    public ResponseEntity<Object> addFileToEventId(@PathVariable final Long event_id , @PathVariable final Long fileId) {
-        return fileService.addFileToEventId(event_id ,fileId);
+    @GetMapping("/photos/{announcementId}" )
+    public ResponseEntity<Object> fetchAllFilesByAnnouncementId(@PathVariable final Long announcementId){
+        return fileService.fetchAllFilesByAnnouncementId(announcementId);
     }
 
     @GetMapping("/photos/{event_id}" )

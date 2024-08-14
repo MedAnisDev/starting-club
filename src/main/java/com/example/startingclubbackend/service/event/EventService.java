@@ -2,8 +2,13 @@ package com.example.startingclubbackend.service.event;
 
 import com.example.startingclubbackend.DTO.event.EventDTO;
 import com.example.startingclubbackend.model.event.Event;
+import jakarta.validation.constraints.NotNull;
 import lombok.NonNull;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.List;
 
 public interface EventService {
     ResponseEntity<Object> createEvent(@NonNull EventDTO eventDTO);
@@ -17,4 +22,7 @@ public interface EventService {
     ResponseEntity<Object> deleteEventById(Long eventId);
 
     Event getEventById(Long eventId);
+
+    ResponseEntity<Object> uploadFilesToEvent(Long eventId, @NotNull List<MultipartFile> files) throws IOException;
+    void saveEvent(@NonNull Event event) ;
 }

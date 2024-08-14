@@ -2,9 +2,9 @@ package com.example.startingclubbackend.service.file;
 
 import com.example.startingclubbackend.DTO.file.FileRecordDTO;
 import com.example.startingclubbackend.DTO.file.FileRecordDTOMapper;
+import com.example.startingclubbackend.exceptions.custom.DatabaseCustomException;
 import com.example.startingclubbackend.exceptions.custom.FileValidationCustomException;
 import com.example.startingclubbackend.exceptions.custom.ResourceNotFoundCustomException;
-import com.example.startingclubbackend.model.event.Event;
 import com.example.startingclubbackend.model.file.FileRecord;
 import com.example.startingclubbackend.model.user.Admin;
 import com.example.startingclubbackend.repository.FileRepository;
@@ -13,6 +13,7 @@ import org.springframework.core.io.Resource;
 import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.UrlResource;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,12 +37,10 @@ import java.util.List;
 public class FileServiceImpl implements FileService{
     private final FileRepository fileRepository ;
     private final FileRecordDTOMapper fileRecordDTOMapper ;
-    private final EventService eventService;
 
-    public FileServiceImpl(FileRepository fileRepository, FileRecordDTOMapper fileRecordDTOMapper, EventService eventService) {
+    public FileServiceImpl(FileRepository fileRepository, FileRecordDTOMapper fileRecordDTOMapper) {
         this.fileRepository = fileRepository;
         this.fileRecordDTOMapper = fileRecordDTOMapper;
-        this.eventService = eventService;
     }
 
     private final String  FILE_PATH= Paths.get("").toAbsolutePath().resolve("src").resolve("main").resolve("resources").resolve("files") +"/";
@@ -81,16 +80,16 @@ public class FileServiceImpl implements FileService{
     }
 
     @Override
-    public ResponseEntity<Object> addFileToEventId(final Long eventId,final Long fileId) {
-        Event currEvent = eventService.getEventById(eventId);
-        FileRecord fileRecord = getFileById(fileId);
-        if (fileRecord.getEvent().getId() == eventId){ //check if the event has already registered
-            return new ResponseEntity<>("Sorry , file already added to this event",HttpStatus.CONFLICT) ;
+    public ResponseEntity<Object> fetchAllFilesByAnnouncementId(final Long announcementId) {
+        List<FileRecord> currentFiles = fileRepository.fetchAllPhotosByAnnouncementId(announcementId);
+        if (currentFiles.isEmpty()){
+            return new ResponseEntity<>("Sorry, there are no files for the specified Announcement ",HttpStatus.NOT_FOUND);
         }
-
-        fileRecord.setEvent(currEvent);//adding event to file
-        fileRepository.save(fileRecord);
-        return new ResponseEntity<>("File Added To Event Successfully", HttpStatus.OK);
+        //handling response
+        List<FileRecordDTO> currentFilesResponse = currentFiles.stream()
+                .map(fileRecordDTOMapper)
+                .toList() ;
+        return new ResponseEntity<>(currentFilesResponse , HttpStatus.OK) ;
     }
 
     @Override
@@ -147,7 +146,8 @@ public class FileServiceImpl implements FileService{
         }
     }
 
-    private FileRecord handleFile(final MultipartFile file) throws IOException {
+    @Override
+    public FileRecord handleFile(final MultipartFile file) throws IOException {
         //getting current authenticated Admin
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Admin admin = (Admin) authentication.getPrincipal();
@@ -169,5 +169,14 @@ public class FileServiceImpl implements FileService{
         file.transferTo(new File(path));
 
         return fileRecord;
+    }
+
+    @Override
+    public void saveFile(FileRecord fileRecord) {
+        try{
+            fileRepository.save(fileRecord);
+        }catch (DataIntegrityViolationException e) {
+            throw new DatabaseCustomException("error with saving this file");
+        }
     }
 }

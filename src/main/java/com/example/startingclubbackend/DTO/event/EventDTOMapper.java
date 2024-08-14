@@ -24,6 +24,7 @@ public class EventDTOMapper  implements Function<Event ,EventDTO> {
                 event.getLocation(),
                 event.getDescription(),
                 event.getDate(),
+                event.getType().name(),
                 event.getCreated_by() !=null ? userPublicDTOMapper.apply(event.getCreated_by()) : null
         );
     }

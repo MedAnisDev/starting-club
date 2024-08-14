@@ -44,13 +44,12 @@ public class JWTService {
         //Return true if claims can be extracted
         try {
             Claims claims = extractAllClaims(token);
-            return true;
-
         } catch (ExpiredJwtException e) {
             throw new InvalidTokenCustomException("Token has expired");
         } catch (MalformedJwtException e) {
             throw new InvalidTokenCustomException("Malformed token");
         }
+        return true ;
     }
 
     public boolean isTokenValid(@NonNull UserDetails userDetails , String token){
@@ -75,17 +74,15 @@ public class JWTService {
     }
 
     private Claims extractAllClaims(String token) {
-        try{
+
             return Jwts
                     .parserBuilder()        // Creates a new JwtParserBuilder instance
                     .setSigningKey(getSignInKey())
                     .build()                // Builds the JwtParser instance
                     .parseClaimsJws(token)
                     .getBody();
-        }
-        catch (JwtException e) {
-            throw new InvalidTokenCustomException("Token parsing error");
-        }
+
+
     }
 
 }
