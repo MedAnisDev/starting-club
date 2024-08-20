@@ -4,12 +4,14 @@ import com.example.startingclubbackend.DTO.athlete.AthleteDTO;
 import com.example.startingclubbackend.DTO.athlete.AthleteDTOMapper;
 import com.example.startingclubbackend.exceptions.custom.DatabaseCustomException;
 import com.example.startingclubbackend.exceptions.custom.ResourceNotFoundCustomException;
+import com.example.startingclubbackend.model.file.FileRecord;
 import com.example.startingclubbackend.model.user.Athlete;
 import com.example.startingclubbackend.repository.AthleteRepository;
 import com.example.startingclubbackend.service.Token.ConfirmationTokenService;
 import com.example.startingclubbackend.service.Token.RefreshTokenService;
 import com.example.startingclubbackend.service.Token.TokenService;
 import com.example.startingclubbackend.service.event.RegistrationEventService;
+import com.example.startingclubbackend.service.file.FileService;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
@@ -25,7 +27,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.List;
@@ -42,15 +46,17 @@ public class AthleteServiceImpl implements AthleteService {
     private RegistrationEventService registrationEventService;
 
     private final AthleteDTOMapper athleteDTOMapper;
+    private final FileService fileService ;
     @PersistenceContext
     private EntityManager entityManager;
 
-    public AthleteServiceImpl(TokenService tokenService, RefreshTokenService refreshTokenService, AthleteRepository athleteRepository, ConfirmationTokenService confirmationTokenService, AthleteDTOMapper athleteDTOMapper) {
+    public AthleteServiceImpl(TokenService tokenService, RefreshTokenService refreshTokenService, AthleteRepository athleteRepository, ConfirmationTokenService confirmationTokenService, AthleteDTOMapper athleteDTOMapper, FileService fileService) {
         this.tokenService = tokenService;
         this.refreshTokenService = refreshTokenService;
         this.athleteRepository = athleteRepository;
         this.confirmationTokenService = confirmationTokenService;
         this.athleteDTOMapper = athleteDTOMapper;
+        this.fileService = fileService;
     }
 
     @Autowired
@@ -94,9 +100,9 @@ public class AthleteServiceImpl implements AthleteService {
     }
 
     @Override
-    public ResponseEntity<Object> getAllAthletes(final long pageNumber , final String columnName) {
+    public ResponseEntity<Object> getAllAthletes(final long pageNumber , final String sortingColumn) {
 
-        Sort sort = Sort.by(Sort.Order.desc(columnName).nullsLast()) ;
+        Sort sort = Sort.by(Sort.Order.desc(sortingColumn).nullsLast()) ;
         Pageable pageable = PageRequest.of(
                 (int)pageNumber -1 ,
                 5,
@@ -113,7 +119,7 @@ public class AthleteServiceImpl implements AthleteService {
 
     @Override
     @Transactional
-    public ResponseEntity<Object> getAllCustomAthletes(List<String> checkedColumns) {
+    public ResponseEntity<Object> getAllCustomAthletes(final List<String> checkedColumns) {
         String athleteColumns = checkedColumns.stream()
 //                .filter(col -> !col.contains("."))
                 .map(col -> "a." + col + " as " + col)
@@ -135,6 +141,25 @@ public class AthleteServiceImpl implements AthleteService {
         @SuppressWarnings("unchecked")
         List<Map<String, Object>> queryResult =(List<Map<String, Object>>) query.getResultList();
         return new ResponseEntity<>(queryResult , HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<Object> uploadFilesToAthlete(final Long athleteId, final List<MultipartFile> files) throws IOException {
+        Athlete currentAthlete = getAthleteById(athleteId) ;
+
+        for(MultipartFile file : files){
+            final FileRecord currFile = fileService.handleFile(file);
+            currFile.setAthlete(currentAthlete);
+            fileService.saveFile(currFile);
+        }
+        return new ResponseEntity<>("files added to this athlete successfully", HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<Object> getCustomAthleteById(final Long athleteId) {
+        Athlete athlete =getAthleteById(athleteId) ;
+        AthleteDTO athleteDTO = athleteDTOMapper.apply(athlete) ;
+        return new ResponseEntity<>(athleteDTO, HttpStatus.OK);
     }
 
     @Scheduled(cron = "0 0 0 * * ?")

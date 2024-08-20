@@ -60,6 +60,4 @@ public class EmailSenderServiceImpl implements EmailSenderService {
                 "    </div>\n" +
                 "</div>";
     }
-
-
 }

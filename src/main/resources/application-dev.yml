@@ -29,8 +29,8 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: ${spring.mail.username}
-    password: ${spring.mail.password}
+    username: mohamedanis2506@gmail.com
+    password: bder km pl heus eqiv
     properties:
       mail:
         smtp:
@@ -40,17 +40,11 @@ spring:
 
 logging:
   level:
-    org.flywaydb: DEBUG
+#    org.flywaydb: DEBUG
     org.hibernate.SQL: DEBUG
 #    org.springframework: DEBUG
-#    com.zaxxer.hikari: DEBUG
 
 
 server:
   port: 8082
 
-jwt:
-  access_secret_key : ${jwt.access_secret_key}
-  refresh_secret_key : ${jwt.refresh_secret_key}
-  refresh_expiration : ${jwt.refresh_expiration}
-  access_expiration : ${jwt.access_expiration}

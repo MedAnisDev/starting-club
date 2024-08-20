@@ -1,6 +1,7 @@
 package com.example.startingclubbackend.model.user;
 
 import com.example.startingclubbackend.model.event.Event;
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -37,6 +38,8 @@ public class Athlete extends User {
             inverseJoinColumns = @JoinColumn(name = "event_id")
     )
     private List<Event> registeredEvents;
+
+    //constructor
     public Athlete() {}
     public static AthleteBuilder builder() {
         return new AthleteBuilder();

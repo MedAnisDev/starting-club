@@ -1,0 +1,23 @@
+version: "3.7"
+
+services:
+  spring_boot_app:
+    build: .
+    restart: always
+    ports:
+      - "8082:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysqldb:3306/starting_club
+    depends_on:
+      - mysqldb
+
+  mysqldb:
+    image: mysql:8.0
+    restart: always
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_DATABASE: starting_club
+      MYSQL_USER: root
+      MYSQL_PASSWORD: anisanis
+      MYSQL_ROOT_PASSWORD: anisanis

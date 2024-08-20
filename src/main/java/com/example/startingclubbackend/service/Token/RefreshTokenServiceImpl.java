@@ -7,6 +7,7 @@ import com.example.startingclubbackend.exceptions.custom.RevokedTokenCustomExcep
 import com.example.startingclubbackend.model.token.RefreshToken;
 import com.example.startingclubbackend.model.user.User;
 import com.example.startingclubbackend.repository.RefreshTokenRepository;
+import com.example.startingclubbackend.security.utility.SecurityConstants;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
@@ -15,7 +16,6 @@ import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.TransactionException;
 import org.hibernate.exception.ConstraintViolationException;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
@@ -29,9 +29,6 @@ public class RefreshTokenServiceImpl implements RefreshTokenService{
 
     private final RefreshTokenRepository refreshTokenRepository ;
 
-    @Value("${jwt.refresh_expiration}")
-    private long expirationRefreshTokenDuration ;
-
     public RefreshTokenServiceImpl(RefreshTokenRepository refreshTokenRepository) {
         this.refreshTokenRepository = refreshTokenRepository;
     }
@@ -41,7 +38,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService{
         return Jwts.builder()
                 .setSubject(user.getEmail())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + expirationRefreshTokenDuration))
+                .setExpiration(new Date(System.currentTimeMillis() + SecurityConstants.REFRESH_JWT_EXPIRATION))
                 .signWith(getSignInKey() , SignatureAlgorithm.HS256)
                 .compact() ;
     }
@@ -107,10 +104,8 @@ public class RefreshTokenServiceImpl implements RefreshTokenService{
         }
     }
 
-    @Value("${jwt.refresh_secret_key}")
-    private String refreshSecretKey ;
     private Key getSignInKey() {
-    byte [] keyBytes = Decoders.BASE64.decode(refreshSecretKey) ;
+    byte [] keyBytes = Decoders.BASE64.decode(SecurityConstants.REFRESH_JWT_SECRET_KEY) ;
     return Keys.hmacShaKeyFor(keyBytes) ;
     }
 }

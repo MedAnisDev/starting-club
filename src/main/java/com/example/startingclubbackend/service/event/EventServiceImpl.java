@@ -53,9 +53,6 @@ public class EventServiceImpl implements EventService{
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         Admin curentAdmin = (Admin) auth.getPrincipal();
 
-        log.info("Authentication Principal: " + auth.getPrincipal());
-        log.info("Authentication Authorities: " + auth.getAuthorities());
-
         EventType eventType =EventType.valueOf(eventDTO.getType()) ;
 
         final Event currentEvent = new Event() ;
