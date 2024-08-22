@@ -1,7 +1,7 @@
 package com.example.startingclubbackend.service.Token;
 
 import com.example.startingclubbackend.model.token.ConfirmationToken;
-import com.example.startingclubbackend.model.user.Athlete;
+import com.example.startingclubbackend.model.user.athlete.Athlete;
 import jakarta.validation.constraints.NotNull;
 
 public interface ConfirmationTokenService {

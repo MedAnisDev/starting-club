@@ -24,13 +24,13 @@ create table IF NOT EXISTS users
 
 create table IF NOT EXISTS athletes
 (
-    id            bigint       not null
+    id            bigint                                                       not null
         primary key,
-    licence_id    varchar(255) null,
-    note          varchar(255) null,
-    date_of_birth date         not null,
-    has_medal     tinyint(1)   null,
-    age           int          null
+    licence_id    varchar(255)                                                 null,
+    date_of_birth date                                                         not null,
+    has_medal     tinyint(1)                                                   null,
+    age           int                                                          null,
+    branch        enum ('HEALTH_SPORT', 'PERFORMANCE_SPORT' ,'DISABLED_SPORT') not null
 );
 
 

@@ -4,5 +4,5 @@ import com.example.startingclubbackend.DTO.athlete.AthleteDTO;
 
 public record AthleteNoteDTO(
         AthleteDTO athleteDTO ,
-        String noteEvent
+        double noteEvent
 ) {}

@@ -1,6 +1,6 @@
 package com.example.startingclubbackend.service.User;
 
-import com.example.startingclubbackend.model.user.Athlete;
+import com.example.startingclubbackend.model.user.athlete.Athlete;
 import com.example.startingclubbackend.model.user.User;
 
 public interface UserService{

@@ -4,6 +4,6 @@ import com.example.startingclubbackend.DTO.event.EventDTO;
 
 public record EventNoteDTO(
         EventDTO eventDTO ,
-        String noteEvent
+        double noteEvent
 ) {
 }

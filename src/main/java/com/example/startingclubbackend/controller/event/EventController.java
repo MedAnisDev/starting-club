@@ -23,7 +23,7 @@ public class EventController {
     }
 
     @PostMapping()
-    public ResponseEntity<Object> createEvent(@Valid @RequestBody final EventDTO eventDTO){
+    public ResponseEntity<Object> createEvent(@NotNull @Valid @RequestBody final EventDTO eventDTO){
         return eventService.createEvent(eventDTO);
     }
 
@@ -33,15 +33,15 @@ public class EventController {
     }
 
     @GetMapping("/page/{pageNumber}")
-    public ResponseEntity<Object> fetchAllEvents(@PathVariable final long pageNumber ,@RequestParam(value = "columnName" ,defaultValue = "id") final String columnName){
-        return eventService.fetchAllEvents(pageNumber , columnName);
+    public ResponseEntity<Object> fetchAllEvents(@PathVariable final long pageNumber ,@RequestParam(value = "sortedBY" ,defaultValue = "id") final String sortedBY){
+        return eventService.fetchAllEvents(pageNumber , sortedBY);
     }
     @GetMapping("/{eventId}")
     public ResponseEntity<Object> fetchEventById(@PathVariable final Long eventId){
         return eventService.fetchEventById(eventId) ;
     }
     @PutMapping("/{eventId}")
-    public ResponseEntity<Object> updateEvent(@PathVariable final Long eventId , @Valid @NotNull @RequestBody final EventDTO eventDTO){
+    public ResponseEntity<Object> updateEvent(@PathVariable final Long eventId , @NotNull @Valid @RequestBody final EventDTO eventDTO){
         return eventService.updateEvent(eventId , eventDTO) ;
     }
     @DeleteMapping("/{eventId}")

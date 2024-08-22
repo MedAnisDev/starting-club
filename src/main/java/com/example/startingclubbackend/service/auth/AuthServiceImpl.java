@@ -10,9 +10,10 @@ import com.example.startingclubbackend.model.role.Role;
 import com.example.startingclubbackend.model.token.ConfirmationToken;
 import com.example.startingclubbackend.model.token.RefreshToken;
 import com.example.startingclubbackend.model.token.Token;
-import com.example.startingclubbackend.model.user.Athlete;
+import com.example.startingclubbackend.model.user.athlete.Athlete;
 import com.example.startingclubbackend.model.user.User;
 import com.example.startingclubbackend.model.token.TokenType;
+import com.example.startingclubbackend.model.user.athlete.AthleteBranch;
 import com.example.startingclubbackend.security.JWT.JWTService;
 import com.example.startingclubbackend.security.utility.SecurityConstants;
 import com.example.startingclubbackend.service.Token.ConfirmationTokenService;
@@ -84,6 +85,8 @@ public class AuthServiceImpl implements AuthService{
         }
         //build and save athlete
         Role role = roleService.fetchRoleByName("ROLE_ATHLETE") ;
+        AthleteBranch branch = AthleteBranch.valueOf(registerDTO.getBranch()) ;
+
         Athlete athlete = Athlete.builder()
             .firstname(registerDTO.getFirstname())
             .lastname(registerDTO.getLastname())
@@ -93,6 +96,7 @@ public class AuthServiceImpl implements AuthService{
             .licenceID(registerDTO.getLicenceID())
             .dateOFBirth(registerDTO.getDateOfBirth())
             .createAt(LocalDateTime.now())
+            .branch(branch)
             .role(role)
             .enable(false)
             .build();

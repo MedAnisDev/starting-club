@@ -8,8 +8,8 @@ import com.example.startingclubbackend.exceptions.custom.ResourceNotFoundCustomE
 import com.example.startingclubbackend.model.event.Event;
 import com.example.startingclubbackend.model.event.EventType;
 import com.example.startingclubbackend.model.file.FileRecord;
-import com.example.startingclubbackend.model.user.Admin;
-import com.example.startingclubbackend.model.user.Athlete;
+import com.example.startingclubbackend.model.user.admin.Admin;
+import com.example.startingclubbackend.model.user.athlete.Athlete;
 import com.example.startingclubbackend.repository.AthleteRepository;
 import com.example.startingclubbackend.repository.EventRepository;
 import com.example.startingclubbackend.service.file.FileService;
@@ -62,7 +62,7 @@ public class EventServiceImpl implements EventService{
         currentEvent.setUpdatedAt(LocalDateTime.now());
         currentEvent.setDate(eventDTO.getDate());
         currentEvent.setType(eventType);
-        currentEvent.setCreated_by(curentAdmin);
+        currentEvent.setCreatedBy(curentAdmin);
 
         eventRepository.save(currentEvent) ;
 
@@ -71,9 +71,9 @@ public class EventServiceImpl implements EventService{
     }
 
     @Override
-    public ResponseEntity<Object> fetchAllEvents(final long pageNumber , final String columnName) {
+    public ResponseEntity<Object> fetchAllEvents(final long pageNumber , final String sortedBY) {
 
-        Sort sort = Sort.by(Sort.Order.desc(columnName).nullsLast()) ;
+        Sort sort = Sort.by(Sort.Order.desc(sortedBY).nullsLast()) ;
         Pageable pageable = PageRequest.of(
                 (int)pageNumber - 1 ,
                 5,

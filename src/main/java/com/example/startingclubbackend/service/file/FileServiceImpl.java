@@ -6,7 +6,7 @@ import com.example.startingclubbackend.exceptions.custom.DatabaseCustomException
 import com.example.startingclubbackend.exceptions.custom.FileValidationCustomException;
 import com.example.startingclubbackend.exceptions.custom.ResourceNotFoundCustomException;
 import com.example.startingclubbackend.model.file.FileRecord;
-import com.example.startingclubbackend.model.user.Admin;
+import com.example.startingclubbackend.model.user.admin.Admin;
 import com.example.startingclubbackend.repository.FileRepository;
 import org.springframework.core.io.Resource;
 import jakarta.validation.constraints.NotNull;

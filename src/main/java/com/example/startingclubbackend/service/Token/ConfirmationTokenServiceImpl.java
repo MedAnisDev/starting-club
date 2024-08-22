@@ -2,7 +2,7 @@ package com.example.startingclubbackend.service.Token;
 
 import com.example.startingclubbackend.exceptions.custom.ResourceNotFoundCustomException;
 import com.example.startingclubbackend.model.token.ConfirmationToken;
-import com.example.startingclubbackend.model.user.Athlete;
+import com.example.startingclubbackend.model.user.athlete.Athlete;
 import com.example.startingclubbackend.repository.ConfirmationTokenRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

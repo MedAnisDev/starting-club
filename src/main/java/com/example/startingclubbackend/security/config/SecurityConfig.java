@@ -70,13 +70,15 @@ public class SecurityConfig {
                                   .requestMatchers(HttpMethod.POST, "/api/v1/announcements/**" ,
                                           "/api/v1/events/**",
                                           "api/v1/files/**",
-                                          "api/v1/athlete_event/**").
+                                          "api/v1/athlete_event/**" ,
+                                          "api/v1/training_session/**").
                                     hasAnyRole("SUPER_ADMIN", "ADMIN")
 
                                   .requestMatchers(HttpMethod.PUT, "/api/v1/announcements/**" ,
                                           "/api/v1/events/**",
                                           "api/v1/files/**",
-                                          "api/v1/athlete_event/**")
+                                          "api/v1/athlete_event/**" ,
+                                          "api/v1/training_session/**")
                                     .hasAnyRole("SUPER_ADMIN", "ADMIN")
 
                                   .requestMatchers(HttpMethod.DELETE,
@@ -85,7 +87,8 @@ public class SecurityConfig {
                                           "/api/v1/register_event/admin/**",
                                           "api/v1/files/**" ,
                                           "api/v1/athlete/**",
-                                          "api/v1/athlete_event/**")
+                                          "api/v1/athlete_event/**" ,
+                                          "api/v1/training_session/**")
                                     .hasRole("SUPER_ADMIN")
 
                                   .requestMatchers(HttpMethod.POST, "api/v1/register_event/**")

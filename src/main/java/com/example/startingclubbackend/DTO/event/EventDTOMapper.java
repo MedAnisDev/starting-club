@@ -1,6 +1,5 @@
 package com.example.startingclubbackend.DTO.event;
 
-import com.example.startingclubbackend.DTO.user.UserDTOMapper;
 import com.example.startingclubbackend.DTO.user.UserPublicDTOMapper;
 import com.example.startingclubbackend.model.event.Event;
 import org.springframework.stereotype.Service;
@@ -25,7 +24,7 @@ public class EventDTOMapper  implements Function<Event ,EventDTO> {
                 event.getDescription(),
                 event.getDate(),
                 event.getType().name(),
-                event.getCreated_by() !=null ? userPublicDTOMapper.apply(event.getCreated_by()) : null
+                event.getCreatedBy() !=null ? userPublicDTOMapper.apply(event.getCreatedBy()) : null
         );
     }
 }

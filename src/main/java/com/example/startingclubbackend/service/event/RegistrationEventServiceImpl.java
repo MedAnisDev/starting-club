@@ -3,7 +3,7 @@ package com.example.startingclubbackend.service.event;
 import com.example.startingclubbackend.DTO.athlete.AthleteDTO;
 import com.example.startingclubbackend.DTO.athlete.AthleteDTOMapper;
 import com.example.startingclubbackend.model.event.Event;
-import com.example.startingclubbackend.model.user.Athlete;
+import com.example.startingclubbackend.model.user.athlete.Athlete;
 import com.example.startingclubbackend.repository.AthleteRepository;
 import com.example.startingclubbackend.repository.EventRepository;
 import com.example.startingclubbackend.service.athlete.AthleteService;

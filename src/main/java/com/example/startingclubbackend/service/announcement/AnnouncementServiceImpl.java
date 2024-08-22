@@ -5,9 +5,8 @@ import com.example.startingclubbackend.DTO.announcement.AnnouncementDTOMapper;
 import com.example.startingclubbackend.exceptions.custom.DatabaseCustomException;
 import com.example.startingclubbackend.exceptions.custom.ResourceNotFoundCustomException;
 import com.example.startingclubbackend.model.announcement.Announcement;
-import com.example.startingclubbackend.model.event.Event;
 import com.example.startingclubbackend.model.file.FileRecord;
-import com.example.startingclubbackend.model.user.Admin;
+import com.example.startingclubbackend.model.user.admin.Admin;
 import com.example.startingclubbackend.repository.AnnouncementRepository;
 import com.example.startingclubbackend.service.file.FileService;
 import jakarta.transaction.Transactional;
@@ -26,12 +25,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Service
 @Slf4j
@@ -88,7 +84,7 @@ public class AnnouncementServiceImpl implements AnnouncementService{
     @Override
     public Announcement getAnnouncementById(final Long announcementId) {
         return announcementRepository.fetchAnnouncementById(announcementId)
-                .orElseThrow(()-> new ResourceNotFoundCustomException("Announcement not found")) ;
+                .orElseThrow(()-> new ResourceNotFoundCustomException("Announcement requested not found")) ;
     }
 
     @Override

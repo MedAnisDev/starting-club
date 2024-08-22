@@ -1,7 +1,6 @@
 package com.example.startingclubbackend.repository;
 
-import com.example.startingclubbackend.model.event.Event;
-import com.example.startingclubbackend.model.user.Athlete;
+import com.example.startingclubbackend.model.user.athlete.Athlete;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

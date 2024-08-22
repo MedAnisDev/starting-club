@@ -1,6 +1,6 @@
 package com.example.startingclubbackend.DTO.athlete;
 
-import com.example.startingclubbackend.model.user.Athlete;
+import com.example.startingclubbackend.model.user.athlete.Athlete;
 import org.springframework.stereotype.Service;
 
 import java.util.function.Function;
@@ -14,8 +14,11 @@ public class AthleteDTOMapper implements Function<Athlete , AthleteDTO> {
                 athlete.getFirstname(),
                 athlete.getLastname(),
                 athlete.getEmail(),
+                athlete.getPassword(),
+                athlete.getPhoneNumber() ,
                 athlete.getLicenceID(),
                 athlete.getDateOfBirth() ,
+                athlete.getBranch().name() ,
                 athlete.getCreatedAT() ,
                 athlete.getHasMedal() != null ? athlete.getHasMedal() : false
         );
