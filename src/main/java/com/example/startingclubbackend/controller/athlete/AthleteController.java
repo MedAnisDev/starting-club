@@ -27,7 +27,7 @@ public class AthleteController {
     }
 
     @GetMapping("/{athleteId}")
-    public ResponseEntity<Object> getCustomAthleteById(@PathVariable("athleteId") final Long athleteId) {
+    public ResponseEntity<Object> getAthleteById(@PathVariable("athleteId") final Long athleteId) {
         return athleteService.getCustomAthleteById(athleteId);
     }
 
@@ -37,7 +37,7 @@ public class AthleteController {
     }
 
     @GetMapping("/custom")
-    public ResponseEntity<Object> getAllCustomAthletes(@RequestParam List<String> checkedColumns) {
+    public ResponseEntity<Object> getAllCustomAthletes(@RequestParam("checkedColumns") List<String> checkedColumns) {
         return athleteService.getAllCustomAthletes(checkedColumns);
     }
 
@@ -48,7 +48,7 @@ public class AthleteController {
     }
 
     @DeleteMapping("/{athleteId}")
-    public ResponseEntity<Object> deleteAthleteById(@PathVariable("athleteId") final Long athleteId) {
+    public ResponseEntity<Object> deleteAthleteById(@PathVariable("athleteId") final Long athleteId) throws IOException {
         return athleteService.deleteAthleteById(athleteId);
     }
 }

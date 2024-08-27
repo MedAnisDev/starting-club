@@ -80,7 +80,7 @@ public class PerformanceServiceImpl implements PerformanceService{
 
     @Override
     public ResponseEntity<Object> deletePerformanceById(Long performanceId) {
-        performanceRepository.deleteById(performanceId);
+        performanceRepository.deletePerformanceById(performanceId);
         return new ResponseEntity<>("performance requested is deleted successfully", HttpStatus.OK) ;
     }
 

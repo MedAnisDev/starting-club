@@ -42,7 +42,7 @@ public class AnnouncementController {
         return announcementService.updateAnnouncement(announcementId , announcementDTO) ;
     }
     @DeleteMapping("/{announcementId}")
-    public ResponseEntity<Object> deleteAnnouncement(@PathVariable final Long announcementId){
+    public ResponseEntity<Object> deleteAnnouncement(@PathVariable final Long announcementId) throws IOException{
         return announcementService.deleteAnnouncementById(announcementId ) ;
     }
 }

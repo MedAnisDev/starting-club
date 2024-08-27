@@ -2,6 +2,7 @@ package com.example.startingclubbackend.repository;
 
 import com.example.startingclubbackend.model.performance.Performance;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -18,4 +19,11 @@ public interface PerformanceRepository extends JpaRepository<Performance , Long>
 
     @Query("SELECT p FROM Performance p where p.id = :performanceId")
     Optional<Performance>fetchByPerformanceId(@Param("performanceId")Long performanceId) ;
+
+
+    @Transactional
+    @Modifying
+    @Query("DELETE FROM Performance p where p.id = :performanceId")
+    void deletePerformanceById(@Param("performanceId")Long performanceId) ;
+
 }

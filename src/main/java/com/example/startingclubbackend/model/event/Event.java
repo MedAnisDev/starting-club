@@ -47,6 +47,6 @@ public class Event {
     @ManyToMany(mappedBy = "registeredEvents")
     private List<Athlete> participants ;
 
-    @OneToMany(mappedBy = "event")
+    @OneToMany(mappedBy = "event" , cascade = CascadeType.ALL)
     private List<FileRecord> files ;
 }

@@ -1,14 +1,12 @@
 package com.example.startingclubbackend.controller.auth;
 
 import com.example.startingclubbackend.DTO.auth.*;
-import com.example.startingclubbackend.model.token.RefreshToken;
 import com.example.startingclubbackend.service.auth.AuthService;
 import com.example.startingclubbackend.service.auth.AuthServiceImpl;
 import jakarta.validation.Valid;
+import lombok.NonNull;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Optional;
 
 @RestController
 @RequestMapping("api/v1/auth")
@@ -21,12 +19,12 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<RegisterResponseDTO> register( @RequestBody RegisterDTO registerDTO ){
+    public ResponseEntity<RegisterResponseDTO> register(@NonNull @Valid @RequestBody RegisterDTO registerDTO ){
         return authService.register(registerDTO ) ;
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponseDTO> login(@RequestBody LoginDTO loginDTO ){
+    public ResponseEntity<LoginResponseDTO> login(@NonNull @Valid @RequestBody LoginDTO loginDTO ){
         return authService.login(loginDTO) ;
     }
 
@@ -39,6 +37,4 @@ public class AuthController {
     public String confirmToken (@RequestParam("token") final String token){
         return authService.confirmToken(token) ;
     }
-
-
 }

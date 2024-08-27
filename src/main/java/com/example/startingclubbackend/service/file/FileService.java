@@ -17,7 +17,7 @@ public interface FileService {
 
     ResponseEntity<Object> downloadFile(String files) throws IOException;
 
-    ResponseEntity<String> deleteFileByIds(Long fileId) throws IOException;
+    void deleteFileById(Long fileId) throws IOException;
     FileRecord handleFile(MultipartFile file) throws IOException ;
     void saveFile(FileRecord fileRecord);
 }

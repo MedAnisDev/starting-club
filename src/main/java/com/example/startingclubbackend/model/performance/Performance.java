@@ -9,7 +9,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
-
 @Entity
 @Table(name = "performances")
 public class Performance {
@@ -27,6 +26,7 @@ public class Performance {
     @Column(name = "updated_at" , nullable = false)
     private LocalDateTime updatedAT;
 
+    //relations
     @ManyToOne
     @JoinColumn(name = "created_by" , nullable = false)
     private Admin createdBy ;
@@ -36,7 +36,7 @@ public class Performance {
     private Admin updatedBy ;
 
     @OneToOne
-    @JoinColumn(name = "athlete_id")
+    @JoinColumn(name = "athlete_id" )
     private Athlete athlete ;
 
     @OneToMany(mappedBy = "performance" , cascade = CascadeType.ALL, orphanRemoval = true)

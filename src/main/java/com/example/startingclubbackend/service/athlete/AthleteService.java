@@ -14,7 +14,7 @@ public interface AthleteService {
 
     Athlete getAthleteById(Long athleteId);
 
-    ResponseEntity<Object> deleteAthleteById(Long athleteId);
+    ResponseEntity<Object> deleteAthleteById(Long athleteId) throws IOException;
 
     ResponseEntity<Object> getAllAthletes( long pageNumber , String sortingColumn);
     ResponseEntity<Object> getAllCustomAthletes(List<String> checkedColumns);

@@ -21,7 +21,7 @@ public interface AnnouncementService {
 
     ResponseEntity<Object> updateAnnouncement(Long announcementId, @NonNull AnnouncementDTO announcementDTO);
 
-    ResponseEntity<Object> deleteAnnouncementById(Long announcementId);
+    ResponseEntity<Object> deleteAnnouncementById(Long announcementId) throws IOException;
 
     void saveAnnouncement(@NonNull Announcement announcement);
     ResponseEntity<Object> uploadFilesToAnnouncement(final Long announcementId , @NotNull List<MultipartFile> files ) throws IOException;

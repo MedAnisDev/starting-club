@@ -102,7 +102,11 @@ public class AnnouncementServiceImpl implements AnnouncementService{
 
     @Transactional
     @Override
-    public ResponseEntity<Object> deleteAnnouncementById(final Long announcementId) {
+    public ResponseEntity<Object> deleteAnnouncementById(final Long announcementId) throws IOException{
+        Announcement currAnnouncement = getAnnouncementById(announcementId) ;
+        for (FileRecord file : currAnnouncement.getFiles()){
+            fileService.deleteFileById(file.getId());
+        }
         announcementRepository.deleteAnnouncementById(announcementId);
         final String successResponse = String.format("Announcement with ID :  %d deleted successfully", announcementId);
         return new ResponseEntity<>(successResponse , HttpStatus.OK);

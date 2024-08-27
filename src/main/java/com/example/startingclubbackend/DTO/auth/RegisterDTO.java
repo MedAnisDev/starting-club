@@ -27,7 +27,7 @@ public class RegisterDTO {
 
     @NotBlank(message = "phone number is required")
     @Size(min =8 , max=8 , message = "Invalid phone number length , please enter an 8 characters number")
-    private String phoneNumber ;
+        private String phoneNumber ;
 
     @NotBlank
     private String licenceID ;

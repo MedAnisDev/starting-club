@@ -15,5 +15,5 @@ public interface EventPerformanceService {
 
     ResponseEntity<Object> updateNoteEventOfAthlete(Long athleteId, Long eventId, @NotNull  double note);
 
-    ResponseEntity<Object> deleteAthleteEvent(Long athleteId, Long eventId);
+    ResponseEntity<Object> deleteEventPerformance(Long athleteId, Long eventId);
 }

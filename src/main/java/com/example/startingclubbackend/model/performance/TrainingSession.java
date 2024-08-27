@@ -30,6 +30,7 @@ public class TrainingSession {
     @Column(name = "updated_at" , nullable = false)
     private LocalDateTime updatedAT;
 
+    //relations
     @ManyToOne
     @JoinColumn(name = "created_by" , nullable = false)
     private Admin createdBy ;
@@ -43,7 +44,5 @@ public class TrainingSession {
     private Performance performance ;
 
 
-    public TrainingSession() {
-
-    }
+    public TrainingSession() {}
 }

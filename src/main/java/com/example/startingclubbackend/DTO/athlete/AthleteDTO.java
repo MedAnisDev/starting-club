@@ -36,11 +36,10 @@ public class AthleteDTO {
     @Past
     private LocalDate dateOfBirth;
 
-    @NotBlank
+    @NotBlank(message = "Please fill branch field")
     private String branch ;
 
     private LocalDateTime createdAt ;
 
     private boolean hasMedal;
-
 }

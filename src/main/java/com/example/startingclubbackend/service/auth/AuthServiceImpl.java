@@ -125,7 +125,7 @@ public class AuthServiceImpl implements AuthService{
 
     @Override
     @Transactional
-    public ResponseEntity<LoginResponseDTO> login(LoginDTO loginDTO) {
+    public ResponseEntity<LoginResponseDTO> login(final LoginDTO loginDTO) {
         User user = userService.fetchUserWithEmail(loginDTO.getEmail());
         if (!user.isEnabled()) {
             throw new RuntimeException("Account not verified. Please verify your account.");

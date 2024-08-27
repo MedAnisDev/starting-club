@@ -4,7 +4,9 @@ import com.example.startingclubbackend.DTO.athleteEvent.AthleteNoteDTO;
 import com.example.startingclubbackend.DTO.athleteEvent.AthleteNoteDTOMapper;
 import com.example.startingclubbackend.DTO.athleteEvent.EventNoteDTO;
 import com.example.startingclubbackend.DTO.athleteEvent.EventNoteDTOMapper;
+import com.example.startingclubbackend.exceptions.custom.AthleteRegistrationCustomException;
 import com.example.startingclubbackend.exceptions.custom.DatabaseCustomException;
+import com.example.startingclubbackend.exceptions.custom.EventDateCustomException;
 import com.example.startingclubbackend.exceptions.custom.ResourceNotFoundCustomException;
 import com.example.startingclubbackend.model.event.EventPerformance;
 import com.example.startingclubbackend.model.event.Event;
@@ -12,15 +14,18 @@ import com.example.startingclubbackend.model.user.athlete.Athlete;
 import com.example.startingclubbackend.repository.EventPerformanceRepository;
 import com.example.startingclubbackend.service.athlete.AthleteService;
 import jakarta.validation.constraints.NotNull;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
+@Slf4j
 public class EventPerformanceServiceImpl implements EventPerformanceService {
     private final EventPerformanceRepository eventPerformanceRepository;
     private final AthleteService athleteService;
@@ -41,6 +46,18 @@ public class EventPerformanceServiceImpl implements EventPerformanceService {
         Athlete currAthlete = athleteService.getAthleteById(athleteId);
         Event currEvent = eventService.getEventById(eventId);
 
+        if(currEvent.getDate().isAfter(LocalDateTime.now())){
+            throw new EventDateCustomException("You cannot assign any note ! This event is not occurred yet .") ;
+        }
+
+        if(!currEvent.getParticipants().contains(currAthlete)){
+            throw new AthleteRegistrationCustomException("athlete is not registered to this event !") ;
+        }
+        //check if athlete already has a note in this event
+        if(eventPerformanceRepository.isAthleteAlreadyHasPerformance(athleteId, eventId)){
+            throw new AthleteRegistrationCustomException("athlete already has a note in this event . You cannot add a new one !") ;
+        }
+        //build event
         EventPerformance eventPerformance = new EventPerformance();
         eventPerformance.setAthlete(currAthlete);
         eventPerformance.setEvent(currEvent);
@@ -89,9 +106,9 @@ public class EventPerformanceServiceImpl implements EventPerformanceService {
 
     @Transactional
     @Override
-    public ResponseEntity<Object> deleteAthleteEvent(final Long athleteId, final Long eventId) {
+    public ResponseEntity<Object> deleteEventPerformance(final Long athleteId, final Long eventId) {
         EventPerformance eventPerformance = getAthleteEventByAthleteIdAndEventId(athleteId, eventId);
-        eventPerformanceRepository.deleteAthleteEvent(athleteId, eventId);
+        eventPerformanceRepository.deleteEventPerformance(athleteId, eventId);
         return new ResponseEntity<>("delete action successful", HttpStatus.OK);
     }
 

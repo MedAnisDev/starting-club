@@ -19,7 +19,7 @@ public interface EventService {
 
     ResponseEntity<Object> updateEvent(Long eventId, @NonNull EventDTO eventDTO);
 
-    ResponseEntity<Object> deleteEventById(Long eventId);
+    ResponseEntity<Object> deleteEventById(Long eventId) throws IOException;
 
     Event getEventById(Long eventId);
 

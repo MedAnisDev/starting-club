@@ -8,15 +8,19 @@ import com.example.startingclubbackend.model.file.FileRecord;
 import com.example.startingclubbackend.model.user.athlete.Athlete;
 import com.example.startingclubbackend.model.user.athlete.AthleteBranch;
 import com.example.startingclubbackend.repository.AthleteRepository;
+import com.example.startingclubbackend.repository.EventPerformanceRepository;
+import com.example.startingclubbackend.repository.EventRepository;
 import com.example.startingclubbackend.service.Token.ConfirmationTokenService;
 import com.example.startingclubbackend.service.Token.RefreshTokenService;
 import com.example.startingclubbackend.service.Token.TokenService;
+import com.example.startingclubbackend.service.event.EventPerformanceService;
 import com.example.startingclubbackend.service.event.RegistrationEventService;
 import com.example.startingclubbackend.service.file.FileService;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
 import jakarta.validation.constraints.NotNull;
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -33,6 +37,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.List;
@@ -40,6 +47,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class AthleteServiceImpl implements AthleteService {
     private final TokenService tokenService;
     private final RefreshTokenService refreshTokenService;
@@ -51,10 +59,11 @@ public class AthleteServiceImpl implements AthleteService {
     private final AthleteDTOMapper athleteDTOMapper;
     private final FileService fileService ;
     private final PasswordEncoder passwordEncoder;
+    private final EventPerformanceRepository eventPerformanceRepository ;
     @PersistenceContext
     private EntityManager entityManager;
 
-    public AthleteServiceImpl(TokenService tokenService, RefreshTokenService refreshTokenService, AthleteRepository athleteRepository, ConfirmationTokenService confirmationTokenService, AthleteDTOMapper athleteDTOMapper, FileService fileService, PasswordEncoder passwordEncoder) {
+    public AthleteServiceImpl(TokenService tokenService, RefreshTokenService refreshTokenService, AthleteRepository athleteRepository, ConfirmationTokenService confirmationTokenService, AthleteDTOMapper athleteDTOMapper, FileService fileService, PasswordEncoder passwordEncoder, EventPerformanceRepository eventPerformanceRepository) {
         this.tokenService = tokenService;
         this.refreshTokenService = refreshTokenService;
         this.athleteRepository = athleteRepository;
@@ -62,6 +71,7 @@ public class AthleteServiceImpl implements AthleteService {
         this.athleteDTOMapper = athleteDTOMapper;
         this.fileService = fileService;
         this.passwordEncoder = passwordEncoder;
+        this.eventPerformanceRepository = eventPerformanceRepository;
     }
 
     @Autowired
@@ -83,7 +93,7 @@ public class AthleteServiceImpl implements AthleteService {
 
     @Override
     @Transactional
-    public ResponseEntity<Object> deleteAthleteById(final Long athleteId) {
+    public ResponseEntity<Object> deleteAthleteById(final Long athleteId) throws IOException{
         try {
 
             final Athlete athlete = getAthleteById(athleteId);
@@ -92,7 +102,12 @@ public class AthleteServiceImpl implements AthleteService {
             refreshTokenService.deleteTokenByUserId(athleteId);
             confirmationTokenService.deleteConfirmTokenByUserId(athleteId);
             registrationEventService.deleteAthleteFromAllEvents(athleteId);
-
+            for(FileRecord file : athlete.getFiles()){
+                log.info("file deleted" + file.getPath() + "name "+file.getName());
+                Path filePath = Paths.get(file.getPath());
+                Files.delete(filePath);
+            }
+            eventPerformanceRepository.deleteAllByAthleteId(athleteId);
 
             //delete User
             athleteRepository.deleteById(athleteId);
@@ -125,24 +140,15 @@ public class AthleteServiceImpl implements AthleteService {
     @Override
     @Transactional
     public ResponseEntity<Object> getAllCustomAthletes(final List<String> checkedColumns) {
+        //building jpql query
         String athleteColumns = checkedColumns.stream()
-//                .filter(col -> !col.contains("."))
                 .map(col -> "a." + col + " as " + col)
                 .collect(Collectors.joining(","));
 
-//        String eventColumns = checkedColumns.stream()
-//                .filter(col -> col.contains("."))
-//                .map(col -> "e." + col.split("[.]",2)[1] + " as " + col.split("[.]",2)[1])
-//                .collect(Collectors.joining(","));
-
-//        String columns = athleteColumns ;
-//        if(!eventColumns.isEmpty()){
-//            columns += "," + eventColumns;
-//        }
-
-        String jpql = "Select new map(" + athleteColumns + ") from Athlete a LEFT JOIN a.registeredEvents e";
+        String jpql = "Select new map(" + athleteColumns + ") from Athlete a";
         Query query = entityManager.createQuery(jpql) ;
 
+        //executing jpql query
         @SuppressWarnings("unchecked")
         List<Map<String, Object>> queryResult =(List<Map<String, Object>>) query.getResultList();
         return new ResponseEntity<>(queryResult , HttpStatus.OK);
@@ -195,5 +201,4 @@ public class AthleteServiceImpl implements AthleteService {
             saveAthlete(athlete) ;
         }
     }
-
 }

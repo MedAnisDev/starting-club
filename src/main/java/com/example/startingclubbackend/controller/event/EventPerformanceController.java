@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("api/v1/athlete_event")
+@RequestMapping("api/v1/event_performance")
 public class EventPerformanceController {
     private final EventPerformanceService eventPerformanceService;
 
@@ -14,14 +14,14 @@ public class EventPerformanceController {
         this.eventPerformanceService = eventPerformanceService;
     }
 
-    @PostMapping("/add/{athleteId}/{eventId}")
+    @PostMapping("/{athleteId}/{eventId}")
     public ResponseEntity<Object> assignNoteEventToAthlete(@PathVariable final Long athleteId,
                                                            @PathVariable final Long eventId,
                                                            @RequestParam(name = "note") @NotNull final double note){
         return eventPerformanceService.assignNoteEventToAthlete(athleteId  ,eventId ,note );
     }
 
-    @PutMapping("/update/{athleteId}/{eventId}")
+    @PutMapping("/{athleteId}/{eventId}")
     public ResponseEntity<Object> updateNoteEventOfAthlete(@PathVariable final Long athleteId,
                                                            @PathVariable final Long eventId,
                                                            @RequestParam(name = "note") @NotNull final double note){
@@ -39,9 +39,9 @@ public class EventPerformanceController {
     }
 
     @DeleteMapping("/{athleteId}/{eventId}")
-    public ResponseEntity<Object> deleteAthleteEvent(@PathVariable final Long athleteId,
+    public ResponseEntity<Object> deleteEventPerformance(@PathVariable final Long athleteId,
                                                            @PathVariable final Long eventId){
-        return eventPerformanceService.deleteAthleteEvent(athleteId  ,eventId);
+        return eventPerformanceService.deleteEventPerformance(athleteId  ,eventId);
     }
 
 

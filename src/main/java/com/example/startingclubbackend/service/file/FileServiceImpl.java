@@ -93,15 +93,15 @@ public class FileServiceImpl implements FileService{
     }
 
     @Override
-    public ResponseEntity<String> deleteFileByIds(Long fileId) throws IOException{
+    public void deleteFileById(final Long fileId) throws IOException{
         FileRecord fileToDelete = getFileById(fileId) ;
-        fileRepository.deleteById(fileId); // delete file from database
+        // delete file from database
+        fileRepository.deleteFileRecordByById(fileId);
 
         //delete file from server using NIO
         Path filePath = Paths.get(fileToDelete.getPath());
         Files.delete(filePath);
 
-        return new ResponseEntity<>("File deleted successfully" , HttpStatus.OK) ;
     }
 
     private void validateUploadFile(final MultipartFile file) {

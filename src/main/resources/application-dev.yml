@@ -42,15 +42,19 @@ logging:
   level:
 #    org.flywaydb: DEBUG
     org.hibernate.SQL: DEBUG
-    org.springframework: DEBUG
-    org.springframework.web: DEBUG
-    org.springframework.web.servlet: DEBUG
-    org.springframework.web.method.annotation: DEBUG
-    org.springframework.validation: TRACE
-    org.springframework.http.converter.json: DEBUG
-    org.hibernate: ERROR
+#    org.springframework: DEBUG
+#    org.springframework.web: DEBUG
+#    org.springframework.web.servlet: DEBUG
+#    org.springframework.web.method.annotation: DEBUG
+#    org.springframework.validation: TRACE
+#    org.springframework.http.converter.json: DEBUG
+#    org.hibernate: ERROR
 
 
 server:
   port: 8082
+  error:
+    include-binding-errors: always
+    include-message: always
+    include-stacktrace: always
 
