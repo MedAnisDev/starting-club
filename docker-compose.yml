@@ -1,23 +1,35 @@
-version: "3.7"
+version: '3.8'
 
 services:
-  spring_boot_app:
-    build: .
-    restart: always
+  app:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    container_name: starting_container
+    image: starting-club-backend:latest
     ports:
-      - "8082:8080"
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysqldb:3306/starting_club
-    depends_on:
-      - mysqldb
+      - "8082:8082"
 
-  mysqldb:
-    image: mysql:8.0.38
+    depends_on:
+      - db
     restart: always
-    ports:
-      - "3307:3306"
+
+  db:
+    image: mysql:8
     environment:
       MYSQL_DATABASE: starting_club
-      MYSQL_USER: root
+      MYSQL_ROOT_PASSWORD : anisanis
       MYSQL_PASSWORD: anisanis
-      MYSQL_ROOT_PASSWORD: anisanis
+    ports:
+      - "3307:3306"
+    container_name: mysql_container
+    volumes:
+      - db-data:/var/lib/mysql
+    restart: always
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  db-data:

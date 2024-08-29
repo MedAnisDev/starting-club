@@ -3,6 +3,7 @@ package com.example.startingclubbackend.model.user.athlete;
 import com.example.startingclubbackend.model.event.Event;
 
 import com.example.startingclubbackend.model.file.FileRecord;
+import com.example.startingclubbackend.model.performance.Performance;
 import com.example.startingclubbackend.model.user.User;
 import jakarta.persistence.*;
 import lombok.*;
@@ -44,6 +45,9 @@ public class Athlete extends User {
 
     @OneToMany(mappedBy = "athlete" , cascade = CascadeType.ALL, orphanRemoval = true)
     List<FileRecord> files = new ArrayList<>();
+
+    @OneToOne(mappedBy = "athlete")
+    private Performance performance;
 
     //constructor
     public Athlete() {}

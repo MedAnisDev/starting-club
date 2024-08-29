@@ -39,6 +39,6 @@ public class Performance {
     @JoinColumn(name = "athlete_id" )
     private Athlete athlete ;
 
-    @OneToMany(mappedBy = "performance" , cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "performance" , cascade = CascadeType.ALL)
     List<TrainingSession> trainingSessionList ;
 }

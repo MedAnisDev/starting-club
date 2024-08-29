@@ -14,7 +14,8 @@ import java.util.Date;
 public class TrainingSessionDTO {
     private Long id ;
 
-    @NotNull
+    @NotNull(message = "please enter a session date !")
+    @Past(message = "You cannot assign a session note before session date")
     private LocalDate date ;
 
     @DecimalMin(value = "0.0"  , message = "Session note must be at least 0")

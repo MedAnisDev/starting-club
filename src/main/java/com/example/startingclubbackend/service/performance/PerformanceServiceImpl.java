@@ -7,35 +7,44 @@ import com.example.startingclubbackend.exceptions.custom.ResourceNotFoundCustomE
 import com.example.startingclubbackend.model.performance.Performance;
 import com.example.startingclubbackend.model.user.admin.Admin;
 import com.example.startingclubbackend.model.user.athlete.Athlete;
+import com.example.startingclubbackend.repository.AthleteRepository;
 import com.example.startingclubbackend.repository.PerformanceRepository;
+import com.example.startingclubbackend.repository.TrainingSessionRepository;
 import com.example.startingclubbackend.service.athlete.AthleteService;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
 @Service
 public class PerformanceServiceImpl implements PerformanceService{
     private final PerformanceRepository performanceRepository ;
-    private final AthleteService athleteService ;
-    private final PerformanceDTOMapper performanceDTOMapper ;
 
-    public PerformanceServiceImpl(PerformanceRepository performanceRepository, AthleteService athleteService, PerformanceDTOMapper performanceDTOMapper) {
+    private final AthleteRepository athleteRepository ;
+    private final PerformanceDTOMapper performanceDTOMapper ;
+    private final TrainingSessionRepository trainingSessionRepository ;
+
+    public PerformanceServiceImpl(PerformanceRepository performanceRepository, AthleteRepository athleteRepository, PerformanceDTOMapper performanceDTOMapper, TrainingSessionRepository trainingSessionRepository) {
         this.performanceRepository = performanceRepository;
-        this.athleteService = athleteService;
+        this.athleteRepository = athleteRepository;
         this.performanceDTOMapper = performanceDTOMapper;
+        this.trainingSessionRepository = trainingSessionRepository;
     }
 
     @Override
-    public ResponseEntity<Object> createPerformance(@NotNull final PerformanceDTO performanceDTO , final Long athleteId) {
+    public ResponseEntity<Object> createPerformance(@NotNull @Valid final PerformanceDTO performanceDTO , final Long athleteId) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication() ;
         Admin currentAdmin = (Admin) auth.getPrincipal() ;
-        Athlete currAthlete = athleteService.getAthleteById(athleteId) ;
+        Athlete currAthlete = athleteRepository.findById(athleteId)
+                .orElseThrow(() -> new ResourceNotFoundCustomException("athlete not found"));
 
         //build performance object
         final Performance currPerformance = new Performance() ;
@@ -56,7 +65,7 @@ public class PerformanceServiceImpl implements PerformanceService{
     }
 
     @Override
-    public ResponseEntity<Object> updatePerformance(@NotNull final PerformanceDTO performanceDTO ,final Long performanceId) {
+    public ResponseEntity<Object> updatePerformance(@NotNull @Valid final PerformanceDTO performanceDTO ,final Long performanceId) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication() ;
         Admin currentAdmin = (Admin) auth.getPrincipal() ;
 
@@ -78,8 +87,12 @@ public class PerformanceServiceImpl implements PerformanceService{
         return new ResponseEntity<>(performanceDTO ,HttpStatus.OK) ;
     }
 
+    @Transactional
     @Override
-    public ResponseEntity<Object> deletePerformanceById(Long performanceId) {
+    public ResponseEntity<Object> deletePerformanceById(final Long performanceId) {
+        //delete relations
+        trainingSessionRepository.deleteAllByPerformanceId(performanceId);
+
         performanceRepository.deletePerformanceById(performanceId);
         return new ResponseEntity<>("performance requested is deleted successfully", HttpStatus.OK) ;
     }

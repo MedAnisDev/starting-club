@@ -10,12 +10,14 @@ import com.example.startingclubbackend.model.user.athlete.AthleteBranch;
 import com.example.startingclubbackend.repository.AthleteRepository;
 import com.example.startingclubbackend.repository.EventPerformanceRepository;
 import com.example.startingclubbackend.repository.EventRepository;
+import com.example.startingclubbackend.repository.PerformanceRepository;
 import com.example.startingclubbackend.service.Token.ConfirmationTokenService;
 import com.example.startingclubbackend.service.Token.RefreshTokenService;
 import com.example.startingclubbackend.service.Token.TokenService;
 import com.example.startingclubbackend.service.event.EventPerformanceService;
 import com.example.startingclubbackend.service.event.RegistrationEventService;
 import com.example.startingclubbackend.service.file.FileService;
+import com.example.startingclubbackend.service.performance.PerformanceService;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
@@ -60,10 +62,11 @@ public class AthleteServiceImpl implements AthleteService {
     private final FileService fileService ;
     private final PasswordEncoder passwordEncoder;
     private final EventPerformanceRepository eventPerformanceRepository ;
+    private final PerformanceService performanceService ;
     @PersistenceContext
     private EntityManager entityManager;
 
-    public AthleteServiceImpl(TokenService tokenService, RefreshTokenService refreshTokenService, AthleteRepository athleteRepository, ConfirmationTokenService confirmationTokenService, AthleteDTOMapper athleteDTOMapper, FileService fileService, PasswordEncoder passwordEncoder, EventPerformanceRepository eventPerformanceRepository) {
+    public AthleteServiceImpl(TokenService tokenService, RefreshTokenService refreshTokenService, AthleteRepository athleteRepository, ConfirmationTokenService confirmationTokenService, AthleteDTOMapper athleteDTOMapper, FileService fileService, PasswordEncoder passwordEncoder, EventPerformanceRepository eventPerformanceRepository, PerformanceService performanceService) {
         this.tokenService = tokenService;
         this.refreshTokenService = refreshTokenService;
         this.athleteRepository = athleteRepository;
@@ -72,6 +75,7 @@ public class AthleteServiceImpl implements AthleteService {
         this.fileService = fileService;
         this.passwordEncoder = passwordEncoder;
         this.eventPerformanceRepository = eventPerformanceRepository;
+        this.performanceService = performanceService;
     }
 
     @Autowired
@@ -96,22 +100,23 @@ public class AthleteServiceImpl implements AthleteService {
     public ResponseEntity<Object> deleteAthleteById(final Long athleteId) throws IOException{
         try {
 
-            final Athlete athlete = getAthleteById(athleteId);
+            final Athlete currAthlete = getAthleteById(athleteId);
             //delete User references
             tokenService.deleteByUserId(athleteId);
             refreshTokenService.deleteTokenByUserId(athleteId);
             confirmationTokenService.deleteConfirmTokenByUserId(athleteId);
             registrationEventService.deleteAthleteFromAllEvents(athleteId);
-            for(FileRecord file : athlete.getFiles()){
+            for(FileRecord file : currAthlete.getFiles()){
                 log.info("file deleted" + file.getPath() + "name "+file.getName());
                 Path filePath = Paths.get(file.getPath());
                 Files.delete(filePath);
             }
             eventPerformanceRepository.deleteAllByAthleteId(athleteId);
+            performanceService.deletePerformanceById(currAthlete.getPerformance().getId()) ;
 
             //delete User
             athleteRepository.deleteById(athleteId);
-            String successResponse = String.format("athlete with email '%s' has been successfully deleted.", athlete.getEmail());
+            String successResponse = String.format("athlete with email '%s' has been successfully deleted.", currAthlete.getEmail());
             return new ResponseEntity<>(successResponse, HttpStatus.OK);
 
         } catch (DataIntegrityViolationException | ConstraintViolationException e) {

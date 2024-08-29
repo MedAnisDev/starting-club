@@ -12,6 +12,5 @@ public interface PerformanceService {
     ResponseEntity<Object> updatePerformance(@NotNull PerformanceDTO performanceDTO , Long performanceId);
 
     ResponseEntity<Object> getPerformanceByAthleteId(Long athleteId);
-
     ResponseEntity<Object> deletePerformanceById(Long performanceId);
 }

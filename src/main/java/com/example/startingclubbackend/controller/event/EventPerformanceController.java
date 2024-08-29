@@ -3,10 +3,12 @@ package com.example.startingclubbackend.controller.event;
 import com.example.startingclubbackend.service.event.EventPerformanceService;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("api/v1/event_performance")
+@Validated
 public class EventPerformanceController {
     private final EventPerformanceService eventPerformanceService;
 

@@ -8,6 +8,7 @@ import com.example.startingclubbackend.model.performance.Performance;
 import com.example.startingclubbackend.model.performance.TrainingSession;
 import com.example.startingclubbackend.model.user.admin.Admin;
 import com.example.startingclubbackend.repository.TrainingSessionRepository;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -38,8 +39,9 @@ public class TrainingSessionServiceImpl implements TrainingSessionService{
         this.performanceService = performanceService;
     }
 
+    @Transactional
     @Override
-    public ResponseEntity<Object> createTrainingSession(@NotNull final TrainingSessionDTO trainingSessionDTO,
+    public ResponseEntity<Object> createTrainingSession(@NotNull @Valid  final TrainingSessionDTO trainingSessionDTO,
                                                         final Long performanceId) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication() ;
         Admin currentAdmin = (Admin) auth.getPrincipal() ;
@@ -58,8 +60,9 @@ public class TrainingSessionServiceImpl implements TrainingSessionService{
         return new ResponseEntity<>(trainingSessionDTOMapper.apply(currentSession) , HttpStatus.CREATED) ;
     }
 
+    @Transactional
     @Override
-    public ResponseEntity<Object> updateTrainingSession(final Long sessionId,@NotNull final TrainingSessionDTO trainingSessionDTO) {
+    public ResponseEntity<Object> updateTrainingSession(final Long sessionId,@NotNull @Valid final TrainingSessionDTO trainingSessionDTO) {
         //get current session
         TrainingSession currentSession = getTrainingSessionById(sessionId);
 

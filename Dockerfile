@@ -1,12 +1,21 @@
-FROM openjdk:20
+FROM maven:3.8.6-amazoncorretto-17 AS build
 
-WORKDIR /starting
+WORKDIR /app
 
-LABEL authors="anis"
+COPY pom.xml .
 
-# Add the JAR file
-ADD target/starting-club-backend-0.0.1-SNAPSHOT.jar /starting/starting-club.jar
+RUN mvn dependency:go-offline
+
+COPY . .
+
+RUN mvn clean package -DskipTests
+
+FROM amazoncorretto:17
+
+WORKDIR /app
+
+COPY --from=build /app/target/*.jar /app/starting-club-backend.jar
 
 EXPOSE 8082
 
-ENTRYPOINT ["java", "-jar","/starting/starting-club.jar"]
+ENTRYPOINT ["java", "-jar", "starting-club-backend.jar"]
