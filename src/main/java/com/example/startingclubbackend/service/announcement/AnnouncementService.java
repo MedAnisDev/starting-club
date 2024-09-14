@@ -13,7 +13,7 @@ import java.util.List;
 public interface AnnouncementService {
     ResponseEntity<Object> createAnnouncement(AnnouncementDTO announcementDTO);
 
-    ResponseEntity<Object> fetchAllAnnouncements(long pageNumber , String columnName);
+    ResponseEntity<Object> fetchAllAnnouncements(long pageNumber , String sortedBy);
 
     ResponseEntity<Object> fetchAnnouncementById(Long announcementId);
 
@@ -21,7 +21,7 @@ public interface AnnouncementService {
 
     ResponseEntity<Object> updateAnnouncement(Long announcementId, @NonNull AnnouncementDTO announcementDTO);
 
-    ResponseEntity<Object> deleteAnnouncementById(Long announcementId);
+    ResponseEntity<Object> deleteAnnouncementById(Long announcementId) throws IOException;
 
     void saveAnnouncement(@NonNull Announcement announcement);
     ResponseEntity<Object> uploadFilesToAnnouncement(final Long announcementId , @NotNull List<MultipartFile> files ) throws IOException;

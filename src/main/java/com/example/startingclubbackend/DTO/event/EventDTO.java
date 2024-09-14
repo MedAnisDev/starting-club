@@ -27,7 +27,11 @@ public class EventDTO {
     @Future(message = "Event date must be in the future")
     private LocalDateTime date;
 
+    @NotBlank(message = "please fill type field")
     private String type ;
 
-    private UserPublicDTO createdBY ;
+    private LocalDateTime createdAt ;
+    private LocalDateTime updatedAt ;
+
+    private UserPublicDTO createdBy ;
 }

@@ -28,9 +28,10 @@ public class AnnouncementController {
         return announcementService.uploadFilesToAnnouncement(announcementId , files) ;
     }
 
-    @GetMapping("/page/{pageNumber}")
-    public ResponseEntity<Object> fetchAllAnnouncements(@PathVariable("pageNumber") final long pageNumber ,@RequestParam(value = "columnName" ,defaultValue = "id") final String columnName){
-        return announcementService.fetchAllAnnouncements(pageNumber ,columnName) ;
+    @GetMapping("")
+    public ResponseEntity<Object> fetchAllAnnouncements(@RequestParam(value ="pageNumber" ,defaultValue="1" ) final long pageNumber ,
+                                                        @RequestParam(value = "sortedBy" ,defaultValue = "id") final String sortedBy){
+        return announcementService.fetchAllAnnouncements(pageNumber ,sortedBy) ;
     }
 
     @GetMapping("/{announcementId}")
@@ -42,7 +43,7 @@ public class AnnouncementController {
         return announcementService.updateAnnouncement(announcementId , announcementDTO) ;
     }
     @DeleteMapping("/{announcementId}")
-    public ResponseEntity<Object> deleteAnnouncement(@PathVariable final Long announcementId){
+    public ResponseEntity<Object> deleteAnnouncement(@PathVariable final Long announcementId) throws IOException{
         return announcementService.deleteAnnouncementById(announcementId ) ;
     }
 }

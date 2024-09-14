@@ -36,9 +36,3 @@ spring:
             enable: true
 server:
   port: 8082
-
-jwt:
-  access_secret_key : ${jwt.access_secret_key}
-  refresh_secret_key : ${jwt.refresh_secret_key}
-  refresh_expiration : ${jwt.refresh_expiration}
-  access_expiration : ${jwt.access_expiration}

@@ -44,7 +44,7 @@ public abstract class User implements UserDetails {
 
     @CreationTimestamp
     @Column(name = "created_at" , nullable = false)
-    private LocalDateTime createdAT ;
+    private LocalDateTime createdAt;
 
     @Column( name = "phone_number", unique=true , nullable = false)
     private String phoneNumber ;
@@ -66,17 +66,17 @@ public abstract class User implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        return UserDetails.super.isAccountNonExpired();
+        return true;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return UserDetails.super.isAccountNonLocked();
+        return true;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return UserDetails.super.isCredentialsNonExpired();
+        return true;
     }
 
     @Override

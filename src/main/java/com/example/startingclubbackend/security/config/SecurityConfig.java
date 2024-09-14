@@ -64,17 +64,23 @@ public class SecurityConfig {
                                   .requestMatchers(SWAGGER_WHITELIST)
                                     .permitAll()
 
-                                  .requestMatchers(HttpMethod.GET, "api/v1/athlete/**")
+                                  .requestMatchers(HttpMethod.GET, "api/v1/athlete/admin/**")
                                     .hasAnyRole("SUPER_ADMIN", "ADMIN")
 
                                   .requestMatchers(HttpMethod.POST, "/api/v1/announcements/**" ,
                                           "/api/v1/events/**",
-                                          "api/v1/files/**").
+                                          "api/v1/files/**",
+                                          "api/v1/athlete_event/**" ,
+                                          "api/v1/training_session/**").
                                     hasAnyRole("SUPER_ADMIN", "ADMIN")
 
-                                  .requestMatchers(HttpMethod.PUT, "/api/v1/announcements/**" ,
+                                  .requestMatchers(HttpMethod.PUT,
+                                          "/api/v1/announcements/**" ,
                                           "/api/v1/events/**",
-                                          "api/v1/files/**")
+                                          "api/v1/files/**",
+                                          "api/v1/athlete_event/**" ,
+                                          "api/v1/training_session/**",
+                                          "api/v1/athlete/admin/**")
                                     .hasAnyRole("SUPER_ADMIN", "ADMIN")
 
                                   .requestMatchers(HttpMethod.DELETE,
@@ -82,7 +88,9 @@ public class SecurityConfig {
                                           "/api/v1/events/**" ,
                                           "/api/v1/register_event/admin/**",
                                           "api/v1/files/**" ,
-                                          "api/v1/athlete/**")
+                                          "api/v1/athlete/**",
+                                          "api/v1/athlete_event/**" ,
+                                          "api/v1/training_session/**")
                                     .hasRole("SUPER_ADMIN")
 
                                   .requestMatchers(HttpMethod.POST, "api/v1/register_event/**")
@@ -99,7 +107,6 @@ public class SecurityConfig {
                                   .addLogoutHandler(logoutHandler)
                                   .logoutSuccessHandler(((request, response, authentication) ->{
                                       response.setStatus(HttpServletResponse.SC_OK);
-                                      response.sendRedirect("api/v1/auth/login") ;
                                       response.getWriter().write("{" +
                                               "\"message\": \"Logout successful\"" +
                                               "}");
@@ -115,13 +122,13 @@ public class SecurityConfig {
      @Bean
      public CorsConfigurationSource corsConfigurationSource(){
           CorsConfiguration configuration= new CorsConfiguration() ;
-          configuration.setAllowedOrigins(List.of("http://localhost:4200"));
+          configuration.setAllowedOrigins(List.of("http://localhost:3000"));
           configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
           configuration.setAllowedHeaders(Arrays.asList("Authorization" ,"Content-Type"));
           configuration.setAllowCredentials(true);
 
           UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-          source.registerCorsConfiguration("api/v1/**",configuration);
+          source.registerCorsConfiguration("/**",configuration);
           return source ;
      }
 

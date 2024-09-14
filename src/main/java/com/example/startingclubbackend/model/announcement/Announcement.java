@@ -2,10 +2,12 @@ package com.example.startingclubbackend.model.announcement;
 
 import com.example.startingclubbackend.model.file.FileRecord;
 import com.example.startingclubbackend.model.user.User;
+import com.example.startingclubbackend.model.user.admin.Admin;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -34,10 +36,10 @@ public class Announcement {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt = LocalDateTime.now() ;
 
-    @ManyToOne()
+    @ManyToOne
     @JoinColumn(name = "created_by")
-    private User createdBy;
+    private Admin createdBy;
 
     @OneToMany(mappedBy = "announcement")
-    private List<FileRecord> files ;
+    private List<FileRecord> files = new ArrayList<>();
 }

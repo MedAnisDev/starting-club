@@ -10,10 +10,12 @@ import com.example.startingclubbackend.model.role.Role;
 import com.example.startingclubbackend.model.token.ConfirmationToken;
 import com.example.startingclubbackend.model.token.RefreshToken;
 import com.example.startingclubbackend.model.token.Token;
-import com.example.startingclubbackend.model.user.Athlete;
+import com.example.startingclubbackend.model.user.athlete.Athlete;
 import com.example.startingclubbackend.model.user.User;
 import com.example.startingclubbackend.model.token.TokenType;
+import com.example.startingclubbackend.model.user.athlete.AthleteBranch;
 import com.example.startingclubbackend.security.JWT.JWTService;
+import com.example.startingclubbackend.security.utility.SecurityConstants;
 import com.example.startingclubbackend.service.Token.ConfirmationTokenService;
 import com.example.startingclubbackend.service.Token.RefreshTokenService;
 import com.example.startingclubbackend.service.Token.TokenService;
@@ -25,7 +27,6 @@ import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -57,8 +58,6 @@ public class AuthServiceImpl implements AuthService{
     private final ConfirmationTokenService confirmationTokenService;
     private final EmailSenderService emailSenderService ;
 
-    @Value("${jwt.refresh_expiration}")
-    private long expirationRefreshTokenDuration ;
     public AuthServiceImpl(RoleService roleService, JWTService jwtService, PasswordEncoder passwordEncoder, UserService userService, UserDTOMapper userDTOMapper, AuthenticationManager authenticationManager, TokenService tokenService, RefreshTokenService refreshTokenService, AthleteService athleteService, ConfirmationTokenService confirmationTokenService, EmailSenderService emailSenderService) {
         this.roleService = roleService;
         this.jwtService = jwtService;
@@ -86,6 +85,8 @@ public class AuthServiceImpl implements AuthService{
         }
         //build and save athlete
         Role role = roleService.fetchRoleByName("ROLE_ATHLETE") ;
+        AthleteBranch branch = AthleteBranch.valueOf(registerDTO.getBranch()) ;
+
         Athlete athlete = Athlete.builder()
             .firstname(registerDTO.getFirstname())
             .lastname(registerDTO.getLastname())
@@ -95,6 +96,7 @@ public class AuthServiceImpl implements AuthService{
             .licenceID(registerDTO.getLicenceID())
             .dateOFBirth(registerDTO.getDateOfBirth())
             .createAt(LocalDateTime.now())
+            .branch(branch)
             .role(role)
             .enable(false)
             .build();
@@ -123,7 +125,7 @@ public class AuthServiceImpl implements AuthService{
 
     @Override
     @Transactional
-    public ResponseEntity<LoginResponseDTO> login(LoginDTO loginDTO) {
+    public ResponseEntity<LoginResponseDTO> login(final LoginDTO loginDTO) {
         User user = userService.fetchUserWithEmail(loginDTO.getEmail());
         if (!user.isEnabled()) {
             throw new RuntimeException("Account not verified. Please verify your account.");
@@ -159,10 +161,10 @@ public class AuthServiceImpl implements AuthService{
         final RefreshToken currentRefreshToken = refreshTokenService.fetchTokenByToken(refreshToken) ;
         final boolean isRefreshTokenValid = refreshTokenService.validateRefreshToken(currentRefreshToken.getToken()) ;
 
-        if( !isRefreshTokenValid ){ // if the token has been expired or revoked
+        if( !isRefreshTokenValid ){
             throw new InvalidTokenCustomException("refresh token has expired or revoked");
         }
-        if(!currentRefreshToken.getUser().getId().equals(currentUser.getId())){ // and refresh token belongs to the user that has expired token
+        if(!currentRefreshToken.getUser().getId().equals(currentUser.getId())){
             throw new InvalidTokenCustomException("the refresh and access token provided does not belong to the same user");
         }
 
@@ -223,7 +225,7 @@ public class AuthServiceImpl implements AuthService{
     }
 
     private void saveUserRefreshToken(@NotNull User user ,@NotNull String refreshToken){
-        Date expirationDate = new Date(System.currentTimeMillis() + expirationRefreshTokenDuration);
+        Date expirationDate = new Date(System.currentTimeMillis() + SecurityConstants.REFRESH_JWT_EXPIRATION);
         Date issuedDate = new Date(System.currentTimeMillis()) ;
 
         RefreshToken jwt = RefreshToken.builder()

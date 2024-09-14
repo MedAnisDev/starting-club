@@ -22,8 +22,8 @@ public class AnnouncementDTO{
     private String content;
 
     private LocalDateTime createdAt ;
-
+ 
     private LocalDateTime updatedAt ;
 
-    private UserPublicDTO createdBY ;
+    private UserPublicDTO createdBy ;
 }

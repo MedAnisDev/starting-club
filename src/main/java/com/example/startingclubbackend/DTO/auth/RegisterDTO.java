@@ -1,8 +1,6 @@
 package com.example.startingclubbackend.DTO.auth;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -13,11 +11,11 @@ import java.time.LocalDate;
 public class RegisterDTO {
 
     @NotBlank(message = "first name is required")
-    @Size(min=2 ,max=10 , message = "Invalid firstname length")
+    @Size(min=2 ,max=20 , message = "Invalid firstname length")
     private String firstname ;
 
     @NotBlank(message = "last name is required")
-    @Size(min=2 ,max=10 , message = "Invalid lastname length")
+    @Size(min=2 ,max=20 , message = "Invalid lastname length")
     private String lastname;
 
     @Pattern(regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$" , message = "Invalid email address")
@@ -29,13 +27,13 @@ public class RegisterDTO {
 
     @NotBlank(message = "phone number is required")
     @Size(min =8 , max=8 , message = "Invalid phone number length , please enter an 8 characters number")
-    private String phoneNumber ;
+        private String phoneNumber ;
 
+    @NotBlank
     private String licenceID ;
 
+    @Past
     private LocalDate dateOfBirth ;
 
-
-
-
+    private String branch ;
 }

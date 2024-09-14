@@ -6,7 +6,7 @@ import com.example.startingclubbackend.exceptions.custom.DatabaseCustomException
 import com.example.startingclubbackend.exceptions.custom.FileValidationCustomException;
 import com.example.startingclubbackend.exceptions.custom.ResourceNotFoundCustomException;
 import com.example.startingclubbackend.model.file.FileRecord;
-import com.example.startingclubbackend.model.user.Admin;
+import com.example.startingclubbackend.model.user.admin.Admin;
 import com.example.startingclubbackend.repository.FileRepository;
 import org.springframework.core.io.Resource;
 import jakarta.validation.constraints.NotNull;
@@ -93,15 +93,15 @@ public class FileServiceImpl implements FileService{
     }
 
     @Override
-    public ResponseEntity<String> deleteFileByIds(Long fileId) throws IOException{
+    public void deleteFileById(final Long fileId) throws IOException{
         FileRecord fileToDelete = getFileById(fileId) ;
-        fileRepository.deleteById(fileId); // delete file from database
+        // delete file from database
+        fileRepository.deleteFileRecordByById(fileId);
 
         //delete file from server using NIO
         Path filePath = Paths.get(fileToDelete.getPath());
         Files.delete(filePath);
 
-        return new ResponseEntity<>("File deleted successfully" , HttpStatus.OK) ;
     }
 
     private void validateUploadFile(final MultipartFile file) {

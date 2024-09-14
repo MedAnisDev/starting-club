@@ -3,8 +3,6 @@ package com.example.startingclubbackend;
 import io.github.cdimascio.dotenv.Dotenv;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.domain.EntityScan;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
@@ -12,20 +10,13 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 public class StartingClubBackendApplication {
 
 	public static void main(String[] args) {
-		// Load the .env file
-		Dotenv dotenv = Dotenv.configure()
-				.filename("secret.env")
-				.load();
-
-		// Set system properties from .env file
-		System.setProperty("spring.mail.username", dotenv.get("MAIL_USERNAME"));
-		System.setProperty("spring.mail.password", dotenv.get("MAIL_PASSWORD"));
-		System.setProperty("jwt.access_secret_key", dotenv.get("JWT_ACCESS_SECRET_KEY"));
-		System.setProperty("jwt.refresh_secret_key", dotenv.get("JWT_REFRESH_SECRET_KEY"));
-		System.setProperty("jwt.refresh_expiration", dotenv.get("REFRESH_EXPIRATION_DURATION"));
-		System.setProperty("jwt.access_expiration", dotenv.get("ACCESS_EXPIRATION_DURATION"));
+//		Dotenv dotenv = Dotenv.configure()
+//				.filename(".env") // Make sure this matches the file name
+//				.load();
+//
+//		System.setProperty("spring.mail.username", dotenv.get("MAIL_USERNAME"));
+//		System.setProperty("spring.mail.password", dotenv.get("MAIL_PASSWORD"));
 
 		SpringApplication.run(StartingClubBackendApplication.class, args);
 	}
-
 }

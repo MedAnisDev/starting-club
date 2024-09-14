@@ -1,7 +1,7 @@
 package com.example.startingclubbackend.service.User;
 
 import com.example.startingclubbackend.exceptions.custom.ResourceNotFoundCustomException;
-import com.example.startingclubbackend.model.user.Athlete;
+import com.example.startingclubbackend.model.user.athlete.Athlete;
 import com.example.startingclubbackend.model.user.User;
 import com.example.startingclubbackend.repository.AthleteRepository;
 import com.example.startingclubbackend.repository.UserRepository;

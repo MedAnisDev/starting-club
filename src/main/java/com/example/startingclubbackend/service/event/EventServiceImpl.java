@@ -8,9 +8,10 @@ import com.example.startingclubbackend.exceptions.custom.ResourceNotFoundCustomE
 import com.example.startingclubbackend.model.event.Event;
 import com.example.startingclubbackend.model.event.EventType;
 import com.example.startingclubbackend.model.file.FileRecord;
-import com.example.startingclubbackend.model.user.Admin;
-import com.example.startingclubbackend.model.user.Athlete;
+import com.example.startingclubbackend.model.user.admin.Admin;
+import com.example.startingclubbackend.model.user.athlete.Athlete;
 import com.example.startingclubbackend.repository.AthleteRepository;
+import com.example.startingclubbackend.repository.EventPerformanceRepository;
 import com.example.startingclubbackend.repository.EventRepository;
 import com.example.startingclubbackend.service.file.FileService;
 import lombok.NonNull;
@@ -40,21 +41,20 @@ public class EventServiceImpl implements EventService{
     private final AthleteRepository athleteRepository ;
     private final EventDTOMapper eventDTOMapper ;
     private final FileService fileService ;
+    private final EventPerformanceRepository eventPerformanceRepository ;
 
-    public EventServiceImpl(EventRepository eventRepository, AthleteRepository athleteRepository, EventDTOMapper eventDTOMapper, FileService fileService) {
+    public EventServiceImpl(EventRepository eventRepository, AthleteRepository athleteRepository, EventDTOMapper eventDTOMapper, FileService fileService, EventPerformanceRepository eventPerformanceRepository) {
         this.eventRepository = eventRepository;
         this.athleteRepository = athleteRepository;
         this.eventDTOMapper = eventDTOMapper;
         this.fileService = fileService;
+        this.eventPerformanceRepository = eventPerformanceRepository;
     }
 
     @Override
     public ResponseEntity<Object> createEvent(@NonNull final EventDTO eventDTO) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         Admin curentAdmin = (Admin) auth.getPrincipal();
-
-        log.info("Authentication Principal: " + auth.getPrincipal());
-        log.info("Authentication Authorities: " + auth.getAuthorities());
 
         EventType eventType =EventType.valueOf(eventDTO.getType()) ;
 
@@ -65,7 +65,7 @@ public class EventServiceImpl implements EventService{
         currentEvent.setUpdatedAt(LocalDateTime.now());
         currentEvent.setDate(eventDTO.getDate());
         currentEvent.setType(eventType);
-        currentEvent.setCreated_by(curentAdmin);
+        currentEvent.setCreatedBy(curentAdmin);
 
         eventRepository.save(currentEvent) ;
 
@@ -74,19 +74,32 @@ public class EventServiceImpl implements EventService{
     }
 
     @Override
-    public ResponseEntity<Object> fetchAllEvents(final long pageNumber , final String columnName) {
+    public ResponseEntity<Object> fetchAllEvents(final long pageNumber , final String sortedBy) {
 
-        Sort sort = Sort.by(Sort.Order.desc(columnName).nullsLast()) ;
+        Sort sort = Sort.by(Sort.Order.desc(sortedBy).nullsLast()) ;
         Pageable pageable = PageRequest.of(
                 (int)pageNumber - 1 ,
                 5,
                 sort
         );
         final List<EventDTO> eventDTOList = eventRepository.fetchAllEvents(pageable).
+                    stream()
+                    .map(eventDTOMapper)
+                    .collect(Collectors.toList());
+        return new ResponseEntity<>(eventDTOList, HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<Object> fetchAllEventsByType(String type) {
+
+        log.info("event type "+type);
+        EventType eventType = EventType.valueOf(type) ;
+        final List<EventDTO> eventDTOList = eventRepository.fetchAllByType(eventType).
                 stream()
                 .map(eventDTOMapper)
                 .collect(Collectors.toList());
-        return new ResponseEntity<>(eventDTOList , HttpStatus.OK) ;
+
+        return new ResponseEntity<>(eventDTOList, HttpStatus.OK);
     }
 
     @Override
@@ -123,7 +136,7 @@ public class EventServiceImpl implements EventService{
 
     @Transactional
     @Override
-    public ResponseEntity<Object> deleteEventById(final Long eventId) {
+    public ResponseEntity<Object> deleteEventById(final Long eventId) throws IOException {
         //check if the event exists
         Event event = getEventById(eventId);
 
@@ -133,6 +146,13 @@ public class EventServiceImpl implements EventService{
             log.info("remove event Id :{} from the athlete ID :{} ",eventId,athlete.getId());
             athleteRepository.save(athlete) ;
         }
+        //delete event files
+        for(FileRecord file : event.getFiles()){
+            fileService.deleteFileById(file.getId());
+        }
+        //delete event performance
+        eventPerformanceRepository.deleteAllByEventId(eventId) ;
+        log.info("event with id {} id removed from all eventPerformances successfully" , eventId);
 
         eventRepository.deleteEventById(eventId);
         String successMessage = String.format("event with ID : %d is deleted successfully",eventId) ;

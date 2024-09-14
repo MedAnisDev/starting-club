@@ -1,6 +1,5 @@
 package com.example.startingclubbackend;
 
-import org.springframework.boot.actuate.autoconfigure.metrics.MetricsProperties;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 

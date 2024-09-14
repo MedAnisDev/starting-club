@@ -2,7 +2,8 @@ package com.example.startingclubbackend.model.file;
 
 import com.example.startingclubbackend.model.announcement.Announcement;
 import com.example.startingclubbackend.model.event.Event;
-import com.example.startingclubbackend.model.user.Admin;
+import com.example.startingclubbackend.model.user.admin.Admin;
+import com.example.startingclubbackend.model.user.athlete.Athlete;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -42,6 +43,10 @@ public class FileRecord {
     @ManyToOne
     @JoinColumn(name = "announcement_id")
     private Announcement announcement;
+
+    @ManyToOne
+    @JoinColumn(name = "athlete_id")
+    private Athlete athlete;
     public FileRecord() {
 
     }

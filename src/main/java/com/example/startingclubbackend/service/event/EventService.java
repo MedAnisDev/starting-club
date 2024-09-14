@@ -14,12 +14,13 @@ public interface EventService {
     ResponseEntity<Object> createEvent(@NonNull EventDTO eventDTO);
 
     ResponseEntity<Object> fetchAllEvents(long pageNumber , String columnName);
+    ResponseEntity<Object> fetchAllEventsByType(String type);
 
     ResponseEntity<Object> fetchEventById(Long eventId);
 
     ResponseEntity<Object> updateEvent(Long eventId, @NonNull EventDTO eventDTO);
 
-    ResponseEntity<Object> deleteEventById(Long eventId);
+    ResponseEntity<Object> deleteEventById(Long eventId) throws IOException;
 
     Event getEventById(Long eventId);
 

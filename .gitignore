@@ -33,4 +33,4 @@ build/
 .vscode/
 
 # Sensitive files
-secret.env
+.env
