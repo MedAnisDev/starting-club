@@ -12,10 +12,10 @@ import java.util.List;
 
 @Repository
 @Transactional(readOnly = true)
-public interface AthleteRepository extends JpaRepository<Athlete , Long> {
+public interface AthleteRepository extends JpaRepository<Athlete, Long> {
 
-    @Query("SELECT Count(a)>0 FROM Athlete a JOIN a.registeredEvents e WHERE a.id = :athleteID AND e.id = :eventId")
-    boolean isAthleteRegistered(@Param("athleteID") Long athleteID ,@Param("eventId") Long eventId) ;
+    @Query("SELECT COUNT(a) > 0 FROM Athlete a JOIN a.registeredEvents e WHERE a.id = :athleteID AND e.id = :eventId")
+    Boolean isAthleteRegistered(@Param("athleteID") Long athleteID, @Param("eventId") Long eventId);
 
     @Query("SELECT a FROM Athlete a ")
     List<Athlete> fetchAllAthletes(Pageable pageable);

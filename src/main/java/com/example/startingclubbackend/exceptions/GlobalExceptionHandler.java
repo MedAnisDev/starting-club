@@ -44,7 +44,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(InvalidTokenCustomException.class)
     public ResponseEntity<Object> handleInvalidTokenException(InvalidTokenCustomException e) {
-        return e.handleResponse(e.getMessage(), "token is not valid", HttpStatus.UNAUTHORIZED);
+        return e.handleResponse(e.getMessage(), "token is not valid", HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler(ExpiredTokenCustomException.class)
@@ -105,7 +105,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(@NotNull MethodArgumentNotValidException ex, @NotNull HttpHeaders headers, @NotNull HttpStatusCode status, @NotNull WebRequest request) {
-        log.info("handleMethodArgumentNotValid method called");
+        log.info("handleMethodArgumentNotValid method called" + ex.getMessage());
         return handleResponseException(
                 ex.getBindingResult()
                         .getFieldErrors()

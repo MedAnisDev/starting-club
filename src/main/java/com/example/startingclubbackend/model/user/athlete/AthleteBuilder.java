@@ -88,7 +88,7 @@ public class AthleteBuilder {
         athlete.setLastname(lastname);
         athlete.setEmail(email);
         athlete.setPassword(password);
-        athlete.setCreatedAT(createdAT);
+        athlete.setCreatedAt(createdAT);
         athlete.setPhoneNumber(phoneNumber);
         athlete.setRole(role);
         athlete.setLicenceID(licenceID);

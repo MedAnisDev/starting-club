@@ -1,6 +1,7 @@
 package com.example.startingclubbackend.controller.event;
 
 import com.example.startingclubbackend.service.event.RegistrationEventService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,5 +26,10 @@ public class RegistrationEventController {
     @GetMapping("/{eventId}/participants")
     public ResponseEntity<Object> getAllParticipants( @PathVariable final Long eventId ) {
         return  registrationEventService.getAllParticipants(eventId) ;
+    }
+    @GetMapping("/is_registered/{eventId}/{athleteId}")
+    public ResponseEntity<Boolean> isAthleteRegistered(@PathVariable final Long eventId ,@PathVariable final Long athleteId){
+        Boolean isRegistered = registrationEventService.isAthleteRegistered(eventId , athleteId) ;
+        return new ResponseEntity<>(isRegistered , HttpStatus.OK) ;
     }
 }

@@ -31,23 +31,24 @@ public class AthleteController {
         return athleteService.getCustomAthleteById(athleteId);
     }
 
-    @GetMapping("/page/{pageNumber}")
-    public ResponseEntity<Object> getAllAthletes(@PathVariable("pageNumber") final long pageNumber, @RequestParam(value = "sortingColumn", defaultValue = "id") final String sortingColumn) {
+    @GetMapping("")
+    public ResponseEntity<Object> getAllAthletes(@RequestParam(value = "pageNumber", defaultValue = "1") final long pageNumber,
+                                                 @RequestParam(value = "sortedBy", defaultValue = "id") final String sortingColumn) {
         return athleteService.getAllAthletes(pageNumber, sortingColumn);
     }
 
-    @GetMapping("/custom")
+    @GetMapping("/admin/custom")
     public ResponseEntity<Object> getAllCustomAthletes(@RequestParam("checkedColumns") List<String> checkedColumns) {
         return athleteService.getAllCustomAthletes(checkedColumns);
     }
 
-    @PutMapping("/{athleteId}")
+    @PutMapping("/admin/{athleteId}")
     public ResponseEntity<Object> updateAthlete(@PathVariable final Long athleteId,
                                                 @NotNull @Valid @RequestBody final AthleteDTO athleteDTO) {
         return athleteService.updateAthlete(athleteId, athleteDTO);
     }
 
-    @DeleteMapping("/{athleteId}")
+    @DeleteMapping("/admin/{athleteId}")
     public ResponseEntity<Object> deleteAthleteById(@PathVariable("athleteId") final Long athleteId) throws IOException {
         return athleteService.deleteAthleteById(athleteId);
     }

@@ -74,19 +74,32 @@ public class EventServiceImpl implements EventService{
     }
 
     @Override
-    public ResponseEntity<Object> fetchAllEvents(final long pageNumber , final String sortedBY) {
+    public ResponseEntity<Object> fetchAllEvents(final long pageNumber , final String sortedBy) {
 
-        Sort sort = Sort.by(Sort.Order.desc(sortedBY).nullsLast()) ;
+        Sort sort = Sort.by(Sort.Order.desc(sortedBy).nullsLast()) ;
         Pageable pageable = PageRequest.of(
                 (int)pageNumber - 1 ,
                 5,
                 sort
         );
         final List<EventDTO> eventDTOList = eventRepository.fetchAllEvents(pageable).
+                    stream()
+                    .map(eventDTOMapper)
+                    .collect(Collectors.toList());
+        return new ResponseEntity<>(eventDTOList, HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<Object> fetchAllEventsByType(String type) {
+
+        log.info("event type "+type);
+        EventType eventType = EventType.valueOf(type) ;
+        final List<EventDTO> eventDTOList = eventRepository.fetchAllByType(eventType).
                 stream()
                 .map(eventDTOMapper)
                 .collect(Collectors.toList());
-        return new ResponseEntity<>(eventDTOList , HttpStatus.OK) ;
+
+        return new ResponseEntity<>(eventDTOList, HttpStatus.OK);
     }
 
     @Override

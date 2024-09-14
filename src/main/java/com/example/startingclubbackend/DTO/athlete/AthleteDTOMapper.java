@@ -19,7 +19,7 @@ public class AthleteDTOMapper implements Function<Athlete , AthleteDTO> {
                 athlete.getLicenceID(),
                 athlete.getDateOfBirth() ,
                 athlete.getBranch().name() ,
-                athlete.getCreatedAT() ,
+                athlete.getCreatedAt() ,
                 athlete.getHasMedal() != null ? athlete.getHasMedal() : false
         );
     }

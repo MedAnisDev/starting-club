@@ -13,7 +13,7 @@ import java.util.List;
 public interface AnnouncementService {
     ResponseEntity<Object> createAnnouncement(AnnouncementDTO announcementDTO);
 
-    ResponseEntity<Object> fetchAllAnnouncements(long pageNumber , String columnName);
+    ResponseEntity<Object> fetchAllAnnouncements(long pageNumber , String sortedBy);
 
     ResponseEntity<Object> fetchAnnouncementById(Long announcementId);
 

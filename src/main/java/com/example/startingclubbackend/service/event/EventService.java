@@ -14,6 +14,7 @@ public interface EventService {
     ResponseEntity<Object> createEvent(@NonNull EventDTO eventDTO);
 
     ResponseEntity<Object> fetchAllEvents(long pageNumber , String columnName);
+    ResponseEntity<Object> fetchAllEventsByType(String type);
 
     ResponseEntity<Object> fetchEventById(Long eventId);
 

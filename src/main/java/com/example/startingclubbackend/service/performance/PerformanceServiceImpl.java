@@ -82,9 +82,14 @@ public class PerformanceServiceImpl implements PerformanceService{
     @Override
     public ResponseEntity<Object> getPerformanceByAthleteId(final Long athleteId) {
         final Performance currPerformance = performanceRepository.fetchByAthleteId(athleteId)
-                .orElseThrow(()-> new ResourceNotFoundCustomException("performance required not found")) ;
-        final PerformanceDTO performanceDTO = performanceDTOMapper.apply(currPerformance) ;
-        return new ResponseEntity<>(performanceDTO ,HttpStatus.OK) ;
+                .orElse(null) ;
+        if(currPerformance !=null) {
+            final PerformanceDTO performanceDTO = performanceDTOMapper.apply(currPerformance);
+            return new ResponseEntity<>(performanceDTO, HttpStatus.OK);
+        }
+        else{
+            return null ;
+        }
     }
 
     @Transactional

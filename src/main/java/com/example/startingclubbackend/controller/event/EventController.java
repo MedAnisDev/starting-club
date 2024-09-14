@@ -1,5 +1,6 @@
 package com.example.startingclubbackend.controller.event;
 import com.example.startingclubbackend.DTO.event.EventDTO;
+import com.example.startingclubbackend.model.event.EventType;
 import com.example.startingclubbackend.service.event.EventService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -18,6 +19,7 @@ import java.util.List;
 @RestController
 @RequestMapping("api/v1/events")
 @Validated
+@Slf4j
 public class EventController {
     private final EventService eventService ;
 
@@ -35,10 +37,19 @@ public class EventController {
         return eventService.uploadFilesToEvent(eventId ,files);
     }
 
-    @GetMapping("/page/{pageNumber}")
-    public ResponseEntity<Object> fetchAllEvents(@PathVariable final long pageNumber ,@RequestParam(value = "sortedBY" ,defaultValue = "id") final String sortedBY){
-        return eventService.fetchAllEvents(pageNumber , sortedBY);
+    @GetMapping("")
+    public ResponseEntity<Object> fetchAllEvents(@RequestParam(value ="pageNumber" ,defaultValue="1" ) final long pageNumber ,
+                                                 @RequestParam(value = "sortedBY" ,defaultValue = "id") final String sortedBy
+                                                 ){
+        return eventService.fetchAllEvents(pageNumber,sortedBy);
     }
+
+    @GetMapping("/custom")
+    public ResponseEntity<Object> fetchAllEventsByType(@RequestParam(value = "type" , defaultValue = "") final String type) {
+        log.info("fetchAllEventsByType controller ");
+        return eventService.fetchAllEventsByType(type);
+    }
+
     @GetMapping("/{eventId}")
     public ResponseEntity<Object> fetchEventById(@PathVariable final Long eventId){
         return eventService.fetchEventById(eventId) ;

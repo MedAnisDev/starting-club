@@ -38,6 +38,7 @@ public class Event {
     private LocalDateTime date ;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "type", nullable = false)
     private EventType type  ;
 
     @ManyToOne

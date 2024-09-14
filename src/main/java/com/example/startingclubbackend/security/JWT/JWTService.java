@@ -1,5 +1,6 @@
 package com.example.startingclubbackend.security.JWT;
 
+import com.example.startingclubbackend.exceptions.custom.ExpiredTokenCustomException;
 import com.example.startingclubbackend.exceptions.custom.InvalidTokenCustomException;
 import com.example.startingclubbackend.security.utility.SecurityConstants;
 import io.jsonwebtoken.*;
@@ -37,8 +38,10 @@ public class JWTService {
         try {
             Claims claims = extractAllClaims(token);
         } catch (ExpiredJwtException e) {
-            throw new InvalidTokenCustomException("Token has expired");
+            log.error("Token has expired: {}", e.getMessage()); // Log to see if this block is reached
+            throw new ExpiredTokenCustomException("Token has expired");
         } catch (MalformedJwtException e) {
+            log.error("Malformed token: {}", e.getMessage()); // Log to see if this block is reached
             throw new InvalidTokenCustomException("Malformed token");
         }
         return true ;

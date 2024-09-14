@@ -24,6 +24,7 @@ public class TrainingSession {
     @Column(name = "session_note" , nullable = false)
     private double sessionNote = 0 ;
 
+
     @Column(name = "created_at" , nullable = false)
     private LocalDateTime createdAT  = LocalDateTime.now() ;
 

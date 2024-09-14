@@ -8,7 +8,6 @@ public record UserDTO(Long id ,
                       String firstname ,
                       String lastname ,
                       String email ,
-                      String password ,
                       boolean isEnable ,
                       LocalDateTime createdAt,
                       Role role

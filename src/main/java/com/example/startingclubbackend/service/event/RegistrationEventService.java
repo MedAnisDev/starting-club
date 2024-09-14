@@ -8,4 +8,5 @@ public interface RegistrationEventService {
     void deleteAthleteFromAllEvents(final Long athleteId) ;
 
     ResponseEntity<Object> getAllParticipants(final Long eventId);
+    boolean isAthleteRegistered(final Long eventId ,final Long athleteID) ;
 }

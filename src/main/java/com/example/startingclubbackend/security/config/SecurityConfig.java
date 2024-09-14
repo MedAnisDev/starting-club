@@ -64,7 +64,7 @@ public class SecurityConfig {
                                   .requestMatchers(SWAGGER_WHITELIST)
                                     .permitAll()
 
-                                  .requestMatchers(HttpMethod.GET, "api/v1/athlete/**")
+                                  .requestMatchers(HttpMethod.GET, "api/v1/athlete/admin/**")
                                     .hasAnyRole("SUPER_ADMIN", "ADMIN")
 
                                   .requestMatchers(HttpMethod.POST, "/api/v1/announcements/**" ,
@@ -74,11 +74,13 @@ public class SecurityConfig {
                                           "api/v1/training_session/**").
                                     hasAnyRole("SUPER_ADMIN", "ADMIN")
 
-                                  .requestMatchers(HttpMethod.PUT, "/api/v1/announcements/**" ,
+                                  .requestMatchers(HttpMethod.PUT,
+                                          "/api/v1/announcements/**" ,
                                           "/api/v1/events/**",
                                           "api/v1/files/**",
                                           "api/v1/athlete_event/**" ,
-                                          "api/v1/training_session/**")
+                                          "api/v1/training_session/**",
+                                          "api/v1/athlete/admin/**")
                                     .hasAnyRole("SUPER_ADMIN", "ADMIN")
 
                                   .requestMatchers(HttpMethod.DELETE,
@@ -105,7 +107,6 @@ public class SecurityConfig {
                                   .addLogoutHandler(logoutHandler)
                                   .logoutSuccessHandler(((request, response, authentication) ->{
                                       response.setStatus(HttpServletResponse.SC_OK);
-                                      response.sendRedirect("api/v1/auth/login") ;
                                       response.getWriter().write("{" +
                                               "\"message\": \"Logout successful\"" +
                                               "}");
@@ -127,7 +128,7 @@ public class SecurityConfig {
           configuration.setAllowCredentials(true);
 
           UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-          source.registerCorsConfiguration("api/v1/**",configuration);
+          source.registerCorsConfiguration("/**",configuration);
           return source ;
      }
 

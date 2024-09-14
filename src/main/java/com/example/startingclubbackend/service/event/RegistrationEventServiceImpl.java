@@ -44,6 +44,7 @@ public class RegistrationEventServiceImpl implements RegistrationEventService{
     public ResponseEntity<Object> registerAthleteToEvent(final Long eventId) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
+        //get current authenticated athlete
         Athlete currentAthlete = (Athlete) auth.getPrincipal();
         Long athleteID =currentAthlete.getId() ;
 
@@ -96,20 +97,18 @@ public class RegistrationEventServiceImpl implements RegistrationEventService{
     }
 
     @Override
-    public ResponseEntity<Object> getAllParticipants(Long eventId) {
+    public ResponseEntity<Object> getAllParticipants(final Long eventId) {
         final Event currentEvent = eventService.getEventById(eventId);
         final List<Athlete> participants = currentEvent.getParticipants();
 
-        if(participants.isEmpty()){
-            String errorMessage= String.format("sorry , event with title '%s' does not contain any registered athlete yet",currentEvent.getTitle()) ;
-            return new ResponseEntity<>(errorMessage ,HttpStatus.OK);
-        }
-        List<AthleteDTO> participantsDTOList = participants.stream().map(athleteDTOMapper).toList();
+        List<AthleteDTO> participantsDTOList = participants.stream().
+                map(athleteDTOMapper).
+                toList();
 
         return new ResponseEntity<>(participantsDTOList ,HttpStatus.OK);
     }
 
-
+    @Override
     public boolean isAthleteRegistered(final Long eventId ,final Long athleteID){
         return athleteRepository.isAthleteRegistered(athleteID, eventId) ;
     }

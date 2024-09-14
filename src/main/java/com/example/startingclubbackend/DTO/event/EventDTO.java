@@ -30,5 +30,8 @@ public class EventDTO {
     @NotBlank(message = "please fill type field")
     private String type ;
 
-    private UserPublicDTO createdBY ;
+    private LocalDateTime createdAt ;
+    private LocalDateTime updatedAt ;
+
+    private UserPublicDTO createdBy ;
 }

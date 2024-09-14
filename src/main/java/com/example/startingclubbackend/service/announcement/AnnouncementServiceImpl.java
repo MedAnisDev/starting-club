@@ -59,9 +59,9 @@ public class AnnouncementServiceImpl implements AnnouncementService{
         return new ResponseEntity<>(announcementDTOResponse, HttpStatus.OK);
     }
     @Override
-    public ResponseEntity<Object> fetchAllAnnouncements(final long pageNumber ,final String columnName) {
+    public ResponseEntity<Object> fetchAllAnnouncements(final long pageNumber ,final String sortedBy) {
 
-        Sort sort = Sort.by(Sort.Order.desc(columnName).nullsLast()) ;
+        Sort sort = Sort.by(Sort.Order.desc(sortedBy).nullsLast()) ;
         Pageable pageable = PageRequest.of(
                 (int)pageNumber -1 ,
                 5 ,
@@ -76,6 +76,7 @@ public class AnnouncementServiceImpl implements AnnouncementService{
 
     @Override
     public ResponseEntity<Object> fetchAnnouncementById(final Long announcementId) {
+        log.info("fetchAnnouncementById called");
         final Announcement currentAnnouncement = getAnnouncementById(announcementId) ;
         final AnnouncementDTO announcementDTOResponse = announcementDTOMapper.apply(currentAnnouncement) ;
         return  new ResponseEntity<>(announcementDTOResponse  ,HttpStatus.OK) ;

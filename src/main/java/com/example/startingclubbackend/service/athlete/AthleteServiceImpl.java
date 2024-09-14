@@ -112,7 +112,7 @@ public class AthleteServiceImpl implements AthleteService {
                 Files.delete(filePath);
             }
             eventPerformanceRepository.deleteAllByAthleteId(athleteId);
-            performanceService.deletePerformanceById(currAthlete.getPerformance().getId()) ;
+            if(currAthlete.getPerformance() != null ) performanceService.deletePerformanceById(currAthlete.getPerformance().getId()) ;
 
             //delete User
             athleteRepository.deleteById(athleteId);
@@ -134,9 +134,6 @@ public class AthleteServiceImpl implements AthleteService {
                 sort
         );
         final List<Athlete> athletes = athleteRepository.fetchAllAthletes(pageable);
-        if (athletes.isEmpty()) {
-            throw new ResourceNotFoundCustomException("No athletes found");
-        }
 
         final List<AthleteDTO> athletesDTOList = athletes.stream().map(athleteDTOMapper).toList();
         return new ResponseEntity<>(athletesDTOList, HttpStatus.OK);
@@ -187,7 +184,6 @@ public class AthleteServiceImpl implements AthleteService {
 
         currAthlete.setFirstname(athleteDTO.getFirstname());
         currAthlete.setLastname(athleteDTO.getLastname());
-        currAthlete.setPassword(passwordEncoder.encode(athleteDTO.getPassword()));
         currAthlete.setPhoneNumber(athleteDTO.getPhoneNumber());
         currAthlete.setLicenceID(athleteDTO.getLicenceID());
         currAthlete.setDateOfBirth(athleteDTO.getDateOfBirth());
