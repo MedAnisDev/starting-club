@@ -22,20 +22,27 @@ public class FileController {
     }
 
     @PostMapping("/upload_file" )
-    public ResponseEntity<Object> uploadFile(@RequestParam(value = "file") final MultipartFile file) throws IOException {
+    public ResponseEntity<Object> uploadFile(@RequestParam(name = "files") final MultipartFile file) throws IOException {
         log.info("uploadFile endpoint called: ");
         log.info("Received file: " + file.getOriginalFilename());
         return fileService.uploadFile(file) ;
     }
 
     @PostMapping("/upload_files" )
-    public ResponseEntity<Object> uploadMultipleFiles(@RequestParam(value = "files") final List<MultipartFile> files) throws IOException {
+    public ResponseEntity<Object> uploadMultipleFiles(@RequestParam(name = "files") final List<MultipartFile> files) throws IOException {
+        log.info("uploadMultipleFiles endpoint called: ");
         return fileService.uploadMultipleFiles(files) ;
     }
 
     @GetMapping("/download_file" )
-    public ResponseEntity<Object> downloadFile(@RequestParam(value = "fileName") final String fileName) throws IOException {
-            return fileService.downloadFile(fileName) ;
+    public ResponseEntity<Object> downloadFile(@RequestParam(name = "fileName") final String fileName) throws IOException {
+        return fileService.downloadFile(fileName) ;
+    }
+
+    @GetMapping("/athlete/{athleteId}" )
+    public ResponseEntity<Object> getAllFilesByAthlete(@PathVariable("athleteId") final Long athleteId) throws IOException {
+        log.info("getAllFilesByAthlete called");
+        return fileService.getAllFilesByAthlete(athleteId) ;
     }
     @DeleteMapping("/{fileId}")
     public ResponseEntity<String> deleteFileById(@PathVariable final Long fileId) {

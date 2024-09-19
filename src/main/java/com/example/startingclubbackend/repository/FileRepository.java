@@ -14,6 +14,7 @@ import java.util.List;
 @Transactional(readOnly = true)
 public interface FileRepository extends JpaRepository<FileRecord,Long> {
 
+    List<FileRecord> findByAthleteId(Long athleteId);
     @Modifying
     @Transactional
     @Query("DELETE FROM FileRecord f where f.id = :fileId")
