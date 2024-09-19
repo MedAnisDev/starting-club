@@ -33,7 +33,7 @@ public class EventController {
     }
 
     @PostMapping("/{eventId}")
-    public ResponseEntity<Object> uploadFilesToEvent(@PathVariable final Long eventId , @RequestParam("files") @NotNull List<MultipartFile> files) throws IOException {
+    public ResponseEntity<Object> uploadFilesToEvent(@PathVariable final Long eventId , @RequestParam(name = "files") @NotNull List<MultipartFile> files) throws IOException {
         return eventService.uploadFilesToEvent(eventId ,files);
     }
 

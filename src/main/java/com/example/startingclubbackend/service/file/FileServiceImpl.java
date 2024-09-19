@@ -85,11 +85,21 @@ public class FileServiceImpl implements FileService{
 
         //setting headers
         HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.CONTENT_DISPOSITION , "attachment; filename=\"" + fileName + "\""); // ex.txt
-        headers.add(HttpHeaders.CONTENT_LENGTH , String.valueOf(fileDataBytes.length));
-        headers.add(HttpHeaders.CONTENT_TYPE ,Files.probeContentType(path) );
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + fileName + "\""); // allows inline display
+        headers.add(HttpHeaders.CONTENT_LENGTH, String.valueOf(fileDataBytes.length));
+        headers.add(HttpHeaders.CONTENT_TYPE, Files.probeContentType(path));
 
         return new ResponseEntity<>(fileDataBytes , headers , HttpStatus.OK) ;
+    }
+
+    @Override
+    public ResponseEntity<Object> getAllFilesByAthlete(final Long athleteId) {
+        final List<FileRecordDTO> fileRecordDTOList = fileRepository.findByAthleteId(athleteId)
+                .stream()
+                .map(fileRecordDTOMapper)
+                .toList();
+        return new ResponseEntity<>(fileRecordDTOList , HttpStatus.OK) ;
+
     }
 
     @Override
@@ -129,11 +139,12 @@ public class FileServiceImpl implements FileService{
         String originalFileName = file.getOriginalFilename();
         String fileName = originalFileName.substring(0, originalFileName.indexOf('.'));
         String extension = originalFileName.substring(originalFileName.lastIndexOf('.'));
+        String fullName = fileName + System.currentTimeMillis() + extension ;
         String path = FILE_PATH + fileName + System.currentTimeMillis() + extension;
 
         //saving file
         final FileRecord fileRecord = FileRecord.builder()
-                .name(fileName)
+                .name(fullName)
                 .type(file.getContentType())
                 .path(path)
                 .uploadedAt(LocalDateTime.now())

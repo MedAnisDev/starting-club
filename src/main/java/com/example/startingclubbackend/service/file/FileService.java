@@ -20,5 +20,7 @@ public interface FileService {
     void deleteFileById(Long fileId) throws IOException;
     FileRecord handleFile(MultipartFile file) throws IOException ;
     void saveFile(FileRecord fileRecord);
+
+    ResponseEntity<Object> getAllFilesByAthlete(Long athleteId);
 }
 

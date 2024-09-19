@@ -22,7 +22,8 @@ public class AthleteController {
     }
 
     @PostMapping("/{athleteId}")
-    public ResponseEntity<Object> uploadFilesToAthlete(@PathVariable final Long athleteId, @RequestParam("files") @NotNull List<MultipartFile> files) throws IOException {
+    public ResponseEntity<Object> uploadFilesToAthlete(@PathVariable final Long athleteId,
+                                                       @RequestParam(name ="files") @NotNull List<MultipartFile> files) throws IOException {
         return athleteService.uploadFilesToAthlete(athleteId, files);
     }
 
