@@ -16,11 +16,15 @@ public interface FileService {
     FileRecord getFileById(Long fileId);
 
     ResponseEntity<Object> downloadFile(String files) throws IOException;
+    ResponseEntity<Object> getAllFilesByAthlete(Long athleteId);
+    ResponseEntity<Object> getAllFilesByEvent(Long eventId);
+
+    ResponseEntity<Object> getAllDocumentFiles();
 
     void deleteFileById(Long fileId) throws IOException;
     FileRecord handleFile(MultipartFile file) throws IOException ;
     void saveFile(FileRecord fileRecord);
 
-    ResponseEntity<Object> getAllFilesByAthlete(Long athleteId);
+
 }
 

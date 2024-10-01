@@ -40,10 +40,25 @@ public class FileController {
     }
 
     @GetMapping("/athlete/{athleteId}" )
-    public ResponseEntity<Object> getAllFilesByAthlete(@PathVariable("athleteId") final Long athleteId) throws IOException {
+    public ResponseEntity<Object> getAllFilesByAthlete(@PathVariable("athleteId") final Long athleteId) {
         log.info("getAllFilesByAthlete called");
         return fileService.getAllFilesByAthlete(athleteId) ;
     }
+
+    @GetMapping("/event/{eventId}" )
+    public ResponseEntity<Object> getAllFilesByEvent(@PathVariable("eventId") final Long eventId) {
+        log.info("getAllFilesByEvent called");
+        return fileService.getAllFilesByEvent(eventId) ;
+    }
+
+
+    @GetMapping()
+    public ResponseEntity<Object> getAllDocumentFiles() {
+        log.info("get All DocumentFiles called");
+        return fileService.getAllDocumentFiles() ;
+    }
+
+
     @DeleteMapping("/{fileId}")
     public ResponseEntity<String> deleteFileById(@PathVariable final Long fileId) {
         try{

@@ -22,6 +22,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -74,27 +76,50 @@ public class FileServiceImpl implements FileService{
 
     @Override
     public ResponseEntity<Object> downloadFile(final String fileName) throws IOException {
-        Path path = Paths.get(FILE_PATH + fileName) ;
+        // Encode the filename for safe use in HTTP headers
+        String encodedFileName = URLEncoder.encode(fileName, StandardCharsets.UTF_8).replaceAll("\\+", "%20");
 
-        //checking file validation
-        Resource resource = new UrlResource(path.toUri()) ;
+        Path path = Paths.get(FILE_PATH + fileName);
+
+        // Validate the file and check if it's available
+        Resource resource = new UrlResource(path.toUri());
         validateDownloadFile(resource);
 
-        //getting fileData
-        byte[] fileDataBytes = Files.readAllBytes(path) ;
+        // Read the file data into byte array
+        byte[] fileDataBytes = Files.readAllBytes(path);
 
-        //setting headers
+        // Setting headers for the file download
         HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + fileName + "\""); // allows inline display
+        // Setting Content-Disposition with encoded filename
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "inline; filename*=UTF-8''" + encodedFileName);
         headers.add(HttpHeaders.CONTENT_LENGTH, String.valueOf(fileDataBytes.length));
         headers.add(HttpHeaders.CONTENT_TYPE, Files.probeContentType(path));
 
-        return new ResponseEntity<>(fileDataBytes , headers , HttpStatus.OK) ;
+        return new ResponseEntity<>(fileDataBytes, headers, HttpStatus.OK);
     }
 
     @Override
     public ResponseEntity<Object> getAllFilesByAthlete(final Long athleteId) {
         final List<FileRecordDTO> fileRecordDTOList = fileRepository.findByAthleteId(athleteId)
+                .stream()
+                .map(fileRecordDTOMapper)
+                .toList();
+        return new ResponseEntity<>(fileRecordDTOList , HttpStatus.OK) ;
+    }
+
+    @Override
+    public ResponseEntity<Object> getAllFilesByEvent(final Long eventId) {
+        final List<FileRecordDTO> fileRecordDTOList = fileRepository.findByEventId(eventId)
+                .stream()
+                .map(fileRecordDTOMapper)
+                .toList();
+        return new ResponseEntity<>(fileRecordDTOList , HttpStatus.OK) ;
+
+    }
+
+    @Override
+    public ResponseEntity<Object> getAllDocumentFiles() {
+        final List<FileRecordDTO> fileRecordDTOList = fileRepository.fetchAllDocumentFiles()
                 .stream()
                 .map(fileRecordDTOMapper)
                 .toList();

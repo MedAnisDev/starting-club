@@ -15,8 +15,15 @@ import java.util.List;
 public interface FileRepository extends JpaRepository<FileRecord,Long> {
 
     List<FileRecord> findByAthleteId(Long athleteId);
+    List<FileRecord> findByEventId(Long eventId);
     @Modifying
     @Transactional
     @Query("DELETE FROM FileRecord f where f.id = :fileId")
     void deleteFileRecordByById(@Param("fileId") Long fileId) ;
+
+    @Query("SELECT f FROM FileRecord f where" +
+            " (f.athlete.id IS null " +
+            "AND f.event.id IS null " +
+            "AND f.announcement.id IS  null) ")
+    List<FileRecord> fetchAllDocumentFiles();
 }

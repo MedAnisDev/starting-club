@@ -32,6 +32,7 @@ public class FileRecordDTOMapper implements Function<FileRecord, FileRecordDTO> 
                 fileRecord.getType(),
                 fileRecord.getPath(),
                 fileRecord.getUploadedBy() != null ? userPublicDTOMapper.apply(fileRecord.getUploadedBy()) : null ,
+
                 fileRecord.getEvent() != null ? eventDTOMapper.apply(fileRecord.getEvent()) : null ,
                 fileRecord.getAthlete() != null ? athleteDTOMapper.apply(fileRecord.getAthlete()) : null ,
                 fileRecord.getAnnouncement() != null ? announcementDTOMapper.apply(fileRecord.getAnnouncement()) : null
