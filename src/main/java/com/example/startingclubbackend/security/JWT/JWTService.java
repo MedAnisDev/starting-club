@@ -22,6 +22,7 @@ import java.util.function.Function;
 public class JWTService {
 
     public String generateToken(UserDetails userDetails){
+        log.info("token generated for {}",userDetails.getUsername());
         return Jwts.builder()
                 .setSubject(userDetails.getUsername())
                 .setExpiration(new Date(System.currentTimeMillis()+ SecurityConstants.ACCESS_JWT_EXPIRATION))

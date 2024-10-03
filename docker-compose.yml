@@ -12,6 +12,11 @@ services:
 
     depends_on:
       - db
+    environment:
+      ACCESS_JWT_SECRET_KEY: qH/KeTPBzgY6NMl84dqn2LmJX1ahtrkj+WkIVyn+zIHthUhogYvNhwQfj/ZwDq8W
+      REFRESH_JWT_SECRET_KEY: Sx1ulId2RUJcYU4Totv+WtlhZ1JK2zPXzlpReWbWu6okP2aNHV7qvQw9ck26NkHb
+      REFRESH_JWT_EXPIRATION: 604800000
+      ACCESS_JWT_EXPIRATION: 86400000
     restart: always
 
   db:

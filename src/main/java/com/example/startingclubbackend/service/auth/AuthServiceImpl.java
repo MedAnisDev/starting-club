@@ -139,6 +139,7 @@ public class AuthServiceImpl implements AuthService{
 
         revokeAllUsersAccessToken(user);
         revokeAllUsersRefreshToken(user);
+        log.info("Attempting to authenticate user: {}", loginDTO.getEmail());
 
         var accessToken = generateAndSaveAccessToken(user);
         String refreshToken = generateAndSaveUserRefreshToken(user);
