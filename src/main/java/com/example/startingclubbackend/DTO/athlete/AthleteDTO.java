@@ -39,6 +39,8 @@ public class AthleteDTO {
     @NotBlank(message = "Please fill branch field")
     private String branch ;
 
+    private Integer age ;
+
     private LocalDateTime createdAt ;
 
     private boolean hasMedal;
