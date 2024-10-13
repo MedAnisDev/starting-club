@@ -64,6 +64,9 @@ public class SecurityConfig {
                                   .requestMatchers(SWAGGER_WHITELIST)
                                     .permitAll()
 
+                                  .requestMatchers(HttpMethod.GET, "/ws/**")
+                                  .permitAll()
+
                                   .requestMatchers(HttpMethod.GET, "api/v1/athlete/admin/**")
                                     .hasAnyRole("SUPER_ADMIN", "ADMIN")
 

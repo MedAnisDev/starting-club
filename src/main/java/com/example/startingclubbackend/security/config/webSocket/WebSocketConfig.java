@@ -10,12 +10,15 @@ import org.springframework.web.socket.config.annotation.*;
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/ws").withSockJS() ; //for https change it to "wss"
+        registry
+                .addEndpoint("/ws")
+                .setAllowedOrigins("http://localhost:3000")
+                .withSockJS() ; //for https change it to "wss"
     }
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
-        registry.setApplicationDestinationPrefixes("app");
-        registry.enableSimpleBroker("topic");
+        registry.setApplicationDestinationPrefixes("/app");
+        registry.enableSimpleBroker("/chatroom");
 
     }
 
