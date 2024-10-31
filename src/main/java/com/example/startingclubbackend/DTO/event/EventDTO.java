@@ -24,7 +24,7 @@ public class EventDTO {
     private String description;
 
     @NotNull(message = "Event date cannot be null")
-    //@Future(message = "Event date must be in the future")
+    @Future(message = "Event date must be in the future")
     private LocalDateTime date;
 
     @NotBlank(message = "please fill type field")
