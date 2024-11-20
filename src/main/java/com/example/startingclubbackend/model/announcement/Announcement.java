@@ -1,7 +1,6 @@
 package com.example.startingclubbackend.model.announcement;
 
 import com.example.startingclubbackend.model.file.FileRecord;
-import com.example.startingclubbackend.model.user.User;
 import com.example.startingclubbackend.model.user.admin.Admin;
 import jakarta.persistence.*;
 import lombok.*;

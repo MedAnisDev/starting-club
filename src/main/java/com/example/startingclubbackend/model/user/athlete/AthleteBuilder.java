@@ -14,7 +14,6 @@ public class AthleteBuilder {
     private String email;
     private String password;
     private LocalDateTime createdAT ;
-
     private String phoneNumber ;
     private Role role ;
 

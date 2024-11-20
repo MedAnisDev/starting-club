@@ -1,0 +1,171 @@
+@startuml
+
+package "classDiagram" {
+    class Announcement {
+        -Long id
+        -String title
+        -String content
+        -LocalDateTime createdAt
+        -LocalDateTime updatedAt
+        -Admin createdBy
+        -List<FileRecord> files
+    }
+
+    Announcement "1" -- "*" FileRecord : has
+    Announcement "1" -- "*" Admin : create
+
+    class Event {
+        -Long id
+        -String title
+        -String location
+        -String description
+        -LocalDateTime createdAt
+        -LocalDateTime updatedAt
+        -LocalDateTime date
+        -EventType type
+        -Admin createdBy
+        -List<Athlete> participants
+        -List<FileRecord> files
+
+
+    }
+
+    Event "1" -- "*" FileRecord : has
+    Event "1" -- "*" EventPerformance : has
+
+    class EventPerformance {
+        -Long id
+        -Athlete athlete
+        -Event event
+        -double noteEvent
+    }
+     EventPerformance "*" -- "1" Athlete : has
+
+
+    class FileRecord {
+        -Long id
+        -String name
+        -String type
+        -String path
+        -LocalDateTime uploadedAt
+        -Admin uploadedBy
+        -Event event
+        -Announcement announcement
+        -Athlete athlete
+    }
+    FileRecord "*" -- "1" Admin :upload
+
+
+    class Performance {
+        -Long id
+        -double federationNote
+        -LocalDateTime createdAt
+        -LocalDateTime updatedAt
+        -Admin createdBy
+        -Admin updatedBy
+        -Athlete athlete
+        -List<TrainingSession> trainingSessionList
+    }
+     EventPerformance "*" -- "1" Admin : create
+
+
+    class TrainingSession {
+        -Long id
+        -LocalDate date
+        -double sessionNote
+        -LocalDateTime createdAt
+        -LocalDateTime updatedAt
+        -Admin createdBy
+        -Admin updatedBy
+        -Performance performance
+    }
+    Performance "*" -- "1" Admin : create
+    Performance "1" -- "*" TrainingSession
+
+    class Role {
+        -Long id
+        -String name
+    }
+
+    User "1" -- "1" Role : has
+
+        abstract class User {
+            -Long id
+            -String firstname
+            -String lastname
+            -String email
+            -String password
+            -boolean enable
+            -LocalDateTime createdAt
+            -String phoneNumber
+            -Role role
+            +authenticate(): void
+            +communicateInForum(): void
+        }
+
+        User <|-- Admin
+        User <|-- Athlete
+
+        class Admin {
+            +manageEvents(): void
+            +manageFiles(): void
+            +manageAnnouncements(): void
+            +manageAthletes(): void
+            +managePerformances(): void
+        }
+
+        class Athlete {
+            -String licenceID
+            -LocalDate dateOfBirth
+            -Integer age
+            -Boolean hasMedal
+            -AthleteBranch branch
+            -List<Event> registeredEvents
+            -List<FileRecord> files
+            -Performance performance
+            +register() : void
+            +participateInEvent(eventId: Long): void
+        }
+
+
+    Athlete "*" -- "*" Event : participate
+    Athlete "1" -- "*" FileRecord : has
+    Athlete "1" -- "1" Performance : has
+
+    class ConfirmationToken {
+        -Long id
+        -String token
+        -LocalDateTime createdAt
+        -LocalDateTime expiredAt
+        -LocalDateTime confirmedAt
+        -Athlete athlete
+    }
+
+    ConfirmationToken "1" -- "1" Athlete
+
+    class RefreshToken {
+        -Long id
+        -String token
+        -boolean expired
+        -boolean revoked
+        -Date issuedAt
+        -Date expiresAt
+        -User user
+    }
+
+    RefreshToken "1" -- "1" User
+
+    class Token {
+        -Long id
+        -String token
+        -TokenType tokenType
+        -boolean expired
+        -boolean revoked
+        -User user
+    }
+
+    Token "1" -- "1" User
+}
+
+
+@enduml
